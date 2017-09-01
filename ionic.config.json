@@ -1,6 +1,6 @@
 {
   "name": "betwixt-mobile-app",
-  "app_id": "",
+  "app_id": "7693beb0",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
