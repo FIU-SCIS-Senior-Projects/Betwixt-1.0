@@ -12,7 +12,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { ServicesModule } from './services/services.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -27,7 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
     ServicesModule,
     // Angular
     BrowserModule,
-    HttpClientModule,
+    HttpModule,
     // Ionic
     IonicModule.forRoot(MyApp)
   ],

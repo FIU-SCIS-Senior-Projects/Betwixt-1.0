@@ -1,47 +1,15 @@
 import { Injectable } from '@angular/core';
 
-export interface ConfigFile {
-  serverUrl: string;
-}
-
-export interface Config {
-  serverUrl: string;
-}
+const SERVER_URL = 'https://server.betwixt.space/';
 
 @Injectable()
-export class ConfigService implements Config {
-  private config: Config;
+export class ConfigService {
 
   constructor() {
     console.info('CONFIG-SERVICE');
   }
 
   get serverUrl(): string {
-    return this.getConfig().serverUrl;
-  }
-
-  init(config: ConfigFile) {
-    if (!config) {
-      throw new Error(`No configuration passed`);
-    }
-
-    if (this.config) {
-      throw new Error(`Attempt to initialize configuration more than once`);
-    }
-
-    const { serverUrl } = config;
-
-    this.config = {
-      serverUrl
-    };
-    console.info(`Application configured!`, this.config);
-  }
-
-  private getConfig(): Config {
-    if (!this.config) {
-      throw new Error(`Configuration is not initialized`);
-    }
-
-    return this.config;
+    return SERVER_URL;
   }
 }

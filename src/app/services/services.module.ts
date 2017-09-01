@@ -8,7 +8,7 @@ const serviceProviders = [SampleService];
 @NgModule({
   imports: serviceModules,
   exports: serviceModules,
-  providers: [...serviceProviders]
+  providers: serviceProviders
 })
 export class ServicesModule {
   constructor(
