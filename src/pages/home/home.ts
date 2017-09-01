@@ -17,7 +17,7 @@ export class HomePage implements OnInit {
     this.sampleService.getRequest()
       .subscribe(
         data => console.log('SUCCESS', data),
-        error => console.error('ERROR', error),
+        error => console.error('ERROR', error)
       );
   }
 

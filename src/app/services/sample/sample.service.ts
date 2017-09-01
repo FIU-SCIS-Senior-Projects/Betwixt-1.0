@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map'
-
-const SAMPLE_API = 'https://server.betwixt.space/';
+import { ConfigService } from '../config/config.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class SampleService {
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
+
+  get serverUrl(): string {
+    return this.configService.serverUrl;
+  }
 
   getRequest(): Observable<any> {
-    return this.http.get(SAMPLE_API).map(response => response);
+    return this.http.get<any>(this.serverUrl);
   }
 }
