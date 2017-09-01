@@ -10,6 +10,6 @@ export class SampleService {
   constructor(private http: Http) {}
 
   getRequest(): Observable<any> {
-    return this.http.get(SAMPLE_API).map(response => response.json());
+    return this.http.get(SAMPLE_API).map(response => response);
   }
 }

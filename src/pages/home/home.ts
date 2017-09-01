@@ -15,7 +15,10 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.sampleService.getRequest()
-      .subscribe(data => console.log(data));
+      .subscribe(
+        data => console.log('SUCCESS', data),
+        error => console.error('ERROR', error),
+      );
   }
 
 }
