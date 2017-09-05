@@ -7,11 +7,11 @@ import { Http } from '@angular/http';
 export class SampleService {
   constructor(private http: Http, private configService: ConfigService) {}
 
-  get serverUrl(): string {
-    return this.configService.serverUrl;
+  get getServerHelloWorld(): string {
+    return this.configService.getServerHelloWorld;
   }
 
   getRequest(): Observable<any> {
-    return this.http.get(this.serverUrl);
+    return this.http.get(this.getServerHelloWorld);
   }
 }
