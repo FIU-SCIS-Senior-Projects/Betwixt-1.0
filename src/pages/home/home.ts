@@ -3,6 +3,7 @@ import { NavController } from 'ionic-angular';
 import { SampleService } from '../../app/services/sample/sample.service';
 import { YelpService } from '../../app/services/yelp/yelp.service';
 import { Observable } from 'rxjs/Observable';
+import { Geolocation } from '@ionic-native/geolocation';
 
 @Component({
   selector: 'page-home',
@@ -15,7 +16,8 @@ export class HomePage implements OnInit {
   constructor(
     navCtrl: NavController,
     private sampleService: SampleService,
-    private yelpService: YelpService
+    private yelpService: YelpService,
+    private geolocation: Geolocation
   ) {}
 
   ngOnInit() {
@@ -25,8 +27,14 @@ export class HomePage implements OnInit {
         error => console.error('ERROR', error)
       );
 
-    // TODO: get user's current location
-    this.locations$ = this.yelpService.getBusinesses(25.9495954, -80.3497382);
+    this.geolocation.getCurrentPosition()
+      .then((resp) => {
+        console.log(`Got geolocation!\nlatitude: ${resp.coords.latitude} longitude: ${resp.coords.longitude}`)
+        this.locations$ = this.yelpService.getBusinesses(resp.coords.latitude, resp.coords.longitude);
+      }).catch((error) => {
+        console.log('Error getting location', error);
+      });
+
   }
 
 }
