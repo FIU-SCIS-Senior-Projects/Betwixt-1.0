@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../config/config.service';
-import { Http, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 
 @Injectable()
 export class YelpService {
@@ -16,11 +16,6 @@ export class YelpService {
       latitude,
       longitude
     };
-
-    // TODO: these headers should probably go on our backend
-    var headers = new Headers();
-    headers.append('Authorization', 'Bearer 6kEyu_lw6RQSRKiRI8ZQocSznf2Zi1AQO7u-bZ0HNF9xjRTsEwTSIeNoolGr9zipiP5-f9NXGwc4m24AdqLlkqMCkpPM7UuJKDbhVqYgm7RBDnpykQBsy822EvCtWXYx');
-
-    return this.http.get(this.yelpBusinessSearch, { params, headers });
+    return this.http.get(this.yelpBusinessSearch, { params });
   }
 }

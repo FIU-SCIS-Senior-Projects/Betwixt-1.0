@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import urlJoin from 'url-join';
 
 const SERVER_URL = 'https://app.betwixt.space/';
-const YELP_API = 'https://api.yelp.com/v3/';
+const SERVER_DEV_URL = 'http://localhost:8080/api/';
 
 @Injectable()
 export class ConfigService {
@@ -19,11 +19,8 @@ export class ConfigService {
     return urlJoin(SERVER_URL, 'helloworld');
   }
 
-  get yelpUrl(): string {
-    return YELP_API;
-  }
-
+  // TODO: switch from dev to reg url
   get yelpBusinessSearch(): string {
-    return urlJoin(YELP_API, 'businesses', 'search');
+    return urlJoin(SERVER_DEV_URL, 'businesses', 'search');
   }
 }

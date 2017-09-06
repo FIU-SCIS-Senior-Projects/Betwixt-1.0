@@ -5,5 +5,5 @@
 </ion-header>
 
 <ion-content padding>
-  <pre>{{ locations$ | async | json }}</pre>
+  <pre>{{ ((locations$ | async)?._body) }}</pre>
 </ion-content>

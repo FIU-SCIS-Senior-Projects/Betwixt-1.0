@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { SampleService } from '../../app/services/sample/sample.service';
 import { YelpService } from '../../app/services/yelp/yelp.service';
 import { Observable } from 'rxjs/Observable';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -15,24 +14,22 @@ export class HomePage implements OnInit {
 
   constructor(
     navCtrl: NavController,
-    private sampleService: SampleService,
     private yelpService: YelpService,
     private geolocation: Geolocation
   ) {}
 
   ngOnInit() {
-    this.sampleService.getRequest()
-      .subscribe(
-        data => console.log('SUCCESS', data),
-        error => console.error('ERROR', error)
-      );
-
     this.geolocation.getCurrentPosition()
-      .then((resp) => {
+      .then(resp => {
         console.log(`Got geolocation!\nlatitude: ${resp.coords.latitude} longitude: ${resp.coords.longitude}`)
         this.locations$ = this.yelpService.getBusinesses(resp.coords.latitude, resp.coords.longitude);
-      }).catch((error) => {
-        console.log('Error getting location', error);
+        // TODO: eventually remove this, it isnot necessary
+        this.locations$.subscribe(
+          data => console.log('SUCCESS', data),
+          error => console.error('ERROR', error)
+        );
+      }).catch(error => {
+        console.log('Error getting geolocation', error);
       });
 
   }
