@@ -20,12 +20,12 @@ let wf = Workfrom({
 app.set('port', (process.env.PORT || 8080));
 app.use(cors());
 app.use(express.static('www'));
- 
+
 app.use((req, res, next) => {
    res.header('Content-Type', 'application/json');
    next();
 });
- 
+
 // Routes
 
 app.get('/api/places', (req, res) => {
@@ -55,7 +55,7 @@ app.get('/api/businesses/search', (req, res) => {
   yelp.accessToken(YELP_CLIENT_ID, YELP_CLIENT_SECRET)
     .then(response => {
       const client = yelp.client(response.jsonBody.access_token);
-    
+
       client.search(searchRequest)
         .then(response => {
           const firstResult = response.jsonBody.businesses[0];
