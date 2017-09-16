@@ -1,26 +1,33 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+# Betwixt
+> A mobile application that helps groups of people find a central location where they may meet up.
 
-## How to use this template
+## Develop 🤓
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
+### `/server` ⚙
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
-
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
+Back-end code is located in the `/server` folder. Follow the steps to get it running:
 
 ```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myTabs tabs
+$ npm install
+$ npm start
 ```
 
-Then, to run it, cd into `myTabs` and run:
+### `/client` 🖥
+
+Front-end code is located in the `/client` folder. To run the 
 
 ```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
+$ npm install
+$ ionic serve
 ```
 
-Substitute ios for android if not on a Mac.
+> The browser should pop-up automatically on http://localhost:8100
 
+### Pull Request (PR) Process 🚀
+
+When picking up a story to work on, you should do the following:
+
+1. Create your own branch off of `master` with the following format, `<storyType>/<storyNumber>`. Story types are: `feature`, `spike`, `bugfix`, `hotfix`. 
+    - For example, if the story type you're working on is a **feature** and the story number is **123**, then the branch name will be: `feature/123`.
+
+2. After you're done working on your story, create a pull request and add yourself as an "Assignee" and the other members of the team as "Reviewers". Please do not hesitate to write comments on PRs, we are here to learn from each other!
