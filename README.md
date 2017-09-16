@@ -5,7 +5,7 @@
 
 ### `/server` ⚙
 
-Back-end code is located in the `/server` folder. Follow the steps to get it running:
+Back-end code is located in the `/server` folder. Run the following commands to get it running:
 
 ```bash
 $ npm install
@@ -14,7 +14,7 @@ $ npm start
 
 ### `/client` 🖥
 
-Front-end code is located in the `/client` folder. To run the 
+Front-end code is located in the `/client` folder. Run the following commands to get it running:
 
 ```bash
 $ npm install
