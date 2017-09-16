@@ -4,11 +4,18 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const yelp = require('yelp-fusion');
+const Workfrom = require('workfrom');
 
-const clientId = process.env.YELP_CLIENT_ID;
-const clientSecret = process.env.YELP_CLIENT_SECRET;
+const YELP_CLIENT_ID = process.env.YELP_CLIENT_ID;
+const YELP_CLIENT_SECRET = process.env.YELP_CLIENT_SECRET;
+
+const WORKFROM_APP_ID = process.env.WORKFROM_APP_ID;
 
 // Configuration
+
+let wf = Workfrom({
+  id: WORKFROM_APP_ID
+});
 
 app.set('port', (process.env.PORT || 8080));
 app.use(cors());
@@ -21,8 +28,22 @@ app.use((req, res, next) => {
  
 // Routes
 
-app.get('/api/businesses/search', (req, res) => {
+app.get('/api/places', (req, res) => {
+  console.log('fetching places');
 
+  const { query } = req;
+  const searchRequest = {
+    lat: query.latitude,
+    long: query.longitude,
+    radius: 2
+  };
+
+  wf.places.near(searchRequest)
+    .then(results => res.json(results.response))
+    .catch(error => console.log('WORKFROM ERROR', error));
+});
+
+app.get('/api/businesses/search', (req, res) => {
   console.log('fetching businesses');
 
   const { query } = req;
@@ -31,7 +52,7 @@ app.get('/api/businesses/search', (req, res) => {
     longitude: query.longitude
   };
 
-  yelp.accessToken(clientId, clientSecret)
+  yelp.accessToken(YELP_CLIENT_ID, YELP_CLIENT_SECRET)
     .then(response => {
       const client = yelp.client(response.jsonBody.access_token);
     
@@ -50,5 +71,5 @@ app.get('/helloworld', function(request, response) {
 });
 
 app.listen(app.get('port'), function() {
-  console.log("Server App is running at localhost:" + app.get('port'))
+  console.log('Server App is running at localhost:' + app.get('port'))
 });
