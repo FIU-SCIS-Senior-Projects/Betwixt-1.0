@@ -10,11 +10,11 @@
     "start": "node server.js"
   },
   "devDependencies": {
-    "cors": "^2.8.4",
-    "express": "^4.15.4",
-    "yelp-fusion": "^1.0.3"
   },
   "dependencies": {
-    "workfrom": "^1.0.1"
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "workfrom": "^1.0.1",
+    "yelp-fusion": "^1.0.3"
   }
 }
