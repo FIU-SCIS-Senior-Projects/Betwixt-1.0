@@ -1,0 +1,20 @@
+{
+  "name": "betwixt-mobile-app",
+  "version": "0.1.0",
+  "description": "Betwixt Node.js app using Express 4",
+  "engines": {
+    "node": "5.9.1"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.15.4",
+    "yelp-fusion": "^1.0.3"
+  },
+  "dependencies": {
+    "workfrom": "^1.0.1"
+  }
+}

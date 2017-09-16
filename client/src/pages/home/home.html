@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Home</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div>
+    <pre>{{ (yelpLocations$ | async)?._body }}</pre>
+  </div>
+  
+  <div>
+    <pre>{{ (workfromLocations$ | async)?._body }}</pre>
+  </div>
+  
+</ion-content>
