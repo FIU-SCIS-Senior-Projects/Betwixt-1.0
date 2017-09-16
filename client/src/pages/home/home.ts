@@ -14,6 +14,9 @@ export class HomePage implements OnInit {
   yelpLocations$: Observable<any>;
   workfromLocations$: Observable<any>;
 
+  latitude: number;
+  longitude: number;
+
   constructor(
     navCtrl: NavController,
     private yelpService: YelpService,
@@ -24,10 +27,11 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.geolocation.getCurrentPosition()
       .then(resp => {
-        console.log(`Got geolocation!\nlatitude: ${resp.coords.latitude} longitude: ${resp.coords.longitude}`)
+        this.latitude = resp.coords.latitude;
+        this.longitude = resp.coords.longitude;
 
-        this.yelpLocations$ = this.yelpService.getBusinesses(resp.coords.latitude, resp.coords.longitude);
-        this.workfromLocations$ = this.workfromService.getPlaces(resp.coords.latitude, resp.coords.longitude);
+        this.yelpLocations$ = this.yelpService.getBusinesses(this.latitude, this.longitude);
+        this.workfromLocations$ = this.workfromService.getPlaces(this.latitude, this.longitude);
 
       }).catch(error => {
         console.log('Error getting geolocation', error);
