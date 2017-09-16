@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 // Routes
 
-app.get('/api/places', (req, res) => {
+app.get('/places', (req, res) => {
   console.log('fetching places');
 
   const { query } = req;
@@ -43,7 +43,7 @@ app.get('/api/places', (req, res) => {
     .catch(error => console.log('WORKFROM ERROR', error));
 });
 
-app.get('/api/businesses/search', (req, res) => {
+app.get('/businesses/search', (req, res) => {
   console.log('fetching businesses');
 
   const { query } = req;
