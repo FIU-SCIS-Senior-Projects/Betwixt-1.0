@@ -5,5 +5,12 @@
 </ion-header>
 
 <ion-content padding>
-  <pre>{{ ((locations$ | async)?._body) }}</pre>
+  <div>
+    <pre>{{ (yelpLocations$ | async)?._body }}</pre>
+  </div>
+  
+  <div>
+    <pre>{{ (workfromLocations$ | async)?._body }}</pre>
+  </div>
+  
 </ion-content>

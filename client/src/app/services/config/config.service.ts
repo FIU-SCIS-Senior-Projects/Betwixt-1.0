@@ -23,4 +23,8 @@ export class ConfigService {
   get yelpBusinessSearch(): string {
     return urlJoin(SERVER_DEV_URL, 'businesses', 'search');
   }
+
+  get workfromPlaces(): string {
+    return urlJoin(SERVER_DEV_URL, 'places');
+  }
 }

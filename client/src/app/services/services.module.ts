@@ -2,9 +2,10 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { SampleService } from './sample/sample.service';
 import { ConfigModule } from './config/config.module';
 import { YelpService } from './yelp/yelp.service';
+import { WorkfromService } from './workfrom/workfrom.service';
 
 const serviceModules = [ConfigModule];
-const serviceProviders = [SampleService, YelpService];
+const serviceProviders = [SampleService, YelpService, WorkfromService];
 
 @NgModule({
   imports: serviceModules,

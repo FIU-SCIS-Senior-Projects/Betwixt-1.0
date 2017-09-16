@@ -3,6 +3,7 @@ import { NavController } from 'ionic-angular';
 import { YelpService } from '../../app/services/yelp/yelp.service';
 import { Observable } from 'rxjs/Observable';
 import { Geolocation } from '@ionic-native/geolocation';
+import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 
 @Component({
   selector: 'page-home',
@@ -10,11 +11,13 @@ import { Geolocation } from '@ionic-native/geolocation';
 })
 export class HomePage implements OnInit {
 
-  locations$: Observable<any>;
+  yelpLocations$: Observable<any>;
+  workfromLocations$: Observable<any>;
 
   constructor(
     navCtrl: NavController,
     private yelpService: YelpService,
+    private workfromService: WorkfromService,
     private geolocation: Geolocation
   ) {}
 
@@ -22,12 +25,10 @@ export class HomePage implements OnInit {
     this.geolocation.getCurrentPosition()
       .then(resp => {
         console.log(`Got geolocation!\nlatitude: ${resp.coords.latitude} longitude: ${resp.coords.longitude}`)
-        this.locations$ = this.yelpService.getBusinesses(resp.coords.latitude, resp.coords.longitude);
-        // TODO: eventually remove this, it isnot necessary
-        this.locations$.subscribe(
-          data => console.log('SUCCESS', data),
-          error => console.error('ERROR', error)
-        );
+
+        this.yelpLocations$ = this.yelpService.getBusinesses(resp.coords.latitude, resp.coords.longitude);
+        this.workfromLocations$ = this.workfromService.getPlaces(resp.coords.latitude, resp.coords.longitude);
+
       }).catch(error => {
         console.log('Error getting geolocation', error);
       });
