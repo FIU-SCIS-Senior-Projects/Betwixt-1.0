@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import urlJoin from 'url-join';
 
 const SERVER_URL = 'https://server.betwixt.space/';
-const SERVER_DEV_URL = 'http://localhost:8080/api/';
 
 @Injectable()
 export class ConfigService {
