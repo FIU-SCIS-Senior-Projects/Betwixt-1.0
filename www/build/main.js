@@ -169,12 +169,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var HomePage = (function () {
-    function HomePage(navCtrl, yelpService, workfromService, geolocation) {
+    function HomePage(navCtrl, platform, yelpService, workfromService, geolocation) {
+        var _this = this;
         this.yelpService = yelpService;
         this.workfromService = workfromService;
         this.geolocation = geolocation;
+        platform.ready()
+            .then(function () { return _this.getCurrentPosition(); });
     }
-    HomePage.prototype.ngOnInit = function () {
+    HomePage.prototype.getCurrentPosition = function () {
         var _this = this;
         this.geolocation.getCurrentPosition()
             .then(function (resp) {
@@ -193,6 +196,7 @@ HomePage = __decorate([
         selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-title>Home</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content padding>\n  <ion-card>\n    <ion-card-header>Your Geolocation</ion-card-header>\n    <ion-card-content>\n      <div>\n        <strong>Latitude:</strong> <span>{{ latitude || \'...\' }}</span>\n      </div>\n      <div>\n        <strong>Longitude:</strong> <span>{{ longitude || \'...\' }}</span>\n      </div>\n    </ion-card-content>\n  </ion-card>\n\n  <ion-card>\n    <ion-card-header>Yelp Locations</ion-card-header>\n    <ion-card-content>\n      <pre>{{ (yelpLocations$ | async)?._body || \'...\' }}</pre>\n    </ion-card-content>\n  </ion-card>\n\n  <ion-card>\n    <ion-card-header>Workfrom Locations</ion-card-header>\n    <ion-card-content>\n      <pre>{{ (workfromLocations$ | async)?._body || \'...\' }}</pre>\n    </ion-card-content>\n  </ion-card>\n  \n</ion-content>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["d" /* NavController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2__app_services_yelp_yelp_service__["a" /* YelpService */],
         __WEBPACK_IMPORTED_MODULE_4__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
         __WEBPACK_IMPORTED_MODULE_3__ionic_native_geolocation__["a" /* Geolocation */]])
