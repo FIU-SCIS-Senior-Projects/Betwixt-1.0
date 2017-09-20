@@ -1,34 +1,3 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  <ion-card>
-    <ion-card-header>Your Geolocation</ion-card-header>
-    <ion-card-content>
-      <div>
-        <strong>Latitude:</strong> <span>{{ latitude || '...' }}</span>
-      </div>
-      <div>
-        <strong>Longitude:</strong> <span>{{ longitude || '...' }}</span>
-      </div>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>Yelp Locations</ion-card-header>
-    <ion-card-content>
-      <pre>{{ (yelpLocations$ | async)?._body || '...' }}</pre>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>Workfrom Locations</ion-card-header>
-    <ion-card-content>
-      <pre>{{ (workfromLocations$ | async)?._body || '...' }}</pre>
-    </ion-card-content>
-  </ion-card>
-  
+<ion-content>
+  <div #map id="map"></div>
 </ion-content>

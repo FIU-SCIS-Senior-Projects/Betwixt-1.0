@@ -1,15 +1,24 @@
-import { Component } from '@angular/core';
-import { NavController, Platform } from 'ionic-angular';
-import { YelpService } from '../../app/services/yelp/yelp.service';
-import { Observable } from 'rxjs/Observable';
-import { Geolocation } from '@ionic-native/geolocation';
-import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
-
-@Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
-})
-export class HomePage {
+import { Component } from "@angular/core/";
+import {
+  GoogleMaps,
+  GoogleMap,
+  GoogleMapsEvent,
+  GoogleMapOptions,
+  CameraPosition,
+  MarkerOptions,
+  Marker
+ } from '@ionic-native/google-maps';
+ import { Platform } from 'ionic-angular';
+ import { YelpService } from '../../app/services/yelp/yelp.service';
+ import { Observable } from 'rxjs/Observable';
+ import { Geolocation } from '@ionic-native/geolocation';
+ import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+ 
+ @Component({
+   selector: 'page-home',
+   templateUrl: 'home.html'
+ })
+ export class HomePage {
 
   yelpLocations$: Observable<any>;
   workfromLocations$: Observable<any>;
@@ -17,18 +26,60 @@ export class HomePage {
   latitude: number;
   longitude: number;
 
-  constructor(
-    navCtrl: NavController,
-    platform: Platform,
-    private yelpService: YelpService,
-    private workfromService: WorkfromService,
-    private geolocation: Geolocation
-  ) {
-    platform.ready()
-      .then(() => this.getCurrentPosition());
-  }
+   map: GoogleMap;
+   mapElement: HTMLElement;
 
-  getCurrentPosition() {
+   constructor(private googleMaps: GoogleMaps, public platform : Platform,  private yelpService: YelpService,
+    private workfromService: WorkfromService,
+    private geolocation: Geolocation) { }
+ 
+   ngAfterViewInit() {
+     console.log("Ion view loaded.")
+    this.platform.ready().then(() => {this.loadMap()});
+   }
+ 
+  loadMap() {
+     this.mapElement = document.getElementById('map');
+ 
+     let mapOptions: GoogleMapOptions = {
+       camera: {
+         target: {
+           lat: 43.0741904,
+           lng: -89.3809802
+         },
+         zoom: 18,
+         tilt: 30
+       }
+     };
+ 
+     this.map = this.googleMaps.create(this.mapElement, mapOptions);
+ 
+     // Wait the MAP_READY before using any methods.
+     this.map.one(GoogleMapsEvent.MAP_READY)
+       .then(() => {
+         console.log('Map is ready!');
+ 
+         // Now you can use all methods safely.
+         this.map.addMarker({
+             title: 'Ionic',
+             icon: 'blue',
+             animation: 'DROP',
+             position: {
+               lat: 43.0741904,
+               lng: -89.3809802
+             }
+           })
+           .then(marker => {
+             marker.on(GoogleMapsEvent.MARKER_CLICK)
+               .subscribe(() => {
+                 alert('clicked');
+               });
+           });
+ 
+       });
+   }
+
+   getCurrentPosition() {
     this.geolocation.getCurrentPosition()
     .then(resp => {
       this.latitude = resp.coords.latitude;
@@ -41,5 +92,4 @@ export class HomePage {
       console.log('Error getting geolocation', error);
     });
   }
-
-}
+ }

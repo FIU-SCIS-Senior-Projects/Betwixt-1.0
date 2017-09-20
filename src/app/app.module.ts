@@ -14,14 +14,12 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { ServicesModule } from './services/services.module';
 import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
+import {GoogleMaps} from '@ionic-native/google-maps'
 
 @NgModule({
   declarations: [
     MyApp,
-    AboutPage,
-    ContactPage,
-    HomePage,
-    TabsPage
+    HomePage
   ],
   imports: [
     // Custom
@@ -35,15 +33,13 @@ import { Geolocation } from '@ionic-native/geolocation';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    AboutPage,
-    ContactPage,
     HomePage,
-    TabsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Geolocation,
+    GoogleMaps,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
