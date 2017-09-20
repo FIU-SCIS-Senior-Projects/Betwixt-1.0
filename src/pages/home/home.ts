@@ -41,20 +41,20 @@ export class HomePage {
     this.platform
       .ready()
       .then(() => this.getCurrentPosition())
-      .then(coords => this.loadMap(coords));
+      .then(() => this.loadMap());
   }
 
-  loadMap(coords) {
+  loadMap() {
     this.mapElement = document.getElementById('map');
 
-    const currentLat = coords.latitude;
-    const currentLng = coords.longitude;
+    //const currentLat = coords.latitude;
+    //const currentLng = coords.longitude;
 
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: currentLat,
-          lng: currentLng,
+          lat: 43.0741904,
+          lng: -89.3809802,
         },
         zoom: 18,
         tilt: 30,
@@ -74,8 +74,8 @@ export class HomePage {
           icon: 'blue',
           animation: 'DROP',
           position: {
-            lat: currentLat,
-            lng: currentLng,
+            lat: 43.0741904,
+            lng: -89.3809802,
           },
         })
         .then(marker => {
