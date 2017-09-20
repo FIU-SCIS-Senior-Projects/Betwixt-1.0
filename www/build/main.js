@@ -74,13 +74,15 @@ var HomePage = (function () {
         this.platform
             .ready()
             .then(function () { return _this.getCurrentPosition(); })
-            .then(function () { return _this.loadMap(); });
+            .then(function (coords) { return _this.loadMap(coords); });
     };
-    HomePage.prototype.loadMap = function () {
+    HomePage.prototype.loadMap = function (coords) {
         var _this = this;
         this.mapElement = document.getElementById('map');
         //const currentLat = coords.latitude;
         //const currentLng = coords.longitude;
+        //alert(currentLat)
+        //alert(currentLng)
         var mapOptions = {
             camera: {
                 target: {
@@ -114,27 +116,16 @@ var HomePage = (function () {
         });
     };
     HomePage.prototype.getCurrentPosition = function () {
-        var _this = this;
-        return this.geolocation
-            .getCurrentPosition()
-            .then(function (resp) {
-            _this.latitude = resp.coords.latitude;
-            _this.longitude = resp.coords.longitude;
-            console.log("Lat: " + _this.latitude + "\nLon:" + _this.longitude);
-            // this.yelpLocations$ = this.yelpService.getBusinesses(
-            //   this.latitude,
-            //   this.longitude
-            // );
-            // this.workfromLocations$ = this.workfromService.getPlaces(
-            //   this.latitude,
-            //   this.longitude
-            // );
-            return resp.coords;
-        })
-            .catch(function (error) {
-            console.log('Error getting geolocation', error);
-            return error;
-        });
+        if (navigator.geolocation) {
+            var options = {
+                enableHighAccuracy: true
+            };
+            return navigator.geolocation.getCurrentPosition(function (position) {
+                return position.coords;
+            }, function (error) {
+                alert(error.code + "\n" + error.message);
+            }, options);
+        }
     };
     return HomePage;
 }());

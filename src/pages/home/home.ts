@@ -41,14 +41,15 @@ export class HomePage {
     this.platform
       .ready()
       .then(() => this.getCurrentPosition())
-      .then(() => this.loadMap());
+      .then((coords) => this.loadMap(coords));
   }
 
-  loadMap() {
+  loadMap(coords) {
     this.mapElement = document.getElementById('map');
-
     //const currentLat = coords.latitude;
     //const currentLng = coords.longitude;
+    //alert(currentLat)
+    //alert(currentLng)
 
     let mapOptions: GoogleMapOptions = {
       camera: {
@@ -87,28 +88,16 @@ export class HomePage {
   }
 
   getCurrentPosition() {
-    return this.geolocation
-      .getCurrentPosition()
-      .then(resp => {
-        
-        this.latitude = resp.coords.latitude;
-        this.longitude = resp.coords.longitude;
+    if (navigator.geolocation) {
+      var options = {
+        enableHighAccuracy: true
+      };
 
-        console.log(`Lat: ${this.latitude}\nLon:${this.longitude}`);
-
-        // this.yelpLocations$ = this.yelpService.getBusinesses(
-        //   this.latitude,
-        //   this.longitude
-        // );
-        // this.workfromLocations$ = this.workfromService.getPlaces(
-        //   this.latitude,
-        //   this.longitude
-        // );
-        return resp.coords;
-      })
-      .catch(error => {
-        console.log('Error getting geolocation', error);
-        return error;
-      });
+      return navigator.geolocation.getCurrentPosition(position=> {
+        return position.coords;
+      }, error => {
+        alert(error.code + "\n" + error.message);
+      }, options);
+    }
   }
 }
