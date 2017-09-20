@@ -35,7 +35,7 @@ import {
  
    ngAfterViewInit() {
      console.log("Ion view loaded.")
-    this.platform.ready().then(() => {this.loadMap()});
+    this.platform.ready().then(() => {this.getCurrentPosition()}).then(() => {this.loadMap()});
    }
  
   loadMap() {
@@ -80,10 +80,14 @@ import {
    }
 
    getCurrentPosition() {
+  
     this.geolocation.getCurrentPosition()
     .then(resp => {
+
       this.latitude = resp.coords.latitude;
       this.longitude = resp.coords.longitude;
+
+      console.log(`Lat: ${this.latitude}\nLon:${this.longitude}`)
 
       this.yelpLocations$ = this.yelpService.getBusinesses(this.latitude, this.longitude);
       this.workfromLocations$ = this.workfromService.getPlaces(this.latitude, this.longitude);

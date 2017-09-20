@@ -71,7 +71,7 @@ var HomePage = (function () {
     HomePage.prototype.ngAfterViewInit = function () {
         var _this = this;
         console.log("Ion view loaded.");
-        this.platform.ready().then(function () { _this.loadMap(); });
+        this.platform.ready().then(function () { _this.getCurrentPosition(); }).then(function () { _this.loadMap(); });
     };
     HomePage.prototype.loadMap = function () {
         var _this = this;
@@ -115,6 +115,7 @@ var HomePage = (function () {
             .then(function (resp) {
             _this.latitude = resp.coords.latitude;
             _this.longitude = resp.coords.longitude;
+            console.log("Lat: " + _this.latitude + "\nLon:" + _this.longitude);
             _this.yelpLocations$ = _this.yelpService.getBusinesses(_this.latitude, _this.longitude);
             _this.workfromLocations$ = _this.workfromService.getPlaces(_this.latitude, _this.longitude);
         }).catch(function (error) {
@@ -127,10 +128,11 @@ HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
         selector: 'page-home',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/'<ion-content>\n  <div #map id="map"></div>\n</ion-content>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* Platform */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__app_services_yelp_yelp_service__["a" /* YelpService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__app_services_yelp_yelp_service__["a" /* YelpService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_5__app_services_workfrom_workfrom_service__["a" /* WorkfromService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_4__ionic_native_geolocation__["a" /* Geolocation */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__ionic_native_geolocation__["a" /* Geolocation */]) === "function" && _e || Object])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */], __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* Platform */], __WEBPACK_IMPORTED_MODULE_3__app_services_yelp_yelp_service__["a" /* YelpService */],
+        __WEBPACK_IMPORTED_MODULE_5__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
+        __WEBPACK_IMPORTED_MODULE_4__ionic_native_geolocation__["a" /* Geolocation */]])
 ], HomePage);
 
-var _a, _b, _c, _d, _e;
 //# sourceMappingURL=home.js.map
 
 /***/ }),
