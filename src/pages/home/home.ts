@@ -41,7 +41,8 @@ export class HomePage {
     this.platform
       .ready()
       .then(() => this.getCurrentPosition())
-      .then((coords) => this.loadMap(coords));
+      .then((coords) => this.loadMap(coords))
+      .then(() => this.getWorkfromLocations());
   }
 
   loadMap(coords) {
@@ -99,5 +100,31 @@ export class HomePage {
         alert(error.code + "\n" + error.message);
       }, options);
     }
+  }
+
+  getWorkfromLocations() {
+    this.workfromService.getPlaces(
+      43.0741904,
+      -89.38098022
+    ).subscribe(res => {
+      var locations = res.json();
+        for (var i = 0; i < locations.length; i++) {
+          this.map
+          .addMarker({
+            title: locations[i].title,
+            icon: 'blue',
+            animation: 'DROP',
+            position: {
+              lat: locations[i].latitude,
+              lng: locations[i].longitude,
+            },
+          })
+          .then(marker => {
+            marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+              alert('clicked');
+            });
+          });
+        }
+    });
   }
 }
