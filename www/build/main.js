@@ -74,20 +74,21 @@ var HomePage = (function () {
         this.platform
             .ready()
             .then(function () { return _this.getCurrentPosition(); })
-            .then(function (coords) { return _this.loadMap(coords); });
+            .then(function (position) { return _this.loadMap(position); })
+            .then(function () { return _this.getWorkfromLocations(); });
     };
-    HomePage.prototype.loadMap = function (coords) {
+    HomePage.prototype.loadMap = function (position) {
         var _this = this;
         this.mapElement = document.getElementById('map');
-        //const currentLat = coords.latitude;
-        //const currentLng = coords.longitude;
-        //alert(currentLat)
-        //alert(currentLng)
+        var currentLat = position.coords.latitude;
+        var currentLng = position.coords.longitude;
+        alert(currentLat);
+        alert(currentLng);
         var mapOptions = {
             camera: {
                 target: {
-                    lat: 43.0741904,
-                    lng: -89.3809802,
+                    lat: currentLat,
+                    lng: currentLng,
                 },
                 zoom: 18,
                 tilt: 30,
@@ -104,8 +105,8 @@ var HomePage = (function () {
                 icon: 'blue',
                 animation: 'DROP',
                 position: {
-                    lat: 43.0741904,
-                    lng: -89.3809802,
+                    lat: currentLat,
+                    lng: currentLng,
                 },
             })
                 .then(function (marker) {
@@ -120,12 +121,33 @@ var HomePage = (function () {
             var options = {
                 enableHighAccuracy: true
             };
-            return navigator.geolocation.getCurrentPosition(function (position) {
-                return position.coords;
-            }, function (error) {
-                alert(error.code + "\n" + error.message);
-            }, options);
+            return new Promise(function (resolve, reject) {
+                navigator.geolocation.getCurrentPosition(resolve, reject, options);
+            });
         }
+    };
+    HomePage.prototype.getWorkfromLocations = function () {
+        var _this = this;
+        this.workfromService.getPlaces(43.0741904, -89.38098022).subscribe(function (res) {
+            var locations = res.json();
+            for (var i = 0; i < locations.length; i++) {
+                _this.map
+                    .addMarker({
+                    title: locations[i].title,
+                    icon: 'blue',
+                    animation: 'DROP',
+                    position: {
+                        lat: locations[i].latitude,
+                        lng: locations[i].longitude,
+                    },
+                })
+                    .then(function (marker) {
+                    marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function () {
+                        alert('clicked');
+                    });
+                });
+            }
+        });
     };
     return HomePage;
 }());

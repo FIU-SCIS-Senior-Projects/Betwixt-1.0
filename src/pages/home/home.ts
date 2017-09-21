@@ -34,29 +34,30 @@ export class HomePage {
     private yelpService: YelpService,
     private workfromService: WorkfromService,
     private geolocation: Geolocation
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
     console.log('Ion view loaded.');
     this.platform
       .ready()
       .then(() => this.getCurrentPosition())
-      .then((coords) => this.loadMap(coords))
+      .then((position) => this.loadMap(position))
       .then(() => this.getWorkfromLocations());
   }
 
-  loadMap(coords) {
+
+  loadMap(position) {
     this.mapElement = document.getElementById('map');
-    //const currentLat = coords.latitude;
-    //const currentLng = coords.longitude;
-    //alert(currentLat)
-    //alert(currentLng)
+    const currentLat = position.coords.latitude;
+    const currentLng = position.coords.longitude;
+    alert(currentLat)
+    alert(currentLng)
 
     let mapOptions: GoogleMapOptions = {
       camera: {
         target: {
-          lat: 43.0741904,
-          lng: -89.3809802,
+          lat: currentLat,
+          lng: currentLng,
         },
         zoom: 18,
         tilt: 30,
@@ -76,8 +77,8 @@ export class HomePage {
           icon: 'blue',
           animation: 'DROP',
           position: {
-            lat: 43.0741904,
-            lng: -89.3809802,
+            lat: currentLat,
+            lng: currentLng,
           },
         })
         .then(marker => {
@@ -94,11 +95,10 @@ export class HomePage {
         enableHighAccuracy: true
       };
 
-      return navigator.geolocation.getCurrentPosition(position=> {
-        return position.coords;
-      }, error => {
-        alert(error.code + "\n" + error.message);
-      }, options);
+      return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, options)
+      });
+
     }
   }
 
@@ -108,8 +108,8 @@ export class HomePage {
       -89.38098022
     ).subscribe(res => {
       var locations = res.json();
-        for (var i = 0; i < locations.length; i++) {
-          this.map
+      for (var i = 0; i < locations.length; i++) {
+        this.map
           .addMarker({
             title: locations[i].title,
             icon: 'blue',
@@ -124,7 +124,7 @@ export class HomePage {
               alert('clicked');
             });
           });
-        }
+      }
     });
   }
 }
