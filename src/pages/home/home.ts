@@ -42,7 +42,7 @@ export class HomePage {
       .ready()
       .then(() => this.getCurrentPosition())
       .then((position) => this.loadMap(position))
-      .then(() => this.getWorkfromLocations());
+      .then((position) => this.getWorkfromLocations(position));
   }
 
 
@@ -87,6 +87,8 @@ export class HomePage {
           });
         });
     });
+
+    return position;
   }
 
   getCurrentPosition() {
@@ -102,10 +104,10 @@ export class HomePage {
     }
   }
 
-  getWorkfromLocations() {
+  getWorkfromLocations(position) {
     this.workfromService.getPlaces(
-      43.0741904,
-      -89.38098022
+      position.coords.latitude,
+      position.coords.longitude
     ).subscribe(res => {
       var locations = res.json();
       for (var i = 0; i < locations.length; i++) {
