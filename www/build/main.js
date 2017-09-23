@@ -130,15 +130,15 @@ var HomePage = (function () {
         var _this = this;
         this.workfromService.getPlaces(position.coords.latitude, position.coords.longitude).subscribe(function (res) {
             var locations = res.json();
-            for (var i = 0; i < locations.length; i++) {
+            locations.forEach(function (location) {
                 _this.map
                     .addMarker({
-                    title: locations[i].title,
+                    title: location.title,
                     icon: 'blue',
                     animation: 'DROP',
                     position: {
-                        lat: locations[i].latitude,
-                        lng: locations[i].longitude,
+                        lat: location.latitude,
+                        lng: location.longitude,
                     },
                 })
                     .then(function (marker) {
@@ -146,7 +146,7 @@ var HomePage = (function () {
                         alert('clicked');
                     });
                 });
-            }
+            });
         });
     };
     return HomePage;

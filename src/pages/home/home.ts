@@ -51,8 +51,6 @@ export class HomePage {
     this.mapElement = document.getElementById('map');
     const currentLat = position.coords.latitude;
     const currentLng = position.coords.longitude;
-    alert(currentLat)
-    alert(currentLng)
 
     let mapOptions: GoogleMapOptions = {
       camera: {
