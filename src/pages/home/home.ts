@@ -42,7 +42,8 @@ export class HomePage {
       .ready()
       .then(() => this.getCurrentPosition())
       .then((position) => this.loadMap(position))
-      .then((position) => this.getWorkfromLocations(position));
+      .then((position) => this.getWorkfromLocations(position))
+      .catch(error => { alert(`An error has occured:\n ${error}`) });
   }
 
 
@@ -92,16 +93,16 @@ export class HomePage {
   }
 
   getCurrentPosition() {
-    if (navigator.geolocation) {
-      var options = {
-        enableHighAccuracy: true
-      };
 
-      return new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, options)
-      });
+    var options = {
+      enableHighAccuracy: true
+    };
 
-    }
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, options)
+    });
+
+
   }
 
   getWorkfromLocations(position) {

@@ -75,7 +75,8 @@ var HomePage = (function () {
             .ready()
             .then(function () { return _this.getCurrentPosition(); })
             .then(function (position) { return _this.loadMap(position); })
-            .then(function () { return _this.getWorkfromLocations(); });
+            .then(function (position) { return _this.getWorkfromLocations(position); })
+            .catch(function (error) { alert("An error has occured:\n " + error); });
     };
     HomePage.prototype.loadMap = function (position) {
         var _this = this;
@@ -115,20 +116,19 @@ var HomePage = (function () {
                 });
             });
         });
+        return position;
     };
     HomePage.prototype.getCurrentPosition = function () {
-        if (navigator.geolocation) {
-            var options = {
-                enableHighAccuracy: true
-            };
-            return new Promise(function (resolve, reject) {
-                navigator.geolocation.getCurrentPosition(resolve, reject, options);
-            });
-        }
+        var options = {
+            enableHighAccuracy: true
+        };
+        return new Promise(function (resolve, reject) {
+            navigator.geolocation.getCurrentPosition(resolve, reject, options);
+        });
     };
-    HomePage.prototype.getWorkfromLocations = function () {
+    HomePage.prototype.getWorkfromLocations = function (position) {
         var _this = this;
-        this.workfromService.getPlaces(43.0741904, -89.38098022).subscribe(function (res) {
+        this.workfromService.getPlaces(position.coords.latitude, position.coords.longitude).subscribe(function (res) {
             var locations = res.json();
             for (var i = 0; i < locations.length; i++) {
                 _this.map
