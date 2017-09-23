@@ -110,24 +110,26 @@ export class HomePage {
       position.coords.latitude,
       position.coords.longitude
     ).subscribe(res => {
+
       var locations = res.json();
-      for (var i = 0; i < locations.length; i++) {
+      locations.forEach(location => {
         this.map
-          .addMarker({
-            title: locations[i].title,
-            icon: 'blue',
-            animation: 'DROP',
-            position: {
-              lat: locations[i].latitude,
-              lng: locations[i].longitude,
-            },
-          })
-          .then(marker => {
-            marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-              alert('clicked');
-            });
+        .addMarker({
+          title: location.title,
+          icon: 'blue',
+          animation: 'DROP',
+          position: {
+            lat: location.latitude,
+            lng: location.longitude,
+          },
+        })
+        .then(marker => {
+          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+            alert('clicked');
           });
-      }
+        });
+      });
+
     });
   }
 }
