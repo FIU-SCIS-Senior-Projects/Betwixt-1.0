@@ -119,14 +119,19 @@ export class HomePage {
 
     this.workfromService.getPlaces(latitude, longitude).subscribe(res => {
       const locations = res.json();
-      locations.forEach(location => {
-        this.dropMarker(
-          location.title,
-          'red',
-          location.latitude,
-          location.longitude
-        );
-      });
+
+      if(locations.index > 0) {
+        locations.forEach(location => {
+          this.dropMarker(
+            location.title,
+            'red',
+            location.latitude,
+            location.longitude
+          );
+        });
+      } else {
+        alert('Could not find Workfrom location');
+      }
     });
   }
 
