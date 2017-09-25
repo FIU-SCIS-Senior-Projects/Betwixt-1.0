@@ -8,7 +8,11 @@ import {
   MarkerOptions,
   Marker,
 } from '@ionic-native/google-maps';
-import { Platform } from 'ionic-angular';
+import {
+  Platform,
+  ModalController,
+  NavParams
+} from 'ionic-angular';
 import { YelpService } from '../../app/services/yelp/yelp.service';
 import { Observable } from 'rxjs/Observable';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -31,6 +35,7 @@ export class HomePage {
   constructor(
     private googleMaps: GoogleMaps,
     public platform: Platform,
+    public spaceCtrl : ModalController,
     private yelpService: YelpService,
     private workfromService: WorkfromService,
     private geolocation: Geolocation
@@ -112,20 +117,20 @@ export class HomePage {
       var locations = res.json();
       locations.forEach(location => {
         this.map
-        .addMarker({
-          title: location.title,
-          icon: 'blue',
-          animation: 'DROP',
-          position: {
-            lat: location.latitude,
-            lng: location.longitude,
-          },
-        })
-        .then(marker => {
-          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-            alert('clicked');
+          .addMarker({
+            title: location.title,
+            icon: 'blue',
+            animation: 'DROP',
+            position: {
+              lat: location.latitude,
+              lng: location.longitude,
+            },
+          })
+          .then(marker => {
+            marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
+              alert('clicked');
+            });
           });
-        });
       });
 
     });
