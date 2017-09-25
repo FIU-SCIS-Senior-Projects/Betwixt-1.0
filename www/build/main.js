@@ -132,9 +132,14 @@ var HomePage = (function () {
         var latitude = centralPosition.latitude, longitude = centralPosition.longitude;
         this.workfromService.getPlaces(latitude, longitude).subscribe(function (res) {
             var locations = res.json();
-            locations.forEach(function (location) {
-                _this.dropMarker(location.title, 'red', location.latitude, location.longitude);
-            });
+            if (locations.index > 0) {
+                locations.forEach(function (location) {
+                    _this.dropMarker(location.title, 'red', location.latitude, location.longitude);
+                });
+            }
+            else {
+                alert('Could not find Workfrom location');
+            }
         });
     };
     HomePage.prototype.dropMarker = function (title, icon, lat, lng) {
