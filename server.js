@@ -34,8 +34,7 @@ app.get('/places', (req, res) => {
   const { query } = req;
   const searchRequest = {
     lat: query.latitude,
-    long: query.longitude,
-    radius: 2
+    long: query.longitude
   };
 
   wf.places.near(searchRequest)
