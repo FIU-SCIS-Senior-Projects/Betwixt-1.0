@@ -9,11 +9,11 @@
   "scripts": {
     "start": "node server.js"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "cors": "^2.8.4",
     "express": "^4.15.4",
+    "socket.io": "^2.0.3",
     "workfrom": "^1.0.1",
     "yelp-fusion": "^1.0.3"
   }
