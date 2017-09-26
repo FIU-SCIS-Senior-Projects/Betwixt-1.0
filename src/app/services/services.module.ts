@@ -3,9 +3,14 @@ import { SampleService } from './sample/sample.service';
 import { ConfigModule } from './config/config.module';
 import { YelpService } from './yelp/yelp.service';
 import { WorkfromService } from './workfrom/workfrom.service';
+import { GroupSocketService } from './groupsocket/groupsocket.service';
 
 const serviceModules = [ConfigModule];
-const serviceProviders = [SampleService, YelpService, WorkfromService];
+const serviceProviders = [
+  SampleService,
+  YelpService,
+  WorkfromService,
+  GroupSocketService];
 
 @NgModule({
   imports: serviceModules,

@@ -13,11 +13,14 @@ import {
   ModalController,
   NavParams
 } from 'ionic-angular';
-import { YelpService } from '../../app/services/yelp/yelp.service';
 import { Observable } from 'rxjs/Observable';
 import { Geolocation } from '@ionic-native/geolocation';
-import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 
+import { SpacePage } from '../space/space';
+
+import { YelpService } from '../../app/services/yelp/yelp.service';
+import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html',
@@ -35,9 +38,10 @@ export class HomePage {
   constructor(
     private googleMaps: GoogleMaps,
     public platform: Platform,
-    public spaceCtrl : ModalController,
+    public spaceCtrl: ModalController,
     private yelpService: YelpService,
     private workfromService: WorkfromService,
+    private groupSocketService: GroupSocketService,
     private geolocation: Geolocation
   ) { }
 
@@ -135,4 +139,11 @@ export class HomePage {
 
     });
   }
+
+  presentSpaceModal() {
+    let spaceModal = this.spaceCtrl.create(SpacePage,
+      { uid: this.groupSocketService.uid });
+    spaceModal.present();
+  }
+
 }
