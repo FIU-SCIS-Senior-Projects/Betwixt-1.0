@@ -5,12 +5,7 @@ import {
   GoogleMapsEvent,
   GoogleMapOptions,
 } from '@ionic-native/google-maps';
-import {
-  Platform,
-  ModalController,
-  NavParams
-} from 'ionic-angular';
-import { Observable } from 'rxjs/Observable';
+import { Platform, ModalController } from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
@@ -39,9 +34,9 @@ export class HomePage {
   constructor(
     private googleMaps: GoogleMaps,
     public platform: Platform,
-    public spaceCtrl: ModalController,
     private workfromService: WorkfromService,
-    private groupSocketService: GroupSocketService,
+    public spaceCtrl: ModalController,
+    private groupSocketService: GroupSocketService
   ) {}
 
   ngAfterViewInit() {
@@ -155,4 +150,5 @@ export class HomePage {
         });
       });
   }
+
 }
