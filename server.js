@@ -7,12 +7,12 @@ const yelp = require('yelp-fusion');
 const Workfrom = require('workfrom');
 const group = require('./routes/group');
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
-const group_socket = require('./sockets/groupSocket')(io);
+var server = require("http").Server(app);
+var io = require('socket.io').listen(server);
+var group_socket = require('./sockets/groupSocket')(io);
 
 const YELP_CLIENT_ID = process.env.YELP_CLIENT_ID;
 const YELP_CLIENT_SECRET = process.env.YELP_CLIENT_SECRET;
-
 const WORKFROM_APP_ID = process.env.WORKFROM_APP_ID;
 
 // Configuration
@@ -31,6 +31,7 @@ app.use((req, res, next) => {
 });
 
 // Use group router.
+
 app.use('/group', group);
 
 // Routes
@@ -81,7 +82,8 @@ app.get('/helloworld', function(request, response) {
 
 group_socket.start();
 
-app.listen(app.get('port'), function() {
-  console.log('Server App is running at localhost:' + app.get('port'))
+server.listen(app.get('port'), function () {
+  console.log("Listening on port %s...", server.address().port);
 });
+
 
