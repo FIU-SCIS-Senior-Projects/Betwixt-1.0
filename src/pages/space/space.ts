@@ -1,5 +1,5 @@
 import { Component } from '@angular/core/';
-import {NavParams} from 'ionic-angular';
+import { NavParams, ViewController } from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
@@ -8,13 +8,19 @@ import { Observable } from 'rxjs/Observable';
 })
 export class SpacePage {
 
-  uid : Observable<string>
+  uid: string
 
-  constructor(params: NavParams) {
-    this.uid = params.get('uid');
-    this.uid.subscribe(success => {console.log(success)},
-    error => {console.log(error)})
-    //console.log('UserId', params.get('userId'));
+  constructor(
+    public viewCtrl: ViewController, params: NavParams) {
+
+    var uidObservable = params.get('uid');
+    uidObservable.subscribe(uid => this.uid = uid,
+      error => { console.log(error) })
+
+  }
+
+  dismiss() {
+    this.viewCtrl.dismiss();
   }
 
 }
