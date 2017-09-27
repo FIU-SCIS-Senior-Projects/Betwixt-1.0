@@ -349,10 +349,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var GroupSocketService = (function () {
     function GroupSocketService(http) {
         this.http = http;
-        //socketHost: string = "http://localhost:8080";
-        this.socketHost = "http://10.0.2.2:8080";
-        this.socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client__(this.socketHost);
+        //LOCALHOST
+        this.socketHost = "http://localhost:8080";
         this.uid = this.getUID;
+        this.socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client__(this.socketHost);
     }
     Object.defineProperty(GroupSocketService.prototype, "getUID", {
         get: function () {
@@ -368,9 +368,10 @@ var GroupSocketService = (function () {
 }());
 GroupSocketService = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]) === "function" && _a || Object])
 ], GroupSocketService);
 
+var _a;
 //# sourceMappingURL=groupsocket.service.js.map
 
 /***/ }),
