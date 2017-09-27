@@ -4,6 +4,13 @@ import { Http } from '@angular/http';
 import * as io from 'socket.io-client';
 import 'rxjs/Rx';
 
+interface userInfo {
+  groupUID : string;
+  username : string;
+  latitude : number;
+  longitude : number;
+}
+
 @Injectable()
 export class GroupSocketService {
   //LOCALHOST
@@ -12,11 +19,20 @@ export class GroupSocketService {
   //socketHost: string = "http://10.0.2.2:8080";
   socket: io;
   uid: Observable<string>;
+  userInfos : Array<userInfo> = [];
 
   constructor(private http: Http) {
     this.uid = this.getUID;
     this.socket = io(this.socketHost);
+
+    this.socket.on('serverSendInfo', (res) => {
+      console.log("User info added\n" + JSON.stringify(res));
+      this.userInfos.push(res);
+      
+    })
+
   }
+
   private get getUID(): Observable<string> {
     return this.http
       .get(`${this.socketHost}/group/create`)
@@ -24,5 +40,13 @@ export class GroupSocketService {
       .catch((error: any) =>
         Observable.throw(JSON.stringify(error.json()) || 'Server error')
       );
+  }
+
+  joinGroup(group_uid) {
+    this.socket.emit('group_uid', group_uid);
+  }
+
+  sendLocation(userInfo) {
+    this.socket.emit('clientSendInfo', userInfo);
   }
 }

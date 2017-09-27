@@ -31,13 +31,17 @@ export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
 
+  //For use outisde promise chain.
+  latitude: number;
+  longitude: number;
+
   constructor(
     private googleMaps: GoogleMaps,
     public platform: Platform,
     private workfromService: WorkfromService,
     public spaceCtrl: ModalController,
     private groupSocketService: GroupSocketService
-  ) {}
+  ) { }
 
   ngAfterViewInit() {
     console.log('Ion view loaded.');
@@ -52,6 +56,8 @@ export class HomePage {
 
   loadMap(currentPosition) {
     const { latitude, longitude } = currentPosition.coords;
+    this.latitude = latitude;
+    this.longitude = longitude;
 
     let mapOptions: GoogleMapOptions = {
       camera: {
@@ -133,10 +139,25 @@ export class HomePage {
   }
 
   showCreateSpaceModal() {
-    let spaceModal = this.spaceCtrl.create(SpacePage, {
-      uid: this.groupSocketService.uid,
-    });
-    spaceModal.present();
+    this.groupSocketService.uid.subscribe((group_uid) => {
+
+      let userInfo = {
+        groupUID: group_uid,
+        username: 'TestUser',
+        latitude: this.latitude,
+        longitude: this.longitude
+      }
+
+      this.groupSocketService.joinGroup(group_uid);
+      this.groupSocketService.sendLocation(userInfo);
+
+      let spaceModal = this.spaceCtrl.create(SpacePage, {
+        uid: group_uid,
+      });
+
+      spaceModal.present();
+
+    }, error => console.log(error))
   }
 
   private dropMarker(title, icon, lat, lng) {
