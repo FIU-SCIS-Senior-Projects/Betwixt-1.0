@@ -18,7 +18,7 @@ interface Coordinates {
 
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-  { latitude: 25.942871, longitude: -80.123380 }, // Sunny Isles
+  { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
@@ -115,7 +115,7 @@ export class HomePage {
     this.workfromService.getPlaces(latitude, longitude).subscribe(res => {
       const locations = res.json();
 
-      if(locations.length > 0) {
+      if (locations.length > 0) {
         locations.forEach(location => {
           this.dropMarker(
             location.title,
@@ -125,14 +125,17 @@ export class HomePage {
           );
         });
       } else {
-        alert(`There aren't any Workfrom locations... We might need to search on Yelp then!`);
+        alert(
+          `There aren't any Workfrom locations... We might need to search on Yelp then!`
+        );
       }
     });
   }
 
-  presentSpaceModal() {
-    let spaceModal = this.spaceCtrl.create(SpacePage,
-      { uid: this.groupSocketService.uid });
+  showCreateSpaceModal() {
+    let spaceModal = this.spaceCtrl.create(SpacePage, {
+      uid: this.groupSocketService.uid,
+    });
     spaceModal.present();
   }
 
@@ -150,5 +153,4 @@ export class HomePage {
         });
       });
   }
-
 }
