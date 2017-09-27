@@ -74,10 +74,7 @@ app.get('/businesses/search', (req, res) => {
 
 });
 
-app.get('/helloworld', function(request, response) {
-  response.send('Hello World!');
-
-});
+group_socket.create();
 
 server.listen(app.get('port'), function () {
   console.log("Listening on port %s...", server.address().port);
