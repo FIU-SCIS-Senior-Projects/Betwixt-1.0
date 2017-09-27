@@ -5,11 +5,12 @@ const app = express();
 const cors = require('cors');
 const yelp = require('yelp-fusion');
 const Workfrom = require('workfrom');
-const group = require('./routes/group');
 var http = require('http').Server(app);
 var server = require("http").Server(app);
 var io = require('socket.io').listen(server);
 var group_socket = require('./sockets/groupSocket')(io);
+module.exports = group_socket
+const group = require('./routes/group');
 
 const YELP_CLIENT_ID = process.env.YELP_CLIENT_ID;
 const YELP_CLIENT_SECRET = process.env.YELP_CLIENT_SECRET;
@@ -77,10 +78,6 @@ app.get('/helloworld', function(request, response) {
   response.send('Hello World!');
 
 });
-
-/// SOCKET IO ///
-
-group_socket.start();
 
 server.listen(app.get('port'), function () {
   console.log("Listening on port %s...", server.address().port);

@@ -1,13 +1,19 @@
 module.exports = (io) => {
 
     return {
-        start: () => {
+        create: (group_uid) => {
             
             console.log('Group socket started');
-            
+
+            var group_room = io.of(`/${group_uid}`);
+            group_room.on('connection', function(socket){
+              console.log(`Someone connected to room: ${group_room}`);
+            });
+
             //Whenever someone connects this gets executed
             io.on('connection', function (socket) {
-                console.log('A user connected');
+
+                socket.join(group_room);
 
                 //Whenever someone disconnects this piece of code executed
                 socket.on('disconnect', function () {
