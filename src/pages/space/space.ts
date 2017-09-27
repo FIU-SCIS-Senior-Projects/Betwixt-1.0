@@ -1,6 +1,5 @@
 import { Component } from '@angular/core/';
 import { NavParams, ViewController } from 'ionic-angular';
-import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'page-space',
