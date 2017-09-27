@@ -42,9 +42,9 @@ webpackEmptyAsyncContext.id = 151;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__ = __webpack_require__(196);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_services_yelp_yelp_service__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_geolocation__ = __webpack_require__(198);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_services_workfrom_workfrom_service__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_geolib__ = __webpack_require__(267);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_geolib__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -59,14 +59,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
+var RANDOM_GEOCOORDINATES = [
+    { latitude: 25.992046, longitude: -80.283645 },
+    { latitude: 25.942871, longitude: -80.123380 },
+];
 var HomePage = (function () {
-    function HomePage(googleMaps, platform, yelpService, workfromService, geolocation) {
+    function HomePage(googleMaps, platform, workfromService) {
         this.googleMaps = googleMaps;
         this.platform = platform;
-        this.yelpService = yelpService;
         this.workfromService = workfromService;
-        this.geolocation = geolocation;
     }
     HomePage.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -74,76 +75,82 @@ var HomePage = (function () {
         this.platform
             .ready()
             .then(function () { return _this.getCurrentPosition(); })
-            .then(function (position) { return _this.loadMap(position); })
-            .then(function (position) { return _this.getWorkfromLocations(position); })
-            .catch(function (error) { alert("An error has occured:\n " + error); });
+            .then(function (currentPosition) { return _this.loadMap(currentPosition); })
+            .then(function (currentPosition) { return _this.getCentralPosition(currentPosition); })
+            .then(function (centralPosition) { return _this.getWorkfromLocations(centralPosition); })
+            .catch(function (error) { return alert("An error has occured:\n " + error); });
     };
-    HomePage.prototype.loadMap = function (position) {
+    HomePage.prototype.loadMap = function (currentPosition) {
         var _this = this;
-        this.mapElement = document.getElementById('map');
-        var currentLat = position.coords.latitude;
-        var currentLng = position.coords.longitude;
+        var _a = currentPosition.coords, latitude = _a.latitude, longitude = _a.longitude;
         var mapOptions = {
             camera: {
                 target: {
-                    lat: currentLat,
-                    lng: currentLng,
+                    lat: latitude,
+                    lng: longitude,
                 },
                 zoom: 18,
                 tilt: 30,
             },
         };
+        this.mapElement = document.getElementById('map');
         this.map = this.googleMaps.create(this.mapElement, mapOptions);
-        // Wait the MAP_READY before using any methods.
-        this.map.one(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MAP_READY).then(function () {
+        return this.map
+            .one(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MAP_READY)
+            .then(function () {
             console.log('Map is ready!');
-            // Now you can use all methods safely.
-            _this.map
-                .addMarker({
-                title: 'Ionic',
-                icon: 'blue',
-                animation: 'DROP',
-                position: {
-                    lat: currentLat,
-                    lng: currentLng,
-                },
-            })
-                .then(function (marker) {
-                marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function () {
-                    alert('clicked');
-                });
+            _this.dropMarker('Current Location', 'green', latitude, longitude);
+            RANDOM_GEOCOORDINATES.forEach(function (position, index) {
+                var latitude = position.latitude, longitude = position.longitude;
+                _this.dropMarker("Location " + (index + 1), 'blue', latitude, longitude);
             });
-        });
-        return position;
+            return { latitude: latitude, longitude: longitude };
+        })
+            .catch(function (error) { return error; });
     };
     HomePage.prototype.getCurrentPosition = function () {
         var options = {
-            enableHighAccuracy: true
+            enableHighAccuracy: true,
         };
         return new Promise(function (resolve, reject) {
             navigator.geolocation.getCurrentPosition(resolve, reject, options);
         });
     };
-    HomePage.prototype.getWorkfromLocations = function (position) {
+    HomePage.prototype.getCentralPosition = function (currentPostion) {
         var _this = this;
-        this.workfromService.getPlaces(position.coords.latitude, position.coords.longitude).subscribe(function (res) {
+        var locations = [currentPostion].concat(RANDOM_GEOCOORDINATES);
+        return new Promise(function (resolve) {
+            var centralPosition = __WEBPACK_IMPORTED_MODULE_4_geolib___default.a.getCenterOfBounds(locations);
+            _this.dropMarker('Central Location', 'purple', centralPosition.latitude, centralPosition.longitude);
+            return resolve(centralPosition);
+        });
+    };
+    HomePage.prototype.getWorkfromLocations = function (centralPosition) {
+        var _this = this;
+        var latitude = centralPosition.latitude, longitude = centralPosition.longitude;
+        this.workfromService.getPlaces(latitude, longitude).subscribe(function (res) {
             var locations = res.json();
-            locations.forEach(function (location) {
-                _this.map
-                    .addMarker({
-                    title: location.title,
-                    icon: 'blue',
-                    animation: 'DROP',
-                    position: {
-                        lat: location.latitude,
-                        lng: location.longitude,
-                    },
-                })
-                    .then(function (marker) {
-                    marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function () {
-                        alert('clicked');
-                    });
+            if (locations.length > 0) {
+                locations.forEach(function (location) {
+                    _this.dropMarker(location.title, 'red', location.latitude, location.longitude);
                 });
+            }
+            else {
+                alert("There aren't any Workfrom locations... We might need to search on Yelp then!");
+            }
+        });
+    };
+    HomePage.prototype.dropMarker = function (title, icon, lat, lng) {
+        this.map
+            .addMarker({
+            title: title,
+            icon: icon,
+            animation: 'DROP',
+            position: { lat: lat, lng: lng },
+        })
+            .then(function (marker) {
+            marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function (res) {
+                alert("clicked on " + res);
             });
         });
     };
@@ -151,13 +158,11 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<ion-content>\n  <div #map id="map"></div>\n</ion-content>\n<ion-footer>\n  <button ion-button full color="betwixt-main">Create Space</button>\n</ion-footer>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<ion-content>\n  <div #map id="map"></div>\n</ion-content>\n<ion-footer>\n  <button ion-button full color="primary">Create space</button>\n</ion-footer>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* Platform */],
-        __WEBPACK_IMPORTED_MODULE_3__app_services_yelp_yelp_service__["a" /* YelpService */],
-        __WEBPACK_IMPORTED_MODULE_5__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
-        __WEBPACK_IMPORTED_MODULE_4__ionic_native_geolocation__["a" /* Geolocation */]])
+        __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]])
 ], HomePage);
 
 //# sourceMappingURL=home.js.map
@@ -165,57 +170,6 @@ HomePage = __decorate([
 /***/ }),
 
 /***/ 197:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return YelpService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(51);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-var YelpService = (function () {
-    function YelpService(http, configService) {
-        this.http = http;
-        this.configService = configService;
-    }
-    Object.defineProperty(YelpService.prototype, "yelpBusinessSearch", {
-        get: function () {
-            return this.configService.yelpBusinessSearch;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    // TODO: create interface for options
-    YelpService.prototype.getBusinesses = function (latitude, longitude, options) {
-        var params = {
-            latitude: latitude,
-            longitude: longitude
-        };
-        return this.http.get(this.yelpBusinessSearch, { params: params });
-    };
-    return YelpService;
-}());
-YelpService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1__config_config_service__["a" /* ConfigService */]])
-], YelpService);
-
-//# sourceMappingURL=yelp.service.js.map
-
-/***/ }),
-
-/***/ 199:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -266,13 +220,13 @@ WorkfromService = __decorate([
 
 /***/ }),
 
-/***/ 200:
+/***/ 198:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(201);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(219);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(217);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -280,7 +234,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 219:
+/***/ 217:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -288,13 +242,13 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(57);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(260);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(258);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(195);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ionic_native_status_bar__ = __webpack_require__(191);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__ionic_native_splash_screen__ = __webpack_require__(194);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_services_module__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__services_services_module__ = __webpack_require__(268);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_http__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_geolocation__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_geolocation__ = __webpack_require__(272);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_google_maps__ = __webpack_require__(196);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -336,7 +290,7 @@ AppModule = __decorate([
         bootstrap: [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* IonicApp */]],
         entryComponents: [
             __WEBPACK_IMPORTED_MODULE_3__app_component__["a" /* MyApp */],
-            __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */],
+            __WEBPACK_IMPORTED_MODULE_4__pages_home_home__["a" /* HomePage */]
         ],
         providers: [
             __WEBPACK_IMPORTED_MODULE_5__ionic_native_status_bar__["a" /* StatusBar */],
@@ -352,7 +306,7 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 260:
+/***/ 258:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -398,16 +352,16 @@ MyApp = __decorate([
 
 /***/ }),
 
-/***/ 269:
+/***/ 268:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ServicesModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(270);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(271);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(269);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(270);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(271);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(197);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -452,7 +406,7 @@ ServicesModule = __decorate([
 
 /***/ }),
 
-/***/ 270:
+/***/ 269:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -498,7 +452,7 @@ SampleService = __decorate([
 
 /***/ }),
 
-/***/ 271:
+/***/ 270:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -528,13 +482,64 @@ ConfigModule = __decorate([
 
 /***/ }),
 
+/***/ 271:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return YelpService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(51);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var YelpService = (function () {
+    function YelpService(http, configService) {
+        this.http = http;
+        this.configService = configService;
+    }
+    Object.defineProperty(YelpService.prototype, "yelpBusinessSearch", {
+        get: function () {
+            return this.configService.yelpBusinessSearch;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    // TODO: create interface for options
+    YelpService.prototype.getBusinesses = function (latitude, longitude, options) {
+        var params = {
+            latitude: latitude,
+            longitude: longitude
+        };
+        return this.http.get(this.yelpBusinessSearch, { params: params });
+    };
+    return YelpService;
+}());
+YelpService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1__config_config_service__["a" /* ConfigService */]])
+], YelpService);
+
+//# sourceMappingURL=yelp.service.js.map
+
+/***/ }),
+
 /***/ 50:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(268);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(266);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_url_join__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -591,5 +596,5 @@ ConfigService = __decorate([
 
 /***/ })
 
-},[200]);
+},[198]);
 //# sourceMappingURL=main.js.map
