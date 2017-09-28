@@ -1,0 +1,25 @@
+page-space {
+  background: transparent;
+  background-color: rgba(32, 181, 170, 0.85);
+  color: white;
+  padding: 16px;
+
+  button {
+    color: rgba(255, 255, 255, 0.5) !important;
+    height: 100% !important;
+
+    .button-inner {
+      display: flex;
+      align-items: start;
+    }
+    ion-icon {
+      padding: 0 !important;
+    }
+  }
+}
+
+.flex-center-align {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

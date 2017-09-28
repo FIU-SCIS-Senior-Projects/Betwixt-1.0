@@ -39,9 +39,9 @@ export class HomePage {
     private googleMaps: GoogleMaps,
     public platform: Platform,
     private workfromService: WorkfromService,
-    public spaceCtrl: ModalController,
+    public modalCtrl: ModalController,
     private groupSocketService: GroupSocketService
-  ) { }
+  ) {}
 
   ngAfterViewInit() {
     console.log('Ion view loaded.');
@@ -139,25 +139,26 @@ export class HomePage {
   }
 
   showCreateSpaceModal() {
-    this.groupSocketService.uid.subscribe((group_uid) => {
+    this.groupSocketService.uid.subscribe(
+      group_uid => {
+        let userInfo = {
+          groupUID: group_uid,
+          username: 'TestUser',
+          latitude: this.latitude,
+          longitude: this.longitude,
+        };
 
-      let userInfo = {
-        groupUID: group_uid,
-        username: 'TestUser',
-        latitude: this.latitude,
-        longitude: this.longitude
-      }
+        this.groupSocketService.joinGroup(group_uid);
+        this.groupSocketService.sendLocation(userInfo);
 
-      this.groupSocketService.joinGroup(group_uid);
-      this.groupSocketService.sendLocation(userInfo);
+        let spaceModal = this.modalCtrl.create(SpacePage, {
+          uid: group_uid,
+        });
 
-      let spaceModal = this.spaceCtrl.create(SpacePage, {
-        uid: group_uid,
-      });
-
-      spaceModal.present();
-
-    }, error => console.log(error))
+        spaceModal.present();
+      },
+      error => console.log(error)
+    );
   }
 
   private dropMarker(title, icon, lat, lng) {

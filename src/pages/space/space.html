@@ -1,4 +1,10 @@
-<ion-content>
-    <h1>Space Link: {{this.uid}}</h1>
-    <button ion-button (click)="dismiss()">Close</button>
-</ion-content>
+<div>
+    <button ion-button icon-only clear large (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+    </button>
+    <div class="flex-center-align">
+        <h1>Your Space Link</h1>
+        <p>{{ uid }}</p>
+        <h4>Share the Space Link above with the people you want to meet with!</h4>
+    </div>
+</div>
