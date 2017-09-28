@@ -25199,9 +25199,26 @@ ion-navbar.toolbar {
   }
 }
 
-page-home #map {
+page-home .map-canvas {
   height: 100%;
   width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
+
+page-home button {
+  width: 90%;
+  margin-bottom: 5% !important;
 }
 
 page-space {

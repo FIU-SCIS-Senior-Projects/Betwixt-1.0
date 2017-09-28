@@ -1,6 +1,14 @@
 page-home {
-    #map {
+    .map-canvas {
         height: 100%;
         width: 100%;
-    }    
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+    }
+
+    button {
+        width: 90%;
+        margin-bottom: 5% !important;
+    }
 }
