@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Platform} from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Platform, Nav} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import {Deeplinks} from '@ionic-native/deeplinks';
@@ -11,6 +11,8 @@ import { HomePage } from '../pages/home/home';
 })
 export class MyApp {
   rootPage:any = HomePage;
+
+  @ViewChild(Nav) navChild:Nav;
 
   constructor(
     private platform: Platform, 
@@ -26,16 +28,13 @@ export class MyApp {
   }
 
   ngAfterViewInit() {
-    this.platform.ready().then(() => {
-  
-      // Convenience to route with a given nav
-      this.deeplinks.route( {
-        '/': {},
-      }).subscribe((match) => {
-        alert('Successfully routed\n' + JSON.stringify(match));
-      }, (nomatch) => {
-        console.warn('Unmatched Route\n' + JSON.stringify(nomatch));
-      });
-    })
+    this.deeplinks.routeWithNavController(this.navChild, {
+      '/': HomePage
+    }).subscribe((match) => {
+      console.log('Successfully routed\n'+ JSON.stringify(match));
+    }, (nomatch) => {
+      console.warn('Unmatched Route', nomatch);
+    });
+
   }
 }

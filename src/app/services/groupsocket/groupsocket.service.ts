@@ -4,12 +4,16 @@ import { Http } from '@angular/http';
 import * as io from 'socket.io-client';
 import 'rxjs/Rx';
 
-interface userInfo {
+export interface UserInfo {
+  socketID : string;
   groupUID : string;
   username : string;
   latitude : number;
   longitude : number;
+
 }
+
+
 
 @Injectable()
 export class GroupSocketService {
@@ -19,15 +23,26 @@ export class GroupSocketService {
   socketHost: string = "http://10.0.2.2:8080";
   socket: io;
   uid: Observable<string>;
-  userInfos : Array<userInfo> = [];
+  userInfos : Array<UserInfo> = [];
+  username : string;
+  public userInfo : UserInfo;
 
   constructor(private http: Http) {
+    //Initialize userInfos object.
+   
     this.uid = this.getUID;
     this.socket = io(this.socketHost);
-
-    this.socket.on('serverSendInfo', (res) => {
+    //Add user information when a new user joins.
+    this.socket.on('getNewUserInfo', (res) => {
       console.log("User info added\n" + JSON.stringify(res));
-      this.userInfos.push(res);
+      this.userInfos.push(res)
+      this.socket.emit('sendUserInfo', {socketID: res.socketID, userInfo: this.userInfo});
+      
+    })
+
+    this.socket.on('getExistingUserInfo', (res) => {
+      console.log("User info added\n" + JSON.stringify(res));
+      this.userInfos.push(res)
       
     })
 
@@ -42,11 +57,10 @@ export class GroupSocketService {
       );
   }
 
-  joinGroup(group_uid) {
-    this.socket.emit('group_uid', group_uid);
+  joinGroup() {
+    //Add the unique socket id on join group.
+    this.userInfo.socketID = this.socket.io.engine.id;
+    this.socket.emit('joinGroup', this.userInfo);
   }
 
-  sendLocation(userInfo) {
-    this.socket.emit('clientSendInfo', userInfo);
-  }
 }
