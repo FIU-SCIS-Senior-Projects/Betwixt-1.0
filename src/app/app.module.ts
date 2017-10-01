@@ -12,7 +12,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { ServicesModule } from './services/services.module';
 import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
-import {GoogleMaps} from '@ionic-native/google-maps'
+import {GoogleMaps} from '@ionic-native/google-maps';
+import {Deeplinks} from '@ionic-native/deeplinks';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {GoogleMaps} from '@ionic-native/google-maps'
     SpacePage
   ],
   providers: [
+    Deeplinks,
     StatusBar,
     SplashScreen,
     Geolocation,

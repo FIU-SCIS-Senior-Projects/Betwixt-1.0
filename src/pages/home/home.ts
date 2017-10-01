@@ -47,14 +47,16 @@ export class HomePage {
     console.log('Ion view loaded.');
     this.platform
       .ready()
-      .then(() => this.getCurrentPosition())
-      .then(currentPosition => this.loadMap(currentPosition))
+      //TODO: getCurrentPosition doesn't work when re-opening the app. Fix needed.
+      //.then(() => this.getCurrentPosition())
+      .then(() => this.loadMap())
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
-      .catch(error => alert(`An error has occured:\n ${error}`));
+      .catch(error => alert(`An error has occured:\n ${JSON.stringify(error)}`));
   }
 
-  loadMap(currentPosition) {
+  loadMap() {
+    let currentPosition = {coords : {latitude: 43.0741904, longitude : -89.3809802 }}
     const { latitude, longitude } = currentPosition.coords;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -92,9 +94,8 @@ export class HomePage {
 
   getCurrentPosition() {
     const options = {
-      enableHighAccuracy: true,
+      enableHighAccuracy: true
     };
-
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
@@ -139,7 +140,9 @@ export class HomePage {
   }
 
   showCreateSpaceModal() {
+    //On open space modal, subscribe to group uid from server.
     this.groupSocketService.uid.subscribe(
+      //User's info object that will be sent to server.
       group_uid => {
         let userInfo = {
           groupUID: group_uid,
@@ -148,9 +151,12 @@ export class HomePage {
           longitude: this.longitude,
         };
 
+        //Join the room specified by the group uid.
         this.groupSocketService.joinGroup(group_uid);
+        //Emit location to server and all clients.
         this.groupSocketService.sendLocation(userInfo);
 
+        //Create modal.
         let spaceModal = this.modalCtrl.create(SpacePage, {
           uid: group_uid,
         });

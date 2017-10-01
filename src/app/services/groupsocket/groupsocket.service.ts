@@ -14,9 +14,9 @@ interface userInfo {
 @Injectable()
 export class GroupSocketService {
   //LOCALHOST
-  socketHost: string = 'http://localhost:8080';
+  //socketHost: string = 'http://localhost:8080';
   //IP TO ACCESS WITH ANDROID EMULATOR. COMMENT OUT ALL OTHERS WHEN TESTING WITH ANDROID EMULATOR.
-  //socketHost: string = "http://10.0.2.2:8080";
+  socketHost: string = "http://10.0.2.2:8080";
   socket: io;
   uid: Observable<string>;
   userInfos : Array<userInfo> = [];
