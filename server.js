@@ -5,10 +5,10 @@ const app = express();
 const cors = require('cors');
 const yelp = require('yelp-fusion');
 const Workfrom = require('workfrom');
-var http = require('http').Server(app);
-var server = require("http").Server(app);
-var io = require('socket.io').listen(server);
-var group_socket = require('./sockets/groupSocket')(io);
+let http = require('http').Server(app);
+let server = require("http").Server(app);
+let io = require('socket.io').listen(server);
+let group_socket = require('./sockets/groupSocket')(io);
 module.exports = group_socket
 const group = require('./routes/group');
 
