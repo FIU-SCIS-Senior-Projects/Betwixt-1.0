@@ -25,7 +25,10 @@ export class GroupSocketService {
   socket: io;
   uid: Observable<string>;
   userInfos : Array<UserInfo> = [];
+<<<<<<< HEAD
   userInfoSubject : Subject<UserInfo> = new Subject<UserInfo>();
+=======
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
   username : string;
   public userInfo : UserInfo;
 
@@ -39,13 +42,19 @@ export class GroupSocketService {
       console.log("User info added\n" + JSON.stringify(res));
       this.userInfos.push(res)
       this.socket.emit('sendUserInfo', {socketID: res.socketID, userInfo: this.userInfo});
+<<<<<<< HEAD
       this.userInfoSubject.next(res);
+=======
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
       
     })
 
     this.socket.on('getExistingUserInfo', (res) => {
       console.log("User info added\n" + JSON.stringify(res));
+<<<<<<< HEAD
       this.userInfoSubject.next(res);
+=======
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
       this.userInfos.push(res)
       
     })

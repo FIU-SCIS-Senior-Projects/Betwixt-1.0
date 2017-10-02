@@ -88,10 +88,13 @@ var HomePage = (function () {
     HomePage.prototype.ngAfterViewInit = function () {
         var _this = this;
         console.log("Ion view loaded.");
+<<<<<<< HEAD
         this.groupSocketService.userInfoSubject.subscribe(function (userInfo) {
             console.log("Marker dropped for user: " + userInfo.username);
             _this.dropMarker(userInfo.username, "red", userInfo.latitude, userInfo.longitude);
         });
+=======
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
         this.platform
             .ready()
             .then(function () { return _this.loadMap(); })
@@ -102,7 +105,11 @@ var HomePage = (function () {
     HomePage.prototype.loadMap = function () {
         var _this = this;
         var currentPosition = {
+<<<<<<< HEAD
             coords: { latitude: 43.0741100, longitude: -89.3809802 }
+=======
+            coords: { latitude: 43.0741904, longitude: -89.3809802 }
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
         };
         var _a = currentPosition.coords, latitude = _a.latitude, longitude = _a.longitude;
         this.latitude = latitude;
@@ -177,7 +184,10 @@ var HomePage = (function () {
                 latitude: _this.latitude,
                 longitude: _this.longitude
             };
+<<<<<<< HEAD
             console.log(group_uid);
+=======
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
             //Join the room specified by the group uid.
             _this.groupSocketService.joinGroup();
             //Create modal.
@@ -222,7 +232,11 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
+<<<<<<< HEAD
         selector: "page-home",template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/'<div id="map" class="map-canvas">\n  <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n</div>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/
+=======
+        selector: "page-home",template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\pages\home\home.html"*/'<div id="map" class="map-canvas">\n  <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n</div>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\pages\home\home.html"*/
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
     }),
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* Platform */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["d" /* ModalController */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_5__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_5__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["f" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["f" /* NavParams */]) === "function" && _f || Object])
 ], HomePage);
@@ -313,7 +327,11 @@ var SpacePage = (function () {
 }());
 SpacePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
+<<<<<<< HEAD
         selector: 'page-space',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/'<div>\n    <button ion-button icon-only clear large (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>betwixt://betwixt.com/?group_uid={{ uid }}</p>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/,
+=======
+        selector: 'page-space',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\pages\space\space.html"*/'<div>\n    <button ion-button icon-only clear large (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{ uid }}</p>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\pages\space\space.html"*/,
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavParams */]])
 ], SpacePage);
@@ -362,9 +380,20 @@ var GroupSocketService = (function () {
         this.userInfos = [];
         this.userInfoSubject = new __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__["Subject"]();
         this.uid = this.getUID;
+<<<<<<< HEAD
         this.socket = __WEBPACK_IMPORTED_MODULE_4_socket_io_client__(this.socketHost);
         //Add user information when a new user joins.
         this.socket.on('getNewUserInfo', function (res) {
+=======
+        this.socket = __WEBPACK_IMPORTED_MODULE_3_socket_io_client__(this.socketHost);
+        //Add user information when a new user joins.
+        this.socket.on('getNewUserInfo', function (res) {
+            console.log("User info added\n" + JSON.stringify(res));
+            _this.userInfos.push(res);
+            _this.socket.emit('sendUserInfo', { socketID: res.socketID, userInfo: _this.userInfo });
+        });
+        this.socket.on('getExistingUserInfo', function (res) {
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
             console.log("User info added\n" + JSON.stringify(res));
             _this.userInfos.push(res);
             _this.socket.emit('sendUserInfo', { socketID: res.socketID, userInfo: _this.userInfo });
@@ -397,7 +426,11 @@ var GroupSocketService = (function () {
 }());
 GroupSocketService = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
+<<<<<<< HEAD
     __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _a || Object])
+=======
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]) === "function" && _a || Object])
+>>>>>>> ab72cdc0bd48779c886c5b43aacb992f9bbd2c2f
 ], GroupSocketService);
 
 var _a;
@@ -552,7 +585,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
 ], MyApp.prototype, "navChild", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\app\app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-Android\Betwixt-1.0\src\app\app.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_4__ionic_native_deeplinks__["a" /* Deeplinks */],
