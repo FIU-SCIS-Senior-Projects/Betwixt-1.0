@@ -25221,6 +25221,16 @@ page-home button {
   margin-bottom: 5% !important;
 }
 
+page-home #profile-icon {
+  margin: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 4px;
+  position: absolute;
+  top: 2%;
+  left: 0;
+}
+
 page-space {
   background: transparent;
   background-color: rgba(32, 181, 170, 0.85);

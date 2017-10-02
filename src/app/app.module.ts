@@ -5,6 +5,7 @@ import { MyApp } from './app.component';
 
 import { HomePage } from '../pages/home/home';
 import {SpacePage} from '../pages/space/space';
+import { ProfilePage } from '../pages/profile/profile';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -15,12 +16,14 @@ import { Geolocation } from '@ionic-native/geolocation';
 import { GoogleMaps } from '@ionic-native/google-maps';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { Clipboard } from '@ionic-native/clipboard';
+import { NativeStorage } from '@ionic-native/native-storage';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    SpacePage
+    SpacePage,
+    ProfilePage
   ],
   imports: [
     // Custom
@@ -35,7 +38,8 @@ import { Clipboard } from '@ionic-native/clipboard';
   entryComponents: [
     MyApp,
     HomePage,
-    SpacePage
+    SpacePage,
+    ProfilePage
   ],
   providers: [
     Deeplinks,
@@ -44,6 +48,7 @@ import { Clipboard } from '@ionic-native/clipboard';
     Geolocation,
     GoogleMaps,
     Clipboard,
+    NativeStorage,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
