@@ -10,14 +10,15 @@ module.exports = (io) => {
 
                 console.log("Connection made.")
 
-                socket.on('group_uid', (group_uid) => {
-                    console.log(`User joined group: ${group_uid}`);
-                    socket.join(group_uid);
+                socket.on('joinGroup', (userInfo) => {
+                    console.log(`User joined group: ${userInfo.groupUID}`);
+                    socket.join(userInfo.groupUID);
+                    socket.to(userInfo.groupUID).emit('getNewUserInfo', userInfo);
                 });
 
-                socket.on('clientSendInfo', (userInfo) => {
-                    console.log(`User ${userInfo.username}'s location is lat: ${userInfo.latitude} lng: ${userInfo.longitude}`)
-                    io.in(userInfo.groupUID).emit('serverSendInfo', userInfo);
+                socket.on('sendUserInfo', (info) => {
+                    console.log(`Sending info to specific client: ${info.socketID}`)
+                    socket.to(info.socketID).emit('getExistingUserInfo', info.userInfo);
                 })
 
                 //Whenever someone disconnects this piece of code executed
