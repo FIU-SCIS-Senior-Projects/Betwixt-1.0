@@ -1,16 +1,16 @@
-import { Component } from "@angular/core/";
+import { Component } from '@angular/core/';
 import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
   GoogleMapOptions
-} from "@ionic-native/google-maps";
-import { Platform, ModalController, NavParams } from "ionic-angular";
-import { WorkfromService } from "../../app/services/workfrom/workfrom.service";
-import { SpacePage } from "../space/space";
-import { GroupSocketService } from "../../app/services/groupsocket/groupsocket.service";
-import geolib from "geolib";
-import {UserInfo} from "../../app/services/groupsocket/groupsocket.service";
+} from '@ionic-native/google-maps';
+import { Platform, ModalController, NavParams } from 'ionic-angular';
+import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+import { SpacePage } from '../space/space';
+import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
+import geolib from 'geolib';
+import {UserInfo} from '../../app/services/groupsocket/groupsocket.service';
 
 interface Coordinates {
   latitude: number;
@@ -67,22 +67,20 @@ export class HomePage {
     console.log("Ion view loaded.");
     this.groupSocketService.userInfoSubject.subscribe(userInfo => {
       console.log(`Marker dropped for user: ${userInfo.username}`);
-      this.dropMarker(userInfo.username, "red", userInfo.latitude, userInfo.longitude );
+      this.dropMarker(userInfo.username, 'blue', userInfo.latitude, userInfo.longitude );
     })
     this.platform
       .ready()
       //TODO: getCurrentPosition doesn't work when re-opening the app. Fix needed.
-      //.then(() => this.getCurrentPosition())
-      .then(() => this.loadMap())
+      .then(() => this.getCurrentPosition())
+      .then((currentPosition) => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
       .catch(error => alert(`An error has occured:\n ${error}`));
   }
 
-  loadMap() {
-    let currentPosition = {
-      coords: { latitude: 43.0741100, longitude: -89.3809802 }
-    };
+  loadMap(currentPosition) {
+
     const { latitude, longitude } = currentPosition.coords;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -194,7 +192,19 @@ export class HomePage {
           this.groupSocketService.userInfos = [];
         });
       },
-      error => console.log(error)
+      error => {
+         //Create modal.
+         let spaceModal = this.modalCtrl.create(SpacePage, {
+          uid: ''
+        });
+
+        spaceModal.present();
+
+        spaceModal.onDidDismiss(data => {
+          this.groupSocketService.userInfos = [];
+        });
+
+      }
     );
     
   }

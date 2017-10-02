@@ -30,9 +30,9 @@ export class MyApp {
   ngAfterViewInit() {
     this.deeplinks.routeWithNavController(this.navChild, {
       '/': HomePage
-    }).subscribe((match) => {
+    }).subscribe(match => {
       console.log('Successfully routed\n'+ JSON.stringify(match));
-    }, (nomatch) => {
+    }, nomatch => {
       console.warn('Unmatched Route', nomatch);
     });
 
