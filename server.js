@@ -5,10 +5,15 @@ const app = express();
 const cors = require('cors');
 const yelp = require('yelp-fusion');
 const Workfrom = require('workfrom');
+let http = require('http').Server(app);
+let server = require("http").Server(app);
+let io = require('socket.io').listen(server);
+let group_socket = require('./sockets/groupSocket')(io);
+module.exports = group_socket
+const group = require('./routes/group');
 
 const YELP_CLIENT_ID = process.env.YELP_CLIENT_ID;
 const YELP_CLIENT_SECRET = process.env.YELP_CLIENT_SECRET;
-
 const WORKFROM_APP_ID = process.env.WORKFROM_APP_ID;
 
 // Configuration
@@ -25,6 +30,10 @@ app.use((req, res, next) => {
    res.header('Content-Type', 'application/json');
    next();
 });
+
+// Use group router.
+
+app.use('/group', group);
 
 // Routes
 
@@ -65,10 +74,10 @@ app.get('/businesses/search', (req, res) => {
 
 });
 
-app.get('/helloworld', function(request, response) {
-  response.send('Hello World!');
+group_socket.create();
+
+server.listen(app.get('port'), function () {
+  console.log("Listening on port %s...", server.address().port);
 });
 
-app.listen(app.get('port'), function() {
-  console.log('Server App is running at localhost:' + app.get('port'))
-});
+
