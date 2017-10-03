@@ -25228,12 +25228,12 @@ page-space {
   padding: 16px;
 }
 
-page-space button {
+page-space .close-button {
   color: rgba(255, 255, 255, 0.5) !important;
   height: 100% !important;
 }
 
-page-space button .button-inner {
+page-space .close-button .button-inner {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -25244,7 +25244,7 @@ page-space button .button-inner {
   align-items: start;
 }
 
-page-space button ion-icon {
+page-space .close-button ion-icon {
   padding: 0 !important;
 }
 

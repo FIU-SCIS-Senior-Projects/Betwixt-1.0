@@ -12,8 +12,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { ServicesModule } from './services/services.module';
 import { HttpModule } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
-import {GoogleMaps} from '@ionic-native/google-maps';
-import {Deeplinks} from '@ionic-native/deeplinks';
+import { GoogleMaps } from '@ionic-native/google-maps';
+import { Deeplinks } from '@ionic-native/deeplinks';
+import { Clipboard } from '@ionic-native/clipboard';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import {Deeplinks} from '@ionic-native/deeplinks';
     SplashScreen,
     Geolocation,
     GoogleMaps,
+    Clipboard,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })

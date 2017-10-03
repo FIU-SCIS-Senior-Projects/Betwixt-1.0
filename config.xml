@@ -109,6 +109,7 @@
         <variable name="DEEPLINK_5_HOST" value=" " />
     </plugin>
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
-    <engine name="ios" spec="~4.3.1" />
     <engine name="android" spec="~6.1.2" />
+    <plugin name="cordova-clipboard" spec="~1.1.0" />
+    <engine name="ios" spec="~4.3.1" />
 </widget>
