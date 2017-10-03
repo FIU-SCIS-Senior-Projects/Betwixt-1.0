@@ -3,14 +3,13 @@ import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  GoogleMapOptions
+  GoogleMapOptions,
 } from '@ionic-native/google-maps';
 import { Platform, ModalController, NavParams } from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
 import geolib from 'geolib';
-import {UserInfo} from '../../app/services/groupsocket/groupsocket.service';
 
 interface Coordinates {
   latitude: number;
@@ -19,14 +18,14 @@ interface Coordinates {
 
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-  { latitude: 25.942871, longitude: -80.12338 } // Sunny Isles
+  { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
 
 @Component({
-  selector: "page-home",
-  templateUrl: "home.html"
+  selector: 'page-home',
+  templateUrl: 'home.html',
 })
 export class HomePage {
   map: GoogleMap;
@@ -35,52 +34,51 @@ export class HomePage {
   //For use outisde promise chain.
   latitude: number;
   longitude: number;
-  host_uid : string;
+  host_uid: string;
 
   //Random username.
-  username : string;
+  username: string;
 
   constructor(
-    private googleMaps: GoogleMaps,
     public platform: Platform,
-    private workfromService: WorkfromService,
     public modalCtrl: ModalController,
+    private workfromService: WorkfromService,
+    private googleMaps: GoogleMaps,
     private groupSocketService: GroupSocketService,
     private navParams: NavParams
-  ) 
-  {
+  ) {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
-
-
   }
 
-  ionViewWillEnter()
-  {
-    this.host_uid = this.navParams.get("group_uid")
+  ionViewWillEnter() {
+    this.host_uid = this.navParams.get('group_uid');
     this.joinHostGroup();
-
   }
 
   ngAfterViewInit() {
-    console.log("Ion view loaded.");
+    console.log('Ion view loaded.');
     this.groupSocketService.userInfoSubject.subscribe(userInfo => {
       console.log(`Marker dropped for user: ${userInfo.username}`);
-      this.dropMarker(userInfo.username, 'blue', userInfo.latitude, userInfo.longitude );
-    })
+      this.dropMarker(
+        userInfo.username,
+        'blue',
+        userInfo.latitude,
+        userInfo.longitude
+      );
+    });
     this.platform
       .ready()
       //TODO: getCurrentPosition doesn't work when re-opening the app. Fix needed.
       .then(() => this.getCurrentPosition())
-      .then((currentPosition) => this.loadMap(currentPosition))
+      .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
       .catch(error => alert(`An error has occured:\n ${error}`));
   }
 
   loadMap(currentPosition) {
-
     const { latitude, longitude } = currentPosition.coords;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -89,26 +87,26 @@ export class HomePage {
       camera: {
         target: {
           lat: latitude,
-          lng: longitude
+          lng: longitude,
         },
         zoom: 18,
-        tilt: 30
-      }
+        tilt: 30,
+      },
     };
 
-    this.mapElement = document.getElementById("map");
+    this.mapElement = document.getElementById('map');
     this.map = this.googleMaps.create(this.mapElement, mapOptions);
 
     return this.map
       .one(GoogleMapsEvent.MAP_READY)
       .then(() => {
-        console.log("Map is ready!");
+        console.log('Map is ready!');
 
-        this.dropMarker("Current Location", "green", latitude, longitude);
+        this.dropMarker('Current Location', 'green', latitude, longitude);
 
         RANDOM_GEOCOORDINATES.forEach((position, index) => {
           const { latitude, longitude } = position;
-          this.dropMarker(`Location ${index + 1}`, "blue", latitude, longitude);
+          this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude);
         });
 
         return { latitude, longitude };
@@ -118,7 +116,7 @@ export class HomePage {
 
   getCurrentPosition() {
     const options = {
-      enableHighAccuracy: true
+      enableHighAccuracy: true,
     };
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -131,8 +129,8 @@ export class HomePage {
     return new Promise(resolve => {
       const centralPosition = geolib.getCenterOfBounds(locations);
       this.dropMarker(
-        "Central Location",
-        "purple",
+        'Central Location',
+        'purple',
         centralPosition.latitude,
         centralPosition.longitude
       );
@@ -150,7 +148,7 @@ export class HomePage {
         locations.forEach(location => {
           this.dropMarker(
             location.title,
-            "red",
+            'red',
             location.latitude,
             location.longitude
           );
@@ -168,12 +166,12 @@ export class HomePage {
     this.groupSocketService.uid.subscribe(
       //User's info object that will be sent to server.
       group_uid => {
-        this.groupSocketService.userInfo  = {
-          socketID : "",
-          groupUID : group_uid,
+        this.groupSocketService.userInfo = {
+          socketID: '',
+          groupUID: group_uid,
           username: this.username,
           latitude: this.latitude,
-          longitude: this.longitude
+          longitude: this.longitude,
         };
 
         console.log(group_uid);
@@ -183,7 +181,7 @@ export class HomePage {
 
         //Create modal.
         let spaceModal = this.modalCtrl.create(SpacePage, {
-          uid: group_uid
+          uid: group_uid,
         });
 
         spaceModal.present();
@@ -193,9 +191,9 @@ export class HomePage {
         });
       },
       error => {
-         //Create modal.
-         let spaceModal = this.modalCtrl.create(SpacePage, {
-          uid: ''
+        //Create modal.
+        let spaceModal = this.modalCtrl.create(SpacePage, {
+          uid: '',
         });
 
         spaceModal.present();
@@ -203,22 +201,19 @@ export class HomePage {
         spaceModal.onDidDismiss(data => {
           this.groupSocketService.userInfos = [];
         });
-
       }
     );
-    
   }
 
   //If routed from the deeplink, join the room.
   private joinHostGroup() {
-
     if (this.host_uid != undefined) {
       this.groupSocketService.userInfo = {
-        socketID : "",
+        socketID: '',
         groupUID: this.host_uid,
         username: this.username,
         latitude: this.latitude,
-        longitude: this.longitude
+        longitude: this.longitude,
       };
 
       //Join the room specified by the group uid.
@@ -231,8 +226,8 @@ export class HomePage {
       .addMarker({
         title,
         icon,
-        animation: "DROP",
-        position: { lat, lng }
+        animation: 'DROP',
+        position: { lat, lng },
       })
       .then(marker => {
         marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
