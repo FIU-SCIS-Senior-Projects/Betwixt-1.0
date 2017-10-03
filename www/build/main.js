@@ -229,7 +229,7 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: "page-home",template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/'<div id="map" class="map-canvas">\n  <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n</div>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/
+        selector: "page-home",template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* Platform */],
@@ -325,7 +325,7 @@ var SpacePage = (function () {
 }());
 SpacePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-space',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/'<div>\n    <button ion-button icon-only clear large (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid != \'\'" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="uid == \'\'" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/,
+        selector: 'page-space',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/'<div>\n    <button ion-button icon-only clear large (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid != \'\'" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="uid == \'\'" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* NavParams */]])
 ], SpacePage);
@@ -370,7 +370,6 @@ var GroupSocketService = (function () {
     function GroupSocketService(http, configService) {
         var _this = this;
         this.http = http;
-        this.configService = configService;
         this.userInfos = [];
         this.userInfoSubject = new __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__["Subject"]();
         this.socketHost = configService.serverUrl;
@@ -379,21 +378,29 @@ var GroupSocketService = (function () {
         this.socket = __WEBPACK_IMPORTED_MODULE_5_socket_io_client__(this.socketHost);
         //Add user information when a new user joins.
         this.socket.on('getNewUserInfo', function (res) {
-            console.log("User info added\n" + JSON.stringify(res));
+            console.log('User info added\n' + JSON.stringify(res));
             _this.userInfos.push(res);
-            _this.socket.emit('sendUserInfo', { socketID: res.socketID, userInfo: _this.userInfo });
+            _this.socket.emit('sendUserInfo', {
+                socketID: res.socketID,
+                userInfo: _this.userInfo,
+            });
             _this.userInfoSubject.next(res);
         });
         this.socket.on('getExistingUserInfo', function (res) {
-            console.log("User info added\n" + JSON.stringify(res));
+            console.log('User info added\n' + JSON.stringify(res));
             _this.userInfos.push(res);
             _this.userInfoSubject.next(res);
         });
     }
+    GroupSocketService.prototype.joinGroup = function () {
+        //Add the unique socket id on join group.
+        this.userInfo.socketID = this.socket.io.engine.id;
+        this.socket.emit('joinGroup', this.userInfo);
+    };
     Object.defineProperty(GroupSocketService.prototype, "getUID", {
         get: function () {
             return this.http
-                .get(this.socketHost + "/group/create")
+                .get(this.socketHost + "group/create")
                 .map(function (res) { return res.json().uid; })
                 .catch(function (error) {
                 return __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__["Observable"].throw(JSON.stringify(error.json()) || 'Server error');
@@ -402,18 +409,14 @@ var GroupSocketService = (function () {
         enumerable: true,
         configurable: true
     });
-    GroupSocketService.prototype.joinGroup = function () {
-        //Add the unique socket id on join group.
-        this.userInfo.socketID = this.socket.io.engine.id;
-        this.socket.emit('joinGroup', this.userInfo);
-    };
     return GroupSocketService;
 }());
 GroupSocketService = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_4__config_config_service__["a" /* ConfigService */]])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_http__["a" /* Http */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_4__config_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__config_config_service__["a" /* ConfigService */]) === "function" && _b || Object])
 ], GroupSocketService);
 
+var _a, _b;
 //# sourceMappingURL=groupsocket.service.js.map
 
 /***/ }),
@@ -565,7 +568,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* Nav */])
 ], MyApp.prototype, "navChild", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["g" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_4__ionic_native_deeplinks__["a" /* Deeplinks */],
