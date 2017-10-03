@@ -3,7 +3,7 @@
     <name>Betwixt</name>
     <description>A mobile application that helps groups of people find a central location where they may meet up.</description>
     <author email="hi@ionicframework" href="https://betwixt.space/">Betwixt Team</author>
-    <content original-src="index.html" src="http://10.0.0.175:8100" />
+    <content src="index.html" />
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
     <allow-intent href="http://*/*" />
@@ -84,8 +84,6 @@
         <param name="API_KEY_FOR_ANDROID" value="AIzaSyDa1_q4_YaiTCgHT7z2IM7UgH4MA_s6XGU" />
         <param name="API_KEY_FOR_IOS" value="AIzaSyCri8p_Qh5jfbLj4ja0S1Z2Gx17PNdFR_o" />
     </gap:plugin>
-    <engine name="android" spec="^6.3.0" />
-    <engine name="ios" spec="^4.5.1" />
     <plugin name="cordova-plugin-console" spec="^1.1.0" />
     <plugin name="cordova-plugin-device" spec="^1.1.4" />
     <plugin name="cordova-plugin-geolocation" spec="^2.4.3" />
@@ -111,4 +109,6 @@
         <variable name="DEEPLINK_5_HOST" value=" " />
     </plugin>
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
+    <engine name="ios" spec="~4.3.1" />
+    <engine name="android" spec="~6.1.2" />
 </widget>
