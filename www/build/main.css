@@ -25199,7 +25199,67 @@ ion-navbar.toolbar {
   }
 }
 
-page-home #map {
+page-home .map-canvas {
   height: 100%;
   width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
+
+page-home button {
+  width: 90%;
+  margin-bottom: 5% !important;
+}
+
+page-space {
+  background: transparent;
+  background-color: rgba(32, 181, 170, 0.85);
+  color: white;
+  padding: 16px;
+}
+
+page-space .close-button {
+  color: rgba(255, 255, 255, 0.5) !important;
+  height: 100% !important;
+}
+
+page-space .close-button .button-inner {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -webkit-align-items: start;
+  -ms-flex-align: start;
+  align-items: start;
+}
+
+page-space .close-button ion-icon {
+  padding: 0 !important;
+}
+
+.flex-center-align {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
