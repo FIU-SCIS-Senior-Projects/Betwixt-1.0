@@ -58,16 +58,16 @@ export class HomePage {
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
 
-    events.subscribe("profile:saved", profile => {
-      this.nativeStorage.setItem("email", profile.email);
-      this.nativeStorage.setItem("firstName", profile.firstName);
-      this.nativeStorage.setItem("lastName", profile.lastName);
+    events.subscribe('profile:saved', profile => {
+      this.nativeStorage.setItem('email', profile.email);
+      this.nativeStorage.setItem('firstName', profile.firstName);
+      this.nativeStorage.setItem('lastName', profile.lastName);
       this.gravatarUrl = gravatar.url(
         profile.email,
-        { s: "100", d: "mm" },
+        { s: '100', d: 'mm' },
         true
       );
-      this.nativeStorage.setItem("gravatarUrl", this.gravatarUrl);
+      this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
     });
   }
 
@@ -99,7 +99,7 @@ export class HomePage {
   }
 
   initialSetup() {
-    this.nativeStorage.getItem("gravatarUrl").then(
+    this.nativeStorage.getItem('gravatarUrl').then(
       url => {
         this.gravatarUrl = url;
       },
@@ -110,21 +110,23 @@ export class HomePage {
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData("email", "firstName", "lastName");
+    const profileData = this.getProfileData('email', 'firstName', 'lastName');
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
   getProfileData(...keys) {
     let profileData = <any>{};
     keys.forEach((key, index) => {
-      this.nativeStorage.getItem(key)
-      .then(value => {
-        profileData[key] = value;
-      }, error => {
-        console.log(error);
-        profileData[key] = "";
-      })
-    })
+      this.nativeStorage.getItem(key).then(
+        value => {
+          profileData[key] = value;
+        },
+        error => {
+          console.log(error);
+          profileData[key] = '';
+        }
+      );
+    });
     return profileData;
   }
 

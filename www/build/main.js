@@ -37,7 +37,7 @@ var ProfilePage = (function () {
 ProfilePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-profile',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/'<ion-header>\n        <ion-navbar>\n            <button ion-button menuToggle>\n              <ion-icon name="menu"></ion-icon>\n            </button>\n            <ion-title>Profile</ion-title>\n          </ion-navbar>\n    </ion-header>\n    <ion-content>\n        <div class="flex-center-align">\n            <form>\n                <ion-item>\n                    <ion-label stacked>Email Address</ion-label>\n                    <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>First Name</ion-label>\n                    <ion-input name="First Name" [(ngModel)]="profile.firstName" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>Last Name</ion-label>\n                    <ion-input name="Last Name" [(ngModel)]="profile.lastName" type="text"></ion-input>\n                </ion-item>\n            </form>\n        </div>\n    </ion-content>'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/,
+        selector: 'page-profile',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/'<ion-header>\n        <ion-navbar>\n            <button ion-button menuToggle>\n              <ion-icon name="menu"></ion-icon>\n            </button>\n            <ion-title>Profile</ion-title>\n          </ion-navbar>\n    </ion-header>\n    <ion-content>\n        <div class="flex-center-align">\n            <form>\n                <ion-item>\n                    <ion-label stacked>Email Address</ion-label>\n                    <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>First Name</ion-label>\n                    <ion-input name="First Name" [(ngModel)]="profile.firstName" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>Last Name</ion-label>\n                    <ion-input name="Last Name" [(ngModel)]="profile.lastName" type="text"></ion-input>\n                </ion-item>\n            </form>\n        </div>\n    </ion-content>\n'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* Events */]])
 ], ProfilePage);
@@ -143,12 +143,12 @@ var HomePage = (function () {
         //Generate random username and pass to socketservice.
         this.username = "TestUser" + Math.floor(Math.random() * 100);
         this.groupSocketService.username = this.username;
-        events.subscribe("profile:saved", function (profile) {
-            _this.nativeStorage.setItem("email", profile.email);
-            _this.nativeStorage.setItem("firstName", profile.firstName);
-            _this.nativeStorage.setItem("lastName", profile.lastName);
-            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_9_gravatar___default.a.url(profile.email, { s: "100", d: "mm" }, true);
-            _this.nativeStorage.setItem("gravatarUrl", _this.gravatarUrl);
+        events.subscribe('profile:saved', function (profile) {
+            _this.nativeStorage.setItem('email', profile.email);
+            _this.nativeStorage.setItem('firstName', profile.firstName);
+            _this.nativeStorage.setItem('lastName', profile.lastName);
+            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_9_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
+            _this.nativeStorage.setItem('gravatarUrl', _this.gravatarUrl);
         });
     }
     HomePage.prototype.ionViewWillEnter = function () {
@@ -173,14 +173,14 @@ var HomePage = (function () {
     };
     HomePage.prototype.initialSetup = function () {
         var _this = this;
-        this.nativeStorage.getItem("gravatarUrl").then(function (url) {
+        this.nativeStorage.getItem('gravatarUrl').then(function (url) {
             _this.gravatarUrl = url;
         }, function (error) {
             console.log(error);
         });
     };
     HomePage.prototype.presentProfilePage = function () {
-        var profileData = this.getProfileData("email", "firstName", "lastName");
+        var profileData = this.getProfileData('email', 'firstName', 'lastName');
         this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__profile_profile__["a" /* ProfilePage */], { profileData: profileData });
     };
     HomePage.prototype.getProfileData = function () {
@@ -191,12 +191,11 @@ var HomePage = (function () {
         }
         var profileData = {};
         keys.forEach(function (key, index) {
-            _this.nativeStorage.getItem(key)
-                .then(function (value) {
+            _this.nativeStorage.getItem(key).then(function (value) {
                 profileData[key] = value;
             }, function (error) {
                 console.log(error);
-                profileData[key] = "";
+                profileData[key] = '';
             });
         });
         return profileData;
@@ -214,7 +213,7 @@ var HomePage = (function () {
                 },
                 zoom: 18,
                 tilt: 30,
-            },
+            }
         };
         this.mapElement = document.getElementById('map');
         this.map = this.googleMaps.create(this.mapElement, mapOptions);
