@@ -17,6 +17,7 @@ import { GoogleMaps } from '@ionic-native/google-maps';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { Clipboard } from '@ionic-native/clipboard';
 import { NativeStorage } from '@ionic-native/native-storage';
+import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { NativeStorage } from '@ionic-native/native-storage';
     GoogleMaps,
     Clipboard,
     NativeStorage,
+    GroupSocketService,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
