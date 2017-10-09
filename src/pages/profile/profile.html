@@ -1,0 +1,26 @@
+<ion-header>
+        <ion-navbar>
+            <button ion-button menuToggle>
+              <ion-icon name="menu"></ion-icon>
+            </button>
+            <ion-title>Profile</ion-title>
+          </ion-navbar>
+    </ion-header>
+    <ion-content>
+        <div class="flex-center-align">
+            <form>
+                <ion-item>
+                    <ion-label stacked>Email Address</ion-label>
+                    <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label stacked>First Name</ion-label>
+                    <ion-input name="First Name" [(ngModel)]="profile.firstName" type="text"></ion-input>
+                </ion-item>
+                <ion-item>
+                    <ion-label stacked>Last Name</ion-label>
+                    <ion-input name="Last Name" [(ngModel)]="profile.lastName" type="text"></ion-input>
+                </ion-item>
+            </form>
+        </div>
+    </ion-content>

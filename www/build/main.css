@@ -25221,6 +25221,32 @@ page-home button {
   margin-bottom: 5% !important;
 }
 
+page-home #profile-icon {
+  margin: 10px;
+  height: 40px;
+  width: 40px;
+  border-radius: 4px;
+  position: absolute;
+  top: 2%;
+  left: 0;
+}
+
+.flex-center-align {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
 page-space {
   background: transparent;
   background-color: rgba(32, 181, 170, 0.85);

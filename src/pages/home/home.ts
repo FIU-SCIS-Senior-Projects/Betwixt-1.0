@@ -5,11 +5,14 @@ import {
   GoogleMapsEvent,
   GoogleMapOptions,
 } from '@ionic-native/google-maps';
-import { Platform, ModalController, NavParams } from 'ionic-angular';
+import { Platform, ModalController, NavController, NavParams, Events } from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
+import { ProfilePage } from '../profile/profile';
+import { NativeStorage } from '@ionic-native/native-storage';
 import geolib from 'geolib';
+import gravatar from 'gravatar';
 
 interface Coordinates {
   latitude: number;
@@ -30,6 +33,7 @@ const RANDOM_GEOCOORDINATES: Coordinates[] = [
 export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
+  gravatarUrl: string;
 
   //For use outisde promise chain.
   latitude: number;
@@ -45,11 +49,26 @@ export class HomePage {
     private workfromService: WorkfromService,
     private googleMaps: GoogleMaps,
     private groupSocketService: GroupSocketService,
-    private navParams: NavParams
+    private nativeStorage: NativeStorage,
+    private navParams: NavParams,
+    public navCtrl: NavController,
+    public events: Events
   ) {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
+
+    events.subscribe('profile:saved', profile => {
+      this.nativeStorage.setItem('email', profile.email);
+      this.nativeStorage.setItem('firstName', profile.firstName);
+      this.nativeStorage.setItem('lastName', profile.lastName);
+      this.gravatarUrl = gravatar.url(
+        profile.email,
+        { s: '100', d: 'mm' },
+        true
+      );
+      this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
+    });
   }
 
   ionViewWillEnter() {
@@ -71,11 +90,44 @@ export class HomePage {
     this.platform
       .ready()
       //TODO: getCurrentPosition doesn't work when re-opening the app. Fix needed.
+      .then(() => this.initialSetup())
       .then(() => this.getCurrentPosition())
       .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
       .catch(error => alert(`An error has occured:\n ${error}`));
+  }
+
+  initialSetup() {
+    this.nativeStorage.getItem('gravatarUrl').then(
+      url => {
+        this.gravatarUrl = url;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
+  presentProfilePage() {
+    const profileData = this.getProfileData('email', 'firstName', 'lastName');
+    this.navCtrl.push(ProfilePage, { profileData });
+  }
+
+  getProfileData(...keys) {
+    let profileData = <any>{};
+    keys.forEach((key, index) => {
+      this.nativeStorage.getItem(key).then(
+        value => {
+          profileData[key] = value;
+        },
+        error => {
+          console.log(error);
+          profileData[key] = '';
+        }
+      );
+    });
+    return profileData;
   }
 
   loadMap(currentPosition) {
