@@ -5,7 +5,13 @@ import {
   GoogleMapsEvent,
   GoogleMapOptions,
 } from '@ionic-native/google-maps';
-import { Platform, ModalController, NavController, NavParams, Events } from 'ionic-angular';
+import {
+  Platform,
+  ModalController,
+  NavController,
+  NavParams,
+  Events,
+} from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
@@ -71,27 +77,18 @@ export class HomePage {
     });
   }
 
-  ionViewWillEnter() {
-    this.host_uid = this.navParams.get('group_uid');
-    this.joinHostGroup();
-  }
-
   ngAfterViewInit() {
     console.log('Ion view loaded.');
-    this.groupSocketService.userInfoSubject.subscribe(userInfo => {
-      console.log(`Marker dropped for user: ${userInfo.username}`);
-      this.dropMarker(
-        userInfo.username,
-        'blue',
-        userInfo.latitude,
-        userInfo.longitude
-      );
-    });
     this.platform
       .ready()
-      //TODO: getCurrentPosition doesn't work when re-opening the app. Fix needed.
       .then(() => this.initialSetup())
-      .then(() => this.getCurrentPosition())
+      .then(() => {
+        alert('platform ready...');
+        this.host_uid = this.navParams.get('group_uid');
+        //When app is re-opened
+        this.joinHostGroup();
+        return this.getCurrentPosition();
+      })
       .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
@@ -159,6 +156,16 @@ export class HomePage {
         RANDOM_GEOCOORDINATES.forEach((position, index) => {
           const { latitude, longitude } = position;
           this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude);
+        });
+
+        this.groupSocketService.userInfoSubject.subscribe(userInfo => {
+          console.log(`Marker dropped for user: ${userInfo.username}`);
+          this.dropMarker(
+            userInfo.username,
+            'blue',
+            userInfo.latitude,
+            userInfo.longitude
+          );
         });
 
         return { latitude, longitude };
@@ -259,7 +266,8 @@ export class HomePage {
 
   //If routed from the deeplink, join the room.
   private joinHostGroup() {
-    if (this.host_uid != undefined) {
+    if (this.host_uid) {
+      alert(`Joining group ${this.host_uid}`);
       this.groupSocketService.userInfo = {
         socketID: '',
         groupUID: this.host_uid,

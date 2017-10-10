@@ -10,8 +10,8 @@ export interface UserInfo {
   socketID: string;
   groupUID: string;
   username: string;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
 }
 
 @Injectable()
@@ -35,7 +35,7 @@ export class GroupSocketService {
     this.socket = io(this.socketHost);
     //Add user information when a new user joins.
     this.socket.on('getNewUserInfo', res => {
-      console.log('User info added\n' + JSON.stringify(res));
+      alert('User info added\n' + JSON.stringify(res));
       this.userInfos.push(res);
       this.socket.emit('sendUserInfo', {
         socketID: res.socketID,
@@ -45,16 +45,18 @@ export class GroupSocketService {
     });
 
     this.socket.on('getExistingUserInfo', res => {
-      console.log('User info added\n' + JSON.stringify(res));
+      alert('User info added\n' + JSON.stringify(res));
       this.userInfos.push(res);
       this.userInfoSubject.next(res);
     });
   }
 
   joinGroup() {
+    alert(`Socket is: ${this.socket.connected}`);
     //Add the unique socket id on join group.
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('joinGroup', this.userInfo);
+    alert(`Should have joined group with uid: ${this.userInfo.groupUID}`)
   }
 
   private get getUID(): Observable<string> {
