@@ -278,6 +278,7 @@ export class HomePage {
 
       //Join the room specified by the group uid.
       this.groupSocketService.joinGroup();
+      this.navCtrl.pop();
     }
   }
 
