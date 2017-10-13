@@ -400,6 +400,7 @@ var HomePage = (function () {
             };
             //Join the room specified by the group uid.
             this.groupSocketService.joinGroup();
+            this.navCtrl.pop();
         }
     };
     HomePage.prototype.dropMarker = function (title, icon, lat, lng) {
