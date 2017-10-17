@@ -1,4 +1,15 @@
 <div id="map" class="map-canvas">
   <img id="profile-icon" [src]="gravatarUrl || 'assets/profile.jpg'" on-tap="presentProfilePage()" />
   <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>
+
+  <div *ngIf="locations.length > 0">
+    <div *ngFor="let location of locations">
+      <ion-card>
+        <ion-card-header>{{ location.title }}</ion-card-header>
+        <ion-card-content>
+          <pre>{{ location | json }}</pre>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
 </div>
