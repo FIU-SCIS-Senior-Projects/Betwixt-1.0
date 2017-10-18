@@ -1,6 +1,6 @@
 import { Component } from '@angular/core/';
-import { NavParams, ViewController } from 'ionic-angular';
-import { Clipboard } from '@ionic-native/clipboard';
+import { NavParams, ViewController, NavController } from 'ionic-angular';
+import { HomePage } from '../home/home';
 
 @Component({
   selector: 'page-location',
@@ -9,8 +9,15 @@ import { Clipboard } from '@ionic-native/clipboard';
 export class LocationPage {
   locations;
 
-  constructor(public viewCtrl: ViewController, params: NavParams) {
+  constructor(public viewCtrl: ViewController, params: NavParams, public navCtrl: NavController) {
     this.locations = params.get('locations');
+  }
+
+  selectLocation(latitude, longitude) {
+    console.log('selected location!', latitude, longitude);
+    // TODO: drop the pin on selected location for everyone
+    this.dismiss();
+    this.navCtrl.push(HomePage, { selectedLocation: { latitude, longitude } });
   }
 
   dismiss() {

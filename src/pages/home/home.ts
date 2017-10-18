@@ -45,6 +45,7 @@ export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
   gravatarUrl: string;
+  selectedLocation: Coordinates;
 
   //For use outisde promise chain.
   latitude: number;
@@ -71,6 +72,9 @@ export class HomePage {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
+    // todo: does not work
+    this.selectedLocation = navParams.get('selectedLocation');
+    alert(`got selected location! ${this.selectedLocation}`);
 
     events.subscribe("profile:saved", profile => {
       this.nativeStorage.setItem("email", profile.email);
@@ -99,13 +103,15 @@ export class HomePage {
         //   title: 'Starbucks',
         //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
         //   type: 'free',
-        //   distance: 12
+        //   distance: 12,
+        //   no_wifi: 1
         // },
         // {
         //   title: 'Starbucks',
         //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
         //   type: 'commercial',
-        //   distance: 5
+        //   distance: 5,
+        //   no_wifi: 0
         // }]
         return this.getCurrentPosition();
       })
@@ -177,6 +183,11 @@ export class HomePage {
           const { latitude, longitude } = position;
           this.dropMarker(`Location ${index + 1}`, "blue", latitude, longitude);
         });
+
+        // todo: not working
+        if (this.selectedLocation) {
+          this.dropMarker(`Meet Up Location`, 'red', this.selectedLocation.latitude, this.selectedLocation.longitude);
+        }
 
         this.groupSocketService.userInfoSubject.subscribe(userInfo => {
           console.log(`Marker dropped for user: ${userInfo.username}`);
