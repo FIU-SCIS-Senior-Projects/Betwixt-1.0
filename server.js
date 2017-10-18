@@ -41,13 +41,11 @@ app.get('/places', (req, res) => {
   console.log('fetching places');
 
   const { query } = req;
-  const { latitude, longitude, radius, limit, page } = query;
+  const { latitude, longitude, radius } = query;
   const searchRequest = {
     lat: query.latitude,
     long: query.longitude,
     radius: radius || 5,
-    limit: limit || 20,
-    page: page || 1,
   };
 
   wf.places
