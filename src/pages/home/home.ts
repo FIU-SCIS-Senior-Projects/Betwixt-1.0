@@ -23,6 +23,7 @@ import {
   LaunchNavigator,
   LaunchNavigatorOptions
 } from "@ionic-native/launch-navigator";
+import { LocationPage } from '../location/location';
 
 interface Coordinates {
   latitude: number;
@@ -94,6 +95,18 @@ export class HomePage {
         this.host_uid = this.navParams.get("group_uid");
         //When app is re-opened
         this.joinHostGroup();
+        // this.locations = [{
+        //   title: 'Starbucks',
+        //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+        //   type: 'free',
+        //   distance: 12
+        // },
+        // {
+        //   title: 'Starbucks',
+        //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+        //   type: 'commercial',
+        //   distance: 5
+        // }]
         return this.getCurrentPosition();
       })
       .then(currentPosition => this.loadMap(currentPosition))
@@ -213,18 +226,10 @@ export class HomePage {
   getWorkfromLocations(centralPosition) {
     const { latitude, longitude } = centralPosition;
 
-    this.workfromService.getPlaces(latitude, longitude).subscribe(res => {
+    this.workfromService.getPlaces(latitude, longitude, { radius: 20 }).subscribe(res => {
       const locations = res.json();
 
       if (locations.length > 0) {
-        // locations.forEach(location => {
-        //   this.dropMarker(
-        //     location.title,
-        //     'red',
-        //     location.latitude,
-        //     location.longitude
-        //   );
-        // });
         this.locations = locations;
       } else {
         alert(
@@ -303,6 +308,12 @@ export class HomePage {
         });
       }
     );
+  }
+
+  showLocationsModal() {
+    let locationsModal = this.modalCtrl.create(LocationPage, { locations: this.locations });
+
+    locationsModal.present();
   }
 
   //If routed from the deeplink, join the room.

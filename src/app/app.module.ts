@@ -19,13 +19,18 @@ import { Clipboard } from '@ionic-native/clipboard';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
+import { LocationPage } from '../pages/location/location';
+
+const components = [
+  MyApp,
+  HomePage,
+  SpacePage,
+  ProfilePage,
+  LocationPage,
+]
+
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage,
-    SpacePage,
-    ProfilePage
-  ],
+  declarations: components,
   imports: [
     // Custom
     ServicesModule,
@@ -36,12 +41,7 @@ import { LaunchNavigator } from '@ionic-native/launch-navigator';
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    HomePage,
-    SpacePage,
-    ProfilePage
-  ],
+  entryComponents: components,
   providers: [
     Deeplinks,
     StatusBar,

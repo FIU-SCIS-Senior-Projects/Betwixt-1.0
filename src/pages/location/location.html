@@ -1,0 +1,41 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Select A Location</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div *ngIf="locations">
+    <div *ngFor="let location of locations">
+      <ion-card>
+        <img *ngIf="location?.full_img" src="location?.full_img"/>
+        <ion-card-content>
+          <ion-card-title>{{ location?.title }}</ion-card-title>
+          <p>{{ location?.description }}</p>
+          <br/>
+          <p>{{ location?.distance }} miles away from central location!</p>
+          <pre>{{ location | json }}</pre>
+        </ion-card-content>
+        <ion-row no-padding>
+          <ion-col text-left>
+            <button ion-button clear icon-start>
+              <ion-icon name="checkmark"></ion-icon>
+              Select
+            </button>
+          </ion-col>
+          <ion-col text-right>
+            <button ion-button clear icon-start>
+              <ion-icon name="more"></ion-icon>
+              More Info
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>
