@@ -1,8 +1,8 @@
 <div id="map" class="map-canvas">
   <img id="profile-icon" [src]="gravatarUrl || 'assets/profile.jpg'" on-tap="presentProfilePage()" />
   <div class="button-group">
-    <div class="location-button">
-      <button *ngIf="locations?.length > 0" ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>
+    <div *ngIf="locations?.length > 0" class="location-button">
+      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>
     </div>
     <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>
   </div>

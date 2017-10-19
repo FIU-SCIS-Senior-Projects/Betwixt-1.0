@@ -72,9 +72,6 @@ export class HomePage {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
-    // todo: does not work
-    this.selectedLocation = navParams.get('selectedLocation');
-    alert(`got selected location! ${this.selectedLocation}`);
 
     events.subscribe("profile:saved", profile => {
       this.nativeStorage.setItem("email", profile.email);
@@ -95,10 +92,13 @@ export class HomePage {
       .ready()
       .then(() => this.initialSetup())
       .then(() => {
-        alert("platform ready...");
-        this.host_uid = this.navParams.get("group_uid");
-        //When app is re-opened
+        alert('platform ready...');
+        this.host_uid = this.navParams.get('group_uid');
+        alert(`got host uid ${this.host_uid}`);
+        this.selectedLocation = this.navParams.get('selectedLocation');
+        alert(`got selectedLocation ${this.selectedLocation}`);
         this.joinHostGroup();
+        this.selectLocation();
         // this.locations = [{
         //   title: 'Starbucks',
         //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
@@ -184,11 +184,6 @@ export class HomePage {
           this.dropMarker(`Location ${index + 1}`, "blue", latitude, longitude);
         });
 
-        // todo: not working
-        if (this.selectedLocation) {
-          this.dropMarker(`Meet Up Location`, 'red', this.selectedLocation.latitude, this.selectedLocation.longitude);
-        }
-
         this.groupSocketService.userInfoSubject.subscribe(userInfo => {
           console.log(`Marker dropped for user: ${userInfo.username}`);
           this.dropMarker(
@@ -197,6 +192,17 @@ export class HomePage {
             userInfo.latitude,
             userInfo.longitude
           );
+        });
+
+        this.groupSocketService.locationSubject.subscribe(selectedLocation => {
+          alert(`Marker dropped for selected location ${JSON.stringify(selectedLocation)}`);
+          this.dropMarker(
+            'Selected Location',
+            'red',
+            selectedLocation.latitude,
+            selectedLocation.longitude
+          );
+          this.locations = [];
         });
 
         return { latitude, longitude };
@@ -322,14 +328,31 @@ export class HomePage {
   }
 
   showLocationsModal() {
-    let locationsModal = this.modalCtrl.create(LocationPage, { locations: this.locations });
+    let locationsModal = this.modalCtrl.create(LocationPage, { locations: this.locations, group_uid: this.groupSocketService.userInfo.groupUID });
 
     locationsModal.present();
   }
 
+  private selectLocation() {
+    if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
+      alert(`Got selected location! ${JSON.stringify(this.selectedLocation)}`);
+      this.groupSocketService.selectedLocation = {
+        socketId: '',
+        groupUID: this.groupSocketService.userInfo.groupUID,
+        latitude: this.selectedLocation.latitude,
+        longitude: this.selectedLocation.longitude,
+      };
+
+      this.groupSocketService.selectLocation();
+      this.navCtrl.pop();
+    }
+  }
+
   //If routed from the deeplink, join the room.
   private joinHostGroup() {
-    if (this.host_uid) {
+    // when there is a selected location, then that means that we have already joined a group
+    // const isJoinedGroup = this.groupSocketService.socket.sockets.adapter.sids[this.groupSocketService.userInfo.socketID][this.groupSocketService.uid];
+    if (this.host_uid && (this.selectedLocation === undefined)) {
       alert(`Joining group ${this.host_uid}`);
       this.groupSocketService.userInfo = {
         socketID: "",

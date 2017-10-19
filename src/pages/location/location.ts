@@ -8,16 +8,25 @@ import { HomePage } from '../home/home';
 })
 export class LocationPage {
   locations;
+  group_uid;
 
-  constructor(public viewCtrl: ViewController, params: NavParams, public navCtrl: NavController) {
+  constructor(
+    public viewCtrl: ViewController,
+    params: NavParams,
+    public navCtrl: NavController
+  ) {
     this.locations = params.get('locations');
+    this.group_uid = params.get('group_uid');
   }
 
-  selectLocation(latitude, longitude) {
+  selectLocation(latitude, longitude, group_uid) {
     console.log('selected location!', latitude, longitude);
-    // TODO: drop the pin on selected location for everyone
+    console.log('group_uid', group_uid);
     this.dismiss();
-    this.navCtrl.push(HomePage, { selectedLocation: { latitude, longitude } });
+    this.navCtrl.push(HomePage, {
+      selectedLocation: { latitude, longitude },
+      group_uid,
+    });
   }
 
   dismiss() {

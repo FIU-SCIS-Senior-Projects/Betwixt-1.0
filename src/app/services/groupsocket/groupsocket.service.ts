@@ -14,6 +14,13 @@ export interface UserInfo {
   longitude?: number;
 }
 
+export interface SelectedLocation {
+  groupUID?: string;
+  socketId?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 @Injectable()
 export class GroupSocketService {
   //LOCALHOST
@@ -26,6 +33,8 @@ export class GroupSocketService {
   userInfos: Array<UserInfo> = [];
   userInfoSubject: Subject<UserInfo> = new Subject<UserInfo>();
   username: string;
+  locationSubject: Subject<SelectedLocation> = new Subject<SelectedLocation>();
+  public selectedLocation: SelectedLocation;
   public userInfo: UserInfo;
 
   constructor(private http: Http, configService: ConfigService) {
@@ -49,6 +58,20 @@ export class GroupSocketService {
       this.userInfos.push(res);
       this.userInfoSubject.next(res);
     });
+
+    this.socket.on('getSelectedLocation', res => {
+      alert('Selected Location Received\n' + JSON.stringify(res));
+      this.socket.emit('sendSelectedLocation', {
+        socketId: res.socketId,
+        selectedLocation: this.selectedLocation,
+      });
+      this.locationSubject.next(res);
+    });
+
+    this.socket.on('getExistingSelectedLocation', res => {
+      alert('Existing Selected Location Received\n' + JSON.stringify(res));
+      this.locationSubject.next(res);
+    });
   }
 
   joinGroup() {
@@ -57,6 +80,14 @@ export class GroupSocketService {
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('joinGroup', this.userInfo);
     alert(`Should have joined group with uid: ${this.userInfo.groupUID}`)
+  }
+
+  selectLocation() {
+    alert(`Socket is: ${this.socket.connected}`);
+    //Add the unique socket id on join group.
+    this.selectedLocation.socketId = this.socket.io.engine.id;
+    this.socket.emit('selectLocation', this.selectedLocation);
+    alert(`Should have selected location with ${JSON.stringify(this.selectedLocation)}`)
   }
 
   private get getUID(): Observable<string> {
