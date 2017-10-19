@@ -18,7 +18,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { Clipboard } from '@ionic-native/clipboard';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
-
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
 @NgModule({
   declarations: [
     MyApp,
@@ -51,6 +51,7 @@ import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
     Clipboard,
     NativeStorage,
     GroupSocketService,
+    LaunchNavigator,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
