@@ -19,13 +19,13 @@ export class LocationPage {
     this.group_uid = params.get('group_uid');
   }
 
-  selectLocation(latitude, longitude, group_uid) {
+  selectLocation(latitude, longitude, title) {
     console.log('selected location!', latitude, longitude);
-    console.log('group_uid', group_uid);
+    console.log('group_uid', this.group_uid);
     this.dismiss();
     this.navCtrl.push(HomePage, {
-      selectedLocation: { latitude, longitude },
-      group_uid,
+      selectedLocation: { latitude, longitude, title },
+      group_uid: this.group_uid,
     });
   }
 

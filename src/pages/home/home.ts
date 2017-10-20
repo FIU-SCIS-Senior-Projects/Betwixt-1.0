@@ -29,6 +29,12 @@ interface Coordinates {
   longitude: number;
 }
 
+interface SelectedLocation {
+  title: string;
+  latitude: number;
+  longitude: number;
+}
+
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
   // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
@@ -44,7 +50,7 @@ export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
   gravatarUrl: string;
-  selectedLocation: Coordinates;
+  selectedLocation: SelectedLocation;
 
   //For use outisde promise chain.
   latitude: number;
@@ -200,7 +206,7 @@ export class HomePage {
             )}`
           );
           this.dropMarker(
-            'Selected Location',
+            selectedLocation.title,
             'red',
             selectedLocation.latitude,
             selectedLocation.longitude,
@@ -208,7 +214,7 @@ export class HomePage {
             {
               launchNavigator: this.launchNavigator,
               currentPosition: currentPosition.coords,
-              centralPosition: selectedLocation,
+              selectedPosition: selectedLocation,
             }
           );
           this.locations = [];
@@ -262,30 +268,35 @@ export class HomePage {
   }
 
   launchMapsDirections(params) {
-    let launchNavigator = params.launchNavigator;
-    launchNavigator
-      .isAppAvailable(launchNavigator.APP.GOOGLE_MAPS)
-      .then(available => {
-        let app: string;
-        if (available) app = launchNavigator.APP.GOOGLE_MAPS;
-        else app = launchNavigator.APP.USER_SELECT;
+    // TODO: we need our own confirmation dialog because the title
+    // of this is index.html and we dont want the user to see that
+    if(confirm(`Would you like directions to ${params.selectedPosition.title}?`)) {
+      let launchNavigator = params.launchNavigator;
 
-        launchNavigator
-          .navigate(
-            [params.centralPosition.latitude, params.centralPosition.longitude],
-            {
-              app: app,
-              start: [
-                params.currentPosition.latitude,
-                params.currentPosition.longitude,
-              ],
-            }
-          )
-          .then(
-            success => alert('Map launching...'),
-            error => alert('Maps application failed to open!')
-          );
-      });
+      launchNavigator
+        .isAppAvailable(launchNavigator.APP.GOOGLE_MAPS)
+        .then(available => {
+          let app: string;
+          if (available) app = launchNavigator.APP.GOOGLE_MAPS;
+          else app = launchNavigator.APP.USER_SELECT;
+
+          launchNavigator
+            .navigate(
+              [params.selectedPosition.latitude, params.selectedPosition.longitude],
+              {
+                app: app,
+                start: [
+                  params.currentPosition.latitude,
+                  params.currentPosition.longitude,
+                ],
+              }
+            )
+            .then(
+              success => alert('Map launching...'),
+              error => alert('Maps application failed to open!')
+            );
+        });
+    }
   }
 
   showCreateSpaceModal() {
@@ -349,6 +360,7 @@ export class HomePage {
         groupUID: this.groupSocketService.userInfo.groupUID,
         latitude: this.selectedLocation.latitude,
         longitude: this.selectedLocation.longitude,
+        title: this.selectedLocation.title,
       };
 
       this.groupSocketService.selectLocation();

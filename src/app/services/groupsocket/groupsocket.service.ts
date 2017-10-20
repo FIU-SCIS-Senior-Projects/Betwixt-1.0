@@ -15,6 +15,7 @@ export interface UserInfo {
 }
 
 export interface SelectedLocation {
+  title?: string;
   groupUID?: string;
   socketId?: string;
   latitude?: number;
