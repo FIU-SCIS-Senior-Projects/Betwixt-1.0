@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-navbar>
+    <ion-buttons start>
+      <button ion-button icon-only (click)="dismiss()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Select A Location</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content *ngIf="locations">
+  <ion-card *ngFor="let location of locations">
+    <img *ngIf="location?.full_img" src="location?.full_img"/>
+    <ion-card-content>
+      <ion-card-title class="flex-center">
+        {{ location?.title }}
+        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>
+      </ion-card-title>
+      <div *ngIf="location?.no_wifi > 0" class="no-wifi">
+        <ion-badge color="danger">No WiFi</ion-badge>
+      </div>
+      <p>{{ location?.description }}</p>
+      <br/>
+      <p>{{ location?.distance }} miles away from central location!</p>
+    </ion-card-content>
+    <ion-row no-padding>
+      <ion-col text-left>
+        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">
+          <ion-icon name="checkmark"></ion-icon>
+          Select
+        </button>
+      </ion-col>
+      <ion-col text-right>
+        <button ion-button clear icon-start>
+          <ion-icon name="more"></ion-icon>
+          More Info
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+</ion-content>

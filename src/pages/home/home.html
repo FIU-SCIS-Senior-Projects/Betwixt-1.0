@@ -1,4 +1,10 @@
 <div id="map" class="map-canvas">
   <img id="profile-icon" [src]="gravatarUrl || 'assets/profile.jpg'" on-tap="presentProfilePage()" />
-  <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>
+  <div class="button-group">
+    <div *ngIf="locations?.length > 0 && groupSocketService.userInfo.groupUID" class="location-button">
+      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>
+    </div>
+    <!-- TODO: if user is in a space, the button should change to 'Leave space' -->
+    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>
+  </div>
 </div>
