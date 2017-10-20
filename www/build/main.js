@@ -42,10 +42,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 // TODO: remove random coordinates
 var RANDOM_GEOCOORDINATES = [
-    // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-    // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
-    { latitude: 38.5678818, longitude: -121.4636956 },
-    { latitude: 37.2972316, longitude: -122.0976092 },
+    { latitude: 25.992046, longitude: -80.283645 },
+    { latitude: 25.942871, longitude: -80.12338 },
 ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, googleMaps, groupSocketService, nativeStorage, navParams, navCtrl, events, launchNavigator) {
@@ -391,12 +389,10 @@ var GroupSocketService = (function () {
     function GroupSocketService(http, configService) {
         var _this = this;
         this.http = http;
-        //LOCALHOST
-        this.socketHost = 'http://localhost:8080/';
         this.userInfos = [];
         this.userInfoSubject = new __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__["Subject"]();
         this.locationSubject = new __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__["Subject"]();
-        // this.socketHost = configService.serverUrl;
+        this.socketHost = configService.serverUrl;
         //Initialize userInfos object.
         this.uid = this.getUID;
         this.socket = __WEBPACK_IMPORTED_MODULE_5_socket_io_client__(this.socketHost);
@@ -914,8 +910,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 
 
-// const SERVER_URL = 'https://server.betwixt.space/';
-var SERVER_URL = 'http://localhost:8080';
+var SERVER_URL = 'https://server.betwixt.space/';
+// const SERVER_URL = 'http://localhost:8080';
 var ConfigService = (function () {
     function ConfigService() {
         console.info('CONFIG-SERVICE');
