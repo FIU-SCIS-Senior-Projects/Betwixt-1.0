@@ -40,6 +40,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+// TODO: remove random coordinates
 var RANDOM_GEOCOORDINATES = [
     // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
     // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
@@ -165,7 +166,7 @@ var HomePage = (function () {
                 _this.dropMarker(userInfo.username, 'blue', userInfo.latitude, userInfo.longitude);
             });
             _this.groupSocketService.locationSubject.subscribe(function (selectedLocation) {
-                alert("Marker dropped for selected location " + JSON.stringify(selectedLocation));
+                console.log("Marker dropped for selected location " + JSON.stringify(selectedLocation));
                 _this.dropMarker(selectedLocation.title, 'red', selectedLocation.latitude, selectedLocation.longitude, _this.launchMapsDirections, {
                     launchNavigator: _this.launchNavigator,
                     currentPosition: currentPosition.coords,
@@ -197,6 +198,7 @@ var HomePage = (function () {
     HomePage.prototype.getWorkfromLocations = function (centralPosition) {
         var _this = this;
         var latitude = centralPosition.latitude, longitude = centralPosition.longitude;
+        // TODO: we need to expand the radius or have some option for the user to expand it
         this.workfromService
             .getPlaces(latitude, longitude, { radius: 20 })
             .subscribe(function (res) {
@@ -210,6 +212,8 @@ var HomePage = (function () {
         });
     };
     HomePage.prototype.launchMapsDirections = function (params) {
+        // TODO: we need our own confirmation dialog because the title
+        // of this is index.html and we dont want the user to see that
         if (confirm("Would you like directions to " + params.selectedPosition.title + "?")) {
             var launchNavigator_1 = params.launchNavigator;
             launchNavigator_1
@@ -221,7 +225,10 @@ var HomePage = (function () {
                 else
                     app = launchNavigator_1.APP.USER_SELECT;
                 launchNavigator_1
-                    .navigate([params.selectedPosition.latitude, params.selectedPosition.longitude], {
+                    .navigate([
+                    params.selectedPosition.latitude,
+                    params.selectedPosition.longitude,
+                ], {
                     app: app,
                     start: [
                         params.currentPosition.latitude,
@@ -268,11 +275,12 @@ var HomePage = (function () {
         });
     };
     HomePage.prototype.showLocationsModal = function () {
-        var locationsModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_11__location_location__["a" /* LocationPage */], {
+        this.modalCtrl
+            .create(__WEBPACK_IMPORTED_MODULE_11__location_location__["a" /* LocationPage */], {
             locations: this.locations,
             group_uid: this.groupSocketService.userInfo.groupUID,
-        });
-        locationsModal.present();
+        })
+            .present();
     };
     HomePage.prototype.selectLocation = function () {
         if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
@@ -315,7 +323,7 @@ var HomePage = (function () {
             position: { lat: lat, lng: lng },
         })
             .then(function (marker) {
-            if (clickFunction != undefined)
+            if (clickFunction !== undefined)
                 marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function (res) {
                     clickFunction(clickFunctionParams);
                 });
@@ -329,7 +337,7 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="locations?.length > 0 && groupSocketService.userInfo.groupUID" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n  </div>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="locations?.length > 0 && groupSocketService.userInfo.groupUID" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <!-- TODO: if user is in a space, the button should change to \'Leave space\' -->\n    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n  </div>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* ModalController */],

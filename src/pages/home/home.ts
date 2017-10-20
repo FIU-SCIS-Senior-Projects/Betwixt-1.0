@@ -19,9 +19,7 @@ import { ProfilePage } from '../profile/profile';
 import { NativeStorage } from '@ionic-native/native-storage';
 import geolib from 'geolib';
 import gravatar from 'gravatar';
-import {
-  LaunchNavigator,
-} from '@ionic-native/launch-navigator';
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../location/location';
 
 interface Coordinates {
@@ -35,6 +33,7 @@ interface SelectedLocation {
   longitude: number;
 }
 
+// TODO: remove random coordinates
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
   // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
@@ -200,7 +199,7 @@ export class HomePage {
         });
 
         this.groupSocketService.locationSubject.subscribe(selectedLocation => {
-          alert(
+          console.log(
             `Marker dropped for selected location ${JSON.stringify(
               selectedLocation
             )}`
@@ -243,7 +242,7 @@ export class HomePage {
         'Central Location',
         'purple',
         centralPosition.latitude,
-        centralPosition.longitude,
+        centralPosition.longitude
       );
       return resolve(centralPosition);
     });
@@ -252,6 +251,7 @@ export class HomePage {
   getWorkfromLocations(centralPosition) {
     const { latitude, longitude } = centralPosition;
 
+    // TODO: we need to expand the radius or have some option for the user to expand it
     this.workfromService
       .getPlaces(latitude, longitude, { radius: 20 })
       .subscribe(res => {
@@ -270,7 +270,9 @@ export class HomePage {
   launchMapsDirections(params) {
     // TODO: we need our own confirmation dialog because the title
     // of this is index.html and we dont want the user to see that
-    if(confirm(`Would you like directions to ${params.selectedPosition.title}?`)) {
+    if (
+      confirm(`Would you like directions to ${params.selectedPosition.title}?`)
+    ) {
       let launchNavigator = params.launchNavigator;
 
       launchNavigator
@@ -282,7 +284,10 @@ export class HomePage {
 
           launchNavigator
             .navigate(
-              [params.selectedPosition.latitude, params.selectedPosition.longitude],
+              [
+                params.selectedPosition.latitude,
+                params.selectedPosition.longitude,
+              ],
               {
                 app: app,
                 start: [
@@ -344,12 +349,12 @@ export class HomePage {
   }
 
   showLocationsModal() {
-    let locationsModal = this.modalCtrl.create(LocationPage, {
-      locations: this.locations,
-      group_uid: this.groupSocketService.userInfo.groupUID,
-    });
-
-    locationsModal.present();
+    this.modalCtrl
+      .create(LocationPage, {
+        locations: this.locations,
+        group_uid: this.groupSocketService.userInfo.groupUID,
+      })
+      .present();
   }
 
   private selectLocation() {
@@ -404,7 +409,7 @@ export class HomePage {
         position: { lat, lng },
       })
       .then(marker => {
-        if (clickFunction != undefined)
+        if (clickFunction !== undefined)
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);
           });
