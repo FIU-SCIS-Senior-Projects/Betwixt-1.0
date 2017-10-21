@@ -1,6 +1,7 @@
 import { Component } from '@angular/core/';
 import { NavParams, ViewController, NavController } from 'ionic-angular';
 import { HomePage } from '../home/home';
+import { PreferenceOptions } from '../preferences/preference-options';
 
 @Component({
   selector: 'page-location',
@@ -9,6 +10,7 @@ import { HomePage } from '../home/home';
 export class LocationPage {
   locations;
   group_uid;
+  public preferences : PreferenceOptions;
 
   constructor(
     public viewCtrl: ViewController,
@@ -17,6 +19,10 @@ export class LocationPage {
   ) {
     this.locations = params.get('locations');
     this.group_uid = params.get('group_uid');
+    this.preferences = params.get('preferences');
+
+    this.sortByPreference();
+
   }
 
   selectLocation(latitude, longitude, title) {
@@ -27,6 +33,48 @@ export class LocationPage {
       selectedLocation: { latitude, longitude, title },
       group_uid: this.group_uid,
     });
+  }
+
+  sortByPreference()
+  {
+    console.log(this.locations);
+    this.locations.sort(this.preferenceCompare(this.preferences));
+  }
+
+  //Comparison function passed into sort.
+  preferenceCompare(preferences)
+  {
+    return (a,b) => {
+    //Amount of preferences a and b match.
+    let aCount = 0;
+    let bCount = 0;
+    console.log(preferences);
+
+    if(preferences.hasWifi)
+    {
+      if(a.no_wifi == "0")
+        aCount++;
+      if(b.no_wifi == "0")
+        bCount++;
+    }
+    if(preferences.localDeals)
+    {
+      if(a.local_deal_flag == "1")
+        aCount++;
+      if(b.local_deal_flag == "1")
+        bCount++;
+    }
+
+    //If a matches more preferences, put it first.
+    if(aCount > bCount)
+      return -1;
+    //if b matches more preferences, put it first.
+    if(bCount > aCount)
+      return 1;
+    //Have the same preference count so do nothing.
+    else
+      return 0;
+  }
   }
 
   dismiss() {

@@ -7,18 +7,19 @@ webpackJsonp([1],{
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__ = __webpack_require__(241);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__space_space__ = __webpack_require__(243);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__app_services_groupsocket_groupsocket_service__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__profile_profile__ = __webpack_require__(143);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_native_storage__ = __webpack_require__(280);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_geolib__ = __webpack_require__(622);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_geolib__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar__ = __webpack_require__(623);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_gravatar__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__location_location__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__preferences_preferences__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__ = __webpack_require__(134);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__profile_profile__ = __webpack_require__(143);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__ = __webpack_require__(281);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib__ = __webpack_require__(623);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_geolib__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar__ = __webpack_require__(624);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10_gravatar__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__location_location__ = __webpack_require__(283);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -40,10 +41,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 // TODO: remove random coordinates
 var RANDOM_GEOCOORDINATES = [
     { latitude: 25.992046, longitude: -80.283645 },
-    { latitude: 25.942871, longitude: -80.12338 },
+    { latitude: 25.942871, longitude: -80.12338 } // Sunny Isles
+    // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
+    // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, googleMaps, groupSocketService, nativeStorage, navParams, navCtrl, events, launchNavigator) {
@@ -58,45 +62,47 @@ var HomePage = (function () {
         this.navCtrl = navCtrl;
         this.events = events;
         this.launchNavigator = launchNavigator;
+        this.spaceCreated = false;
         //Generate random username and pass to socketservice.
         this.username = "TestUser" + Math.floor(Math.random() * 100);
         this.groupSocketService.username = this.username;
-        events.subscribe('profile:saved', function (profile) {
-            _this.nativeStorage.setItem('email', profile.email);
-            _this.nativeStorage.setItem('firstName', profile.firstName);
-            _this.nativeStorage.setItem('lastName', profile.lastName);
-            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_9_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
-            _this.nativeStorage.setItem('gravatarUrl', _this.gravatarUrl);
+        events.subscribe("profile:saved", function (profile) {
+            _this.nativeStorage.setItem("email", profile.email);
+            _this.nativeStorage.setItem("firstName", profile.firstName);
+            _this.nativeStorage.setItem("lastName", profile.lastName);
+            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_10_gravatar___default.a.url(profile.email, { s: "100", d: "mm" }, true);
+            _this.nativeStorage.setItem("gravatarUrl", _this.gravatarUrl);
         });
     }
     HomePage.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.log('Ion view loaded.');
+        console.log("Ion view loaded.");
         this.platform
             .ready()
             .then(function () { return _this.initialSetup(); })
             .then(function () {
-            alert('platform ready...');
-            _this.host_uid = _this.navParams.get('group_uid');
-            alert("got host uid " + _this.host_uid);
-            _this.selectedLocation = _this.navParams.get('selectedLocation');
-            alert("got selectedLocation " + _this.selectedLocation);
+            _this.host_uid = _this.navParams.get("group_uid");
+            _this.selectedLocation = _this.navParams.get("selectedLocation");
             _this.joinHostGroup();
             _this.selectLocation();
-            // this.locations = [{
-            //   title: 'Starbucks',
-            //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-            //   type: 'free',
-            //   distance: 12,
-            //   no_wifi: 1
-            // },
-            // {
-            //   title: 'Starbucks',
-            //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-            //   type: 'commercial',
-            //   distance: 5,
-            //   no_wifi: 0
-            // }]
+            /*
+             this.locations = [{
+               title: 'Starbucks',
+               description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+               type: 'free',
+               distance: 12,
+               no_wifi: 1,
+               local_deal_flag: 1
+             },
+             {
+               title: 'Starbucks',
+               description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+               type: 'commercial',
+               distance: 5,
+               no_wifi: 0,
+               local_deal_flag: 0
+             }]
+             */
             return _this.getCurrentPosition();
         })
             .then(function (currentPosition) { return _this.loadMap(currentPosition); })
@@ -106,15 +112,15 @@ var HomePage = (function () {
     };
     HomePage.prototype.initialSetup = function () {
         var _this = this;
-        this.nativeStorage.getItem('gravatarUrl').then(function (url) {
+        this.nativeStorage.getItem("gravatarUrl").then(function (url) {
             _this.gravatarUrl = url;
         }, function (error) {
             console.log(error);
         });
     };
     HomePage.prototype.presentProfilePage = function () {
-        var profileData = this.getProfileData('email', 'firstName', 'lastName');
-        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__profile_profile__["a" /* ProfilePage */], { profileData: profileData });
+        var profileData = this.getProfileData("email", "firstName", "lastName");
+        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__profile_profile__["a" /* ProfilePage */], { profileData: profileData });
     };
     HomePage.prototype.getProfileData = function () {
         var _this = this;
@@ -128,7 +134,7 @@ var HomePage = (function () {
                 profileData[key] = value;
             }, function (error) {
                 console.log(error);
-                profileData[key] = '';
+                profileData[key] = "";
             });
         });
         return profileData;
@@ -142,33 +148,33 @@ var HomePage = (function () {
             camera: {
                 target: {
                     lat: latitude,
-                    lng: longitude,
+                    lng: longitude
                 },
                 zoom: 18,
-                tilt: 30,
-            },
+                tilt: 30
+            }
         };
-        this.mapElement = document.getElementById('map');
+        this.mapElement = document.getElementById("map");
         this.map = this.googleMaps.create(this.mapElement, mapOptions);
         return this.map
             .one(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MAP_READY)
             .then(function () {
-            console.log('Map is ready!');
-            _this.dropMarker('Current Location', 'green', latitude, longitude);
+            console.log("Map is ready!");
+            _this.dropMarker("Current Location", "green", latitude, longitude);
             RANDOM_GEOCOORDINATES.forEach(function (position, index) {
                 var latitude = position.latitude, longitude = position.longitude;
-                _this.dropMarker("Location " + (index + 1), 'blue', latitude, longitude);
+                _this.dropMarker("Location " + (index + 1), "blue", latitude, longitude);
             });
             _this.groupSocketService.userInfoSubject.subscribe(function (userInfo) {
                 console.log("Marker dropped for user: " + userInfo.username);
-                _this.dropMarker(userInfo.username, 'blue', userInfo.latitude, userInfo.longitude);
+                _this.dropMarker(userInfo.username, "blue", userInfo.latitude, userInfo.longitude);
             });
             _this.groupSocketService.locationSubject.subscribe(function (selectedLocation) {
                 console.log("Marker dropped for selected location " + JSON.stringify(selectedLocation));
-                _this.dropMarker(selectedLocation.title, 'red', selectedLocation.latitude, selectedLocation.longitude, _this.launchMapsDirections, {
+                _this.dropMarker(selectedLocation.title, "red", selectedLocation.latitude, selectedLocation.longitude, _this.launchMapsDirections, {
                     launchNavigator: _this.launchNavigator,
                     currentPosition: currentPosition.coords,
-                    selectedPosition: selectedLocation,
+                    selectedPosition: selectedLocation
                 });
                 _this.locations = [];
             });
@@ -178,7 +184,7 @@ var HomePage = (function () {
     };
     HomePage.prototype.getCurrentPosition = function () {
         var options = {
-            enableHighAccuracy: true,
+            enableHighAccuracy: true
         };
         return new Promise(function (resolve, reject) {
             navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -188,8 +194,8 @@ var HomePage = (function () {
         var _this = this;
         var locations = [currentPostion].concat(RANDOM_GEOCOORDINATES);
         return new Promise(function (resolve) {
-            var centralPosition = __WEBPACK_IMPORTED_MODULE_8_geolib___default.a.getCenterOfBounds(locations);
-            _this.dropMarker('Central Location', 'purple', centralPosition.latitude, centralPosition.longitude);
+            var centralPosition = __WEBPACK_IMPORTED_MODULE_9_geolib___default.a.getCenterOfBounds(locations);
+            _this.dropMarker("Central Location", "purple", centralPosition.latitude, centralPosition.longitude);
             return resolve(centralPosition);
         });
     };
@@ -225,70 +231,79 @@ var HomePage = (function () {
                 launchNavigator_1
                     .navigate([
                     params.selectedPosition.latitude,
-                    params.selectedPosition.longitude,
+                    params.selectedPosition.longitude
                 ], {
                     app: app,
                     start: [
                         params.currentPosition.latitude,
-                        params.currentPosition.longitude,
-                    ],
+                        params.currentPosition.longitude
+                    ]
                 })
-                    .then(function (success) { return alert('Map launching...'); }, function (error) { return alert('Maps application failed to open!'); });
+                    .then(function (success) { return alert("Map launching..."); }, function (error) { return alert("Maps application failed to open!"); });
             });
         }
     };
     HomePage.prototype.showCreateSpaceModal = function () {
         var _this = this;
-        //On open space modal, subscribe to group uid from server.
-        this.groupSocketService.uid.subscribe(
-        //User's info object that will be sent to server.
-        function (group_uid) {
-            _this.groupSocketService.userInfo = {
-                socketID: '',
-                groupUID: group_uid,
-                username: _this.username,
-                latitude: _this.latitude,
-                longitude: _this.longitude,
-            };
-            console.log(group_uid);
-            //Join the room specified by the group uid.
-            _this.groupSocketService.joinGroup();
-            //Create modal.
-            var spaceModal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_4__space_space__["a" /* SpacePage */], {
-                uid: group_uid,
-            });
-            spaceModal.present();
-            spaceModal.onDidDismiss(function (data) {
-                _this.groupSocketService.userInfos = [];
-            });
-        }, function (error) {
-            //Create modal.
-            var spaceModal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_4__space_space__["a" /* SpacePage */], {
-                uid: '',
-            });
-            spaceModal.present();
-            spaceModal.onDidDismiss(function (data) {
-                _this.groupSocketService.userInfos = [];
-            });
+        var preferencesModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_5__preferences_preferences__["a" /* PreferencesPage */]);
+        preferencesModal.present();
+        preferencesModal.onDidDismiss(function (preferences) {
+            //If the next button was clicked, preferences were passed.
+            if (preferences != undefined) {
+                _this.spacePreferences = preferences;
+                //On open space modal, subscribe to group uid from server.
+                _this.groupSocketService.uid.subscribe(
+                //User's info object that will be sent to server.
+                function (group_uid) {
+                    _this.groupSocketService.userInfo = {
+                        socketID: "",
+                        groupUID: group_uid,
+                        username: _this.username,
+                        latitude: _this.latitude,
+                        longitude: _this.longitude
+                    };
+                    console.log(group_uid);
+                    //Join the room specified by the group uid.
+                    _this.groupSocketService.joinGroup();
+                    //Create modal.
+                    var spaceModal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_4__space_space__["a" /* SpacePage */], {
+                        uid: group_uid
+                    });
+                    spaceModal.present();
+                    spaceModal.onDidDismiss(function (data) {
+                        _this.groupSocketService.userInfos = [];
+                        _this.spaceCreated = true;
+                    });
+                }, function (error) {
+                    //Create modal.
+                    var spaceModal = _this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_4__space_space__["a" /* SpacePage */], {
+                        uid: ""
+                    });
+                    spaceModal.present();
+                    spaceModal.onDidDismiss(function (data) {
+                        _this.groupSocketService.userInfos = [];
+                    });
+                });
+            }
         });
     };
     HomePage.prototype.showLocationsModal = function () {
         this.modalCtrl
-            .create(__WEBPACK_IMPORTED_MODULE_11__location_location__["a" /* LocationPage */], {
+            .create(__WEBPACK_IMPORTED_MODULE_12__location_location__["a" /* LocationPage */], {
             locations: this.locations,
             group_uid: this.groupSocketService.userInfo.groupUID,
+            preferences: this.spacePreferences
         })
             .present();
     };
     HomePage.prototype.selectLocation = function () {
         if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
-            alert("Got selected location! " + JSON.stringify(this.selectedLocation));
             this.groupSocketService.selectedLocation = {
-                socketId: '',
+                socketId: "",
                 groupUID: this.groupSocketService.userInfo.groupUID,
                 latitude: this.selectedLocation.latitude,
                 longitude: this.selectedLocation.longitude,
-                title: this.selectedLocation.title,
+                title: this.selectedLocation.title
             };
             this.groupSocketService.selectLocation();
             this.navCtrl.pop();
@@ -296,16 +311,13 @@ var HomePage = (function () {
     };
     //If routed from the deeplink, join the room.
     HomePage.prototype.joinHostGroup = function () {
-        // when there is a selected location, then that means that we have already joined a group
-        // const isJoinedGroup = this.groupSocketService.socket.sockets.adapter.sids[this.groupSocketService.userInfo.socketID][this.groupSocketService.uid];
         if (this.host_uid && this.selectedLocation === undefined) {
-            alert("Joining group " + this.host_uid);
             this.groupSocketService.userInfo = {
-                socketID: '',
+                socketID: "",
                 groupUID: this.host_uid,
                 username: this.username,
                 latitude: this.latitude,
-                longitude: this.longitude,
+                longitude: this.longitude
             };
             //Join the room specified by the group uid.
             this.groupSocketService.joinGroup();
@@ -317,8 +329,8 @@ var HomePage = (function () {
             .addMarker({
             title: title,
             icon: icon,
-            animation: 'DROP',
-            position: { lat: lat, lng: lng },
+            animation: "DROP",
+            position: { lat: lat, lng: lng }
         })
             .then(function (marker) {
             if (clickFunction !== undefined)
@@ -335,18 +347,18 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="locations?.length > 0 && groupSocketService.userInfo.groupUID" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <!-- TODO: if user is in a space, the button should change to \'Leave space\' -->\n    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n  </div>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
+        selector: "page-home",template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="spaceCreated" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <!-- TODO: if user is in a space, the button should change to \'Leave space\' -->\n    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n  </div>\n</div>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* ModalController */],
         __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
         __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
-        __WEBPACK_IMPORTED_MODULE_5__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */],
-        __WEBPACK_IMPORTED_MODULE_7__ionic_native_native_storage__["a" /* NativeStorage */],
+        __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */],
+        __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* Events */],
-        __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__["a" /* LaunchNavigator */]])
+        __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */]])
 ], HomePage);
 
 //# sourceMappingURL=home.js.map
@@ -361,13 +373,13 @@ HomePage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__ = __webpack_require__(333);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__ = __webpack_require__(334);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_subject__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(59);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client__ = __webpack_require__(334);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client__ = __webpack_require__(335);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_socket_io_client__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__ = __webpack_require__(357);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__ = __webpack_require__(358);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -398,7 +410,6 @@ var GroupSocketService = (function () {
         this.socket = __WEBPACK_IMPORTED_MODULE_5_socket_io_client__(this.socketHost);
         //Add user information when a new user joins.
         this.socket.on('getNewUserInfo', function (res) {
-            alert('User info added\n' + JSON.stringify(res));
             _this.userInfos.push(res);
             _this.socket.emit('sendUserInfo', {
                 socketID: res.socketID,
@@ -407,12 +418,10 @@ var GroupSocketService = (function () {
             _this.userInfoSubject.next(res);
         });
         this.socket.on('getExistingUserInfo', function (res) {
-            alert('User info added\n' + JSON.stringify(res));
             _this.userInfos.push(res);
             _this.userInfoSubject.next(res);
         });
         this.socket.on('getSelectedLocation', function (res) {
-            alert('Selected Location Received\n' + JSON.stringify(res));
             _this.socket.emit('sendSelectedLocation', {
                 socketId: res.socketId,
                 selectedLocation: _this.selectedLocation,
@@ -420,23 +429,18 @@ var GroupSocketService = (function () {
             _this.locationSubject.next(res);
         });
         this.socket.on('getExistingSelectedLocation', function (res) {
-            alert('Existing Selected Location Received\n' + JSON.stringify(res));
             _this.locationSubject.next(res);
         });
     }
     GroupSocketService.prototype.joinGroup = function () {
-        alert("Socket is: " + this.socket.connected);
         //Add the unique socket id on join group.
         this.userInfo.socketID = this.socket.io.engine.id;
         this.socket.emit('joinGroup', this.userInfo);
-        alert("Should have joined group with uid: " + this.userInfo.groupUID);
     };
     GroupSocketService.prototype.selectLocation = function () {
-        alert("Socket is: " + this.socket.connected);
         //Add the unique socket id on join group.
         this.selectedLocation.socketId = this.socket.io.engine.id;
         this.socket.emit('selectLocation', this.selectedLocation);
-        alert("Should have selected location with " + JSON.stringify(this.selectedLocation));
     };
     Object.defineProperty(GroupSocketService.prototype, "getUID", {
         get: function () {
@@ -467,7 +471,7 @@ GroupSocketService = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfilePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -498,7 +502,7 @@ var ProfilePage = (function () {
 ProfilePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["e" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-profile',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/'<ion-header>\n        <ion-navbar>\n            <button ion-button menuToggle>\n              <ion-icon name="menu"></ion-icon>\n            </button>\n            <ion-title>Profile</ion-title>\n          </ion-navbar>\n    </ion-header>\n    <ion-content>\n        <div class="flex-center-align">\n            <form>\n                <ion-item>\n                    <ion-label stacked>Email Address</ion-label>\n                    <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>First Name</ion-label>\n                    <ion-input name="First Name" [(ngModel)]="profile.firstName" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>Last Name</ion-label>\n                    <ion-input name="Last Name" [(ngModel)]="profile.lastName" type="text"></ion-input>\n                </ion-item>\n            </form>\n        </div>\n    </ion-content>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/,
+        selector: 'page-profile',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\profile\profile.html"*/'<ion-header>\n        <ion-navbar>\n            <button ion-button menuToggle>\n              <ion-icon name="menu"></ion-icon>\n            </button>\n            <ion-title>Profile</ion-title>\n          </ion-navbar>\n    </ion-header>\n    <ion-content>\n        <div class="flex-center-align">\n            <form>\n                <ion-item>\n                    <ion-label stacked>Email Address</ion-label>\n                    <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>First Name</ion-label>\n                    <ion-input name="First Name" [(ngModel)]="profile.firstName" type="text"></ion-input>\n                </ion-item>\n                <ion-item>\n                    <ion-label stacked>Last Name</ion-label>\n                    <ion-input name="Last Name" [(ngModel)]="profile.lastName" type="text"></ion-input>\n                </ion-item>\n            </form>\n        </div>\n    </ion-content>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\profile\profile.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* NavController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["a" /* Events */]])
 ], ProfilePage);
@@ -529,7 +533,7 @@ webpackEmptyAsyncContext.id = 153;
 
 var map = {
 	"../pages/profile/profile.module": [
-		634,
+		635,
 		0
 	]
 };
@@ -611,7 +615,7 @@ WorkfromService = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SpacePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__ = __webpack_require__(244);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -643,7 +647,7 @@ var SpacePage = (function () {
 }());
 SpacePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-space',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/,
+        selector: 'page-space',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__["a" /* Clipboard */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */]])
 ], SpacePage);
@@ -652,13 +656,55 @@ SpacePage = __decorate([
 
 /***/ }),
 
-/***/ 282:
+/***/ 245:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PreferencesPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var PreferencesPage = (function () {
+    function PreferencesPage(viewCtrl, params) {
+        this.viewCtrl = viewCtrl;
+        this.preferenceOptions = { hasWifi: false, localDeals: false };
+    }
+    PreferencesPage.prototype.dismiss = function () {
+        this.viewCtrl.dismiss();
+    };
+    PreferencesPage.prototype.next = function () {
+        this.viewCtrl.dismiss(this.preferenceOptions);
+    };
+    return PreferencesPage;
+}());
+PreferencesPage = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
+        selector: 'preferences',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\preferences\preferences.html"*/'<div>\n\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n\n        <ion-icon name="close"></ion-icon>\n\n    </button>\n\n    <div class="flex-center-align">\n\n        <h1>Select your preferences</h1>\n\n        <ion-list>\n\n\n\n            <ion-item>\n\n                <ion-label>Has Wi-Fi</ion-label>\n\n                <ion-toggle [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n\n            </ion-item>\n\n\n\n            <ion-item>\n\n                <ion-label>Has Local Deals</ion-label>\n\n                <ion-toggle [(ngModel)]="preferenceOptions.localDeals"></ion-toggle>\n\n            </ion-item>\n\n\n\n        </ion-list>\n\n        <button ion-button icon-only clear large class="icon-button" (click)="next()">\n\n            <ion-icon name="arrow-round-forward"></ion-icon>\n\n        </button>\n\n\n\n    </div>\n\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\preferences\preferences.html"*/,
+    }),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */]])
+], PreferencesPage);
+
+//# sourceMappingURL=preferences.js.map
+
+/***/ }),
+
+/***/ 283:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LocationPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__home_home__ = __webpack_require__(133);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -678,6 +724,8 @@ var LocationPage = (function () {
         this.navCtrl = navCtrl;
         this.locations = params.get('locations');
         this.group_uid = params.get('group_uid');
+        this.preferences = params.get('preferences');
+        this.sortByPreference();
     }
     LocationPage.prototype.selectLocation = function (latitude, longitude, title) {
         console.log('selected location!', latitude, longitude);
@@ -688,6 +736,39 @@ var LocationPage = (function () {
             group_uid: this.group_uid,
         });
     };
+    LocationPage.prototype.sortByPreference = function () {
+        console.log(this.locations);
+        this.locations.sort(this.preferenceCompare(this.preferences));
+    };
+    //Comparison function passed into sort.
+    LocationPage.prototype.preferenceCompare = function (preferences) {
+        return function (a, b) {
+            //Amount of preferences a and b match.
+            var aCount = 0;
+            var bCount = 0;
+            console.log(preferences);
+            if (preferences.hasWifi) {
+                if (a.no_wifi == "0")
+                    aCount++;
+                if (b.no_wifi == "0")
+                    bCount++;
+            }
+            if (preferences.localDeals) {
+                if (a.local_deal_flag == "1")
+                    aCount++;
+                if (b.local_deal_flag == "1")
+                    bCount++;
+            }
+            //If a matches more preferences, put it first.
+            if (aCount > bCount)
+                return -1;
+            //if b matches more preferences, put it first.
+            if (bCount > aCount)
+                return 1;
+            else
+                return 0;
+        };
+    };
     LocationPage.prototype.dismiss = function () {
         this.viewCtrl.dismiss();
     };
@@ -695,7 +776,7 @@ var LocationPage = (function () {
 }());
 LocationPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-location',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.full_img" src="location?.full_img"/>\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/,
+        selector: 'page-location',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\location\location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.full_img" src="location?.full_img" />\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">\n        <ion-badge color="success">Local deals</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\location\location.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */],
@@ -706,13 +787,13 @@ LocationPage = __decorate([
 
 /***/ }),
 
-/***/ 283:
+/***/ 284:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(284);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(289);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -720,36 +801,38 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 288:
+/***/ 289:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(325);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(326);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(133);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_space_space__ = __webpack_require__(243);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_profile_profile__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(236);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(239);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(629);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(630);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(634);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_google_maps__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_deeplinks__ = __webpack_require__(240);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_clipboard__ = __webpack_require__(244);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_native_storage__ = __webpack_require__(280);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_native_storage__ = __webpack_require__(281);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__services_groupsocket_groupsocket_service__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_launch_navigator__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_location_location__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_launch_navigator__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_location_location__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__ = __webpack_require__(245);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -775,6 +858,7 @@ var components = [
     __WEBPACK_IMPORTED_MODULE_5__pages_space_space__["a" /* SpacePage */],
     __WEBPACK_IMPORTED_MODULE_6__pages_profile_profile__["a" /* ProfilePage */],
     __WEBPACK_IMPORTED_MODULE_18__pages_location_location__["a" /* LocationPage */],
+    __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__["a" /* PreferencesPage */]
 ];
 var AppModule = (function () {
     function AppModule() {
@@ -818,13 +902,13 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 325:
+/***/ 326:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(236);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(239);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_deeplinks__ = __webpack_require__(240);
@@ -872,7 +956,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["h" /* Nav */])
 ], MyApp.prototype, "navChild", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/,
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */],
@@ -884,7 +968,7 @@ MyApp = __decorate([
 
 /***/ }),
 
-/***/ 353:
+/***/ 354:
 /***/ (function(module, exports) {
 
 /* (ignored) */
@@ -897,7 +981,7 @@ MyApp = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(332);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(333);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_url_join__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -911,10 +995,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var SERVER_URL = 'https://server.betwixt.space/';
-// const SERVER_URL = 'http://localhost:8080';
+//For browser or iOS testing
+//const SERVER_URL = 'http://localhost:8080/';
+//For android emulator testing
+//const SERVER_URL = "http://10.0.2.2:8080/";
 var ConfigService = (function () {
     function ConfigService() {
-        console.info('CONFIG-SERVICE');
+        console.info("CONFIG-SERVICE");
     }
     Object.defineProperty(ConfigService.prototype, "serverUrl", {
         get: function () {
@@ -925,21 +1012,21 @@ var ConfigService = (function () {
     });
     Object.defineProperty(ConfigService.prototype, "getServerHelloWorld", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'helloworld');
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "helloworld");
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ConfigService.prototype, "yelpBusinessSearch", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'businesses', 'search');
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "businesses", "search");
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ConfigService.prototype, "workfromPlaces", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'places');
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "places");
         },
         enumerable: true,
         configurable: true
@@ -955,15 +1042,15 @@ ConfigService = __decorate([
 
 /***/ }),
 
-/***/ 629:
+/***/ 630:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ServicesModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(630);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(631);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(631);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(633);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__groupsocket_groupsocket_service__ = __webpack_require__(134);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -1016,7 +1103,7 @@ ServicesModule = __decorate([
 
 /***/ }),
 
-/***/ 630:
+/***/ 631:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1062,7 +1149,7 @@ SampleService = __decorate([
 
 /***/ }),
 
-/***/ 631:
+/***/ 632:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1092,7 +1179,7 @@ ConfigModule = __decorate([
 
 /***/ }),
 
-/***/ 632:
+/***/ 633:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1143,5 +1230,5 @@ YelpService = __decorate([
 
 /***/ })
 
-},[283]);
+},[284]);
 //# sourceMappingURL=main.js.map

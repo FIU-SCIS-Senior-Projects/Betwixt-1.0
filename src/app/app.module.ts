@@ -20,6 +20,7 @@ import { NativeStorage } from '@ionic-native/native-storage';
 import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../pages/location/location';
+import { PreferencesPage } from '../pages/preferences/preferences';
 
 const components = [
   MyApp,
@@ -27,6 +28,7 @@ const components = [
   SpacePage,
   ProfilePage,
   LocationPage,
+  PreferencesPage
 ]
 
 @NgModule({
