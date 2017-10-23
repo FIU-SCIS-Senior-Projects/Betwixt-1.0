@@ -4,6 +4,7 @@ import { ConfigModule } from './config/config.module';
 import { YelpService } from './yelp/yelp.service';
 import { WorkfromService } from './workfrom/workfrom.service';
 import { GroupSocketService } from './groupsocket/groupsocket.service';
+import { OnWaterService } from './onwater/onwater.service';
 
 const serviceModules = [ConfigModule];
 const serviceProviders = [
@@ -11,6 +12,7 @@ const serviceProviders = [
   YelpService,
   WorkfromService,
   GroupSocketService,
+  OnWaterService,
 ];
 
 @NgModule({

@@ -26,4 +26,8 @@ export class ConfigService {
   get workfromPlaces(): string {
     return urlJoin(SERVER_URL, 'places');
   }
+
+  get onWater(): string {
+    return 'https://api.onwater.io/api/v1/results/';
+  }
 }

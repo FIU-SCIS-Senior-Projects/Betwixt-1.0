@@ -13,6 +13,7 @@ import {
   Events,
 } from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+import { OnWaterService } from "../../app/services/onwater/onwater.service";
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
 import { ProfilePage } from '../profile/profile';
@@ -36,7 +37,7 @@ interface SelectedLocation {
 // TODO: remove random coordinates
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-  { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
+  { latitude: 25.942871, longitude: -180.12338 }, // Sunny Isles
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
@@ -60,11 +61,14 @@ export class HomePage {
   username: string;
 
   locations;
+  // If central location is on water
+  isOnWater: boolean;
 
   constructor(
     public platform: Platform,
     public modalCtrl: ModalController,
     private workfromService: WorkfromService,
+    private onWaterService: OnWaterService,
     private googleMaps: GoogleMaps,
     public groupSocketService: GroupSocketService,
     private nativeStorage: NativeStorage,
@@ -76,6 +80,7 @@ export class HomePage {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
+    this.isOnWater = false;
 
     events.subscribe('profile:saved', profile => {
       this.nativeStorage.setItem('email', profile.email);
@@ -181,11 +186,11 @@ export class HomePage {
       .then(() => {
         console.log('Map is ready!');
 
-        this.dropMarker('Current Location', 'green', latitude, longitude);
+        this.dropMarker('Current Location', 'green', latitude, longitude, false);
 
         RANDOM_GEOCOORDINATES.forEach((position, index) => {
           const { latitude, longitude } = position;
-          this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude);
+          this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude, false);
         });
 
         this.groupSocketService.userInfoSubject.subscribe(userInfo => {
@@ -194,7 +199,8 @@ export class HomePage {
             userInfo.username,
             'blue',
             userInfo.latitude,
-            userInfo.longitude
+            userInfo.longitude,
+            false
           );
         });
 
@@ -233,23 +239,31 @@ export class HomePage {
     });
   }
 
-  getCentralPosition(currentPostion: Coordinates) {
-    const locations = [currentPostion, ...RANDOM_GEOCOORDINATES];
+  getCentralPosition(currentPosition: Coordinates) {
+    const locations = [currentPosition, ...RANDOM_GEOCOORDINATES];
 
     return new Promise(resolve => {
       const centralPosition = geolib.getCenterOfBounds(locations);
-      this.dropMarker(
-        'Central Location',
-        'purple',
-        centralPosition.latitude,
-        centralPosition.longitude
-      );
+      this.onWaterService.checkForWater(centralPosition.latitude, centralPosition.longitude).subscribe(res => {
+        this.isOnWater = res.json().water;
+        if (this.isOnWater === true) {
+          alert("It seems that the central location is in water! You may move the pin and put it on land.")
+        }
+        this.dropMarker(
+          "Central Location",
+          "purple",
+          centralPosition.latitude,
+          centralPosition.longitude,
+          this.isOnWater,
+        );
+      });
       return resolve(centralPosition);
     });
   }
 
   getWorkfromLocations(centralPosition) {
-    const { latitude, longitude } = centralPosition;
+    const latitude = centralPosition.latitude === undefined ? centralPosition.lat : centralPosition.latitude;
+    const longitude = centralPosition.longitude === undefined ? centralPosition.lng : centralPosition.longitude;
 
     // TODO: we need to expand the radius or have some option for the user to expand it
     this.workfromService
@@ -398,25 +412,33 @@ export class HomePage {
     icon,
     lat,
     lng,
+    draggable,
     clickFunction?,
-    clickFunctionParams?
+    clickFunctionParams?,
   ) {
     this.map
       .addMarker({
         title,
         icon,
-        animation: 'DROP',
-        position: { lat, lng },
+        animation: "DROP",
+        draggable,
+        position: { lat, lng }
       })
       .then(marker => {
-        if (clickFunction !== undefined)
+        if (clickFunction !== undefined) {
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);
           });
+        }
         else
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             alert(`clicked on ${res}`);
           });
+        if (draggable) {
+          marker.on(GoogleMapsEvent.MARKER_DRAG_END).subscribe(res => {
+            this.getWorkfromLocations(res[0]);
+          });
+        }
       });
   }
 }
