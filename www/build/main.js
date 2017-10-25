@@ -47,7 +47,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 // TODO: remove random coordinates
 var RANDOM_GEOCOORDINATES = [
     { latitude: 25.992046, longitude: -80.283645 },
-    { latitude: 25.942871, longitude: -180.12338 },
+    { latitude: 25.942871, longitude: -80.12338 },
 ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, onWaterService, googleMaps, groupSocketService, nativeStorage, navParams, navCtrl, events, launchNavigator) {
@@ -264,7 +264,7 @@ var HomePage = (function () {
         preferencesModal.present();
         preferencesModal.onDidDismiss(function (preferences) {
             //If the next button was clicked, preferences were passed.
-            if (!preferences) {
+            if (preferences) {
                 _this.spacePreferences = preferences;
                 //On open space modal, subscribe to group uid from server.
                 _this.groupSocketService.uid.subscribe(
@@ -766,7 +766,7 @@ var LocationPage = (function () {
         });
     };
     LocationPage.prototype.sortByPreference = function () {
-        if (!this.locations)
+        if (this.locations)
             this.locations.sort(this.preferenceCompare(this.preferences));
     };
     //Comparison function passed into sort.

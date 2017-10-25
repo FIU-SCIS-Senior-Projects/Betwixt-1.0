@@ -35,7 +35,7 @@ export class LocationPage {
   }
 
   sortByPreference() {
-    if (!this.locations)
+    if (this.locations)
       this.locations.sort(this.preferenceCompare(this.preferences));
   }
 
