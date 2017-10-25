@@ -1,5 +1,11 @@
-.flex-center-align {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+ion-content {
+  background-color: #efeff4 !important;
+}
+
+.info-text {
+  padding-left: 16px;
+  position: relative;
+  font-size: 1.2rem;
+  color: #333;
+  background: transparent;
 }

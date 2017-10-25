@@ -6,7 +6,6 @@ import {
   NavParams,
   Events,
 } from 'ionic-angular';
-import { PreferenceOptions } from '../preferences/preference-options';
 
 export interface Profile {
   firstName: string;
@@ -34,11 +33,7 @@ export class ProfilePage {
     console.log('Profile Settings', this.profile);
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad ProfilePage');
-  }
-
-  ionViewWillLeave() {
+  onSave() {
     this.events.publish('profile:saved', this.profile);
     this.navCtrl.pop();
   }

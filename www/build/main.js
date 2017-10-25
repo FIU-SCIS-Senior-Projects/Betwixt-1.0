@@ -9,18 +9,18 @@ webpackJsonp([1],{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__ = __webpack_require__(242);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__ = __webpack_require__(636);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__space_space__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__space_space__ = __webpack_require__(244);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__profile_profile__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__ = __webpack_require__(281);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib__ = __webpack_require__(623);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib__ = __webpack_require__(624);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_geolib__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar__ = __webpack_require__(624);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar__ = __webpack_require__(625);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10_gravatar__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__ = __webpack_require__(282);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__location_location__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__preferences_preferences__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__preferences_preferences__ = __webpack_require__(284);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -46,10 +46,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 // TODO: remove random coordinates
 var RANDOM_GEOCOORDINATES = [
-    // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-    // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
-    { latitude: 38.5678818, longitude: -121.4636956 },
-    { latitude: 37.2972316, longitude: -122.0976092 },
+    { latitude: 25.992046, longitude: -80.283645 },
+    { latitude: 25.942871, longitude: -80.12338 },
 ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, onWaterService, googleMaps, groupSocketService, nativeStorage, navParams, navCtrl, events, launchNavigator) {
@@ -171,7 +169,7 @@ var HomePage = (function () {
             });
             _this.groupSocketService.locationSubject.subscribe(function (selectedLocation) {
                 console.log("Marker dropped for selected location " + JSON.stringify(selectedLocation));
-                _this.dropMarker(selectedLocation.title, 'red', selectedLocation.latitude, selectedLocation.longitude, _this.launchMapsDirections, {
+                _this.dropMarker(selectedLocation.title, 'red', selectedLocation.latitude, selectedLocation.longitude, false, _this.launchMapsDirections, {
                     launchNavigator: _this.launchNavigator,
                     currentPosition: currentPosition.coords,
                     selectedPosition: selectedLocation,
@@ -201,7 +199,7 @@ var HomePage = (function () {
                 .subscribe(function (res) {
                 _this.isOnWater = res.json().water;
                 if (_this.isOnWater === true) {
-                    alert('It seems that the central location is in water! You may move the pin and put it on land.');
+                    alert('It looks like the central location is on water! You have the chance to move the pin and put it on land.');
                 }
                 _this.dropMarker('Central Location', 'purple', centralPosition.latitude, centralPosition.longitude, _this.isOnWater);
             });
@@ -372,19 +370,10 @@ HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
         selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="isSpaceCreated" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <!-- TODO: if user is in a space, the button should change to \'Leave space\' -->\n    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>\n  </div>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* Platform */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* ModalController */],
-        __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
-        __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */],
-        __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
-        __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */],
-        __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* Events */],
-        __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */]])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* Platform */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["g" /* ModalController */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavParams */]) === "function" && _h || Object, typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["i" /* NavController */]) === "function" && _j || Object, typeof (_k = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* Events */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* Events */]) === "function" && _k || Object, typeof (_l = typeof __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */]) === "function" && _l || Object])
 ], HomePage);
 
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 //# sourceMappingURL=home.js.map
 
 /***/ }),
@@ -397,13 +386,13 @@ HomePage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__ = __webpack_require__(334);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject__ = __webpack_require__(335);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_subject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_subject__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client__ = __webpack_require__(335);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__config_config_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client__ = __webpack_require__(336);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_socket_io_client__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__ = __webpack_require__(358);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__ = __webpack_require__(359);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_rxjs_Rx__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -516,10 +505,7 @@ var ProfilePage = (function () {
         this.profile = navParams.get('profileData');
         console.log('Profile Settings', this.profile);
     }
-    ProfilePage.prototype.ionViewDidLoad = function () {
-        console.log('ionViewDidLoad ProfilePage');
-    };
-    ProfilePage.prototype.ionViewWillLeave = function () {
+    ProfilePage.prototype.onSave = function () {
         this.events.publish('profile:saved', this.profile);
         this.navCtrl.pop();
     };
@@ -562,7 +548,7 @@ webpackEmptyAsyncContext.id = 153;
 
 var map = {
 	"../pages/profile/profile.module": [
-		635,
+		636,
 		0
 	]
 };
@@ -588,8 +574,8 @@ module.exports = webpackAsyncContext;
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return WorkfromService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(48);
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -642,10 +628,57 @@ WorkfromService = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OnWaterService; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(48);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var OnWaterService = (function () {
+    function OnWaterService(http, configService) {
+        this.http = http;
+        this.configService = configService;
+    }
+    Object.defineProperty(OnWaterService.prototype, "onWater", {
+        get: function () {
+            return this.configService.onWater;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    OnWaterService.prototype.checkForWater = function (latitude, longitude, options) {
+        var onWaterUrl = "" + this.onWater + latitude + "," + longitude;
+        return this.http.get(onWaterUrl);
+    };
+    return OnWaterService;
+}());
+OnWaterService = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1__config_config_service__["a" /* ConfigService */]])
+], OnWaterService);
+
+//# sourceMappingURL=onwater.service.js.map
+
+/***/ }),
+
+/***/ 244:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SpacePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__ = __webpack_require__(245);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -682,48 +715,6 @@ SpacePage = __decorate([
 ], SpacePage);
 
 //# sourceMappingURL=space.js.map
-
-/***/ }),
-
-/***/ 245:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PreferencesPage; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-var PreferencesPage = (function () {
-    function PreferencesPage(viewCtrl, params) {
-        this.viewCtrl = viewCtrl;
-        this.preferenceOptions = params.get('defaultPreferences');
-    }
-    PreferencesPage.prototype.dismiss = function () {
-        this.viewCtrl.dismiss();
-    };
-    PreferencesPage.prototype.next = function () {
-        this.viewCtrl.dismiss(this.preferenceOptions);
-    };
-    return PreferencesPage;
-}());
-PreferencesPage = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-preferences',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/,
-    }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */]])
-], PreferencesPage);
-
-//# sourceMappingURL=preferences.js.map
 
 /***/ }),
 
@@ -821,9 +812,51 @@ LocationPage = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PreferencesPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var PreferencesPage = (function () {
+    function PreferencesPage(viewCtrl, params) {
+        this.viewCtrl = viewCtrl;
+        this.preferenceOptions = params.get('defaultPreferences');
+    }
+    PreferencesPage.prototype.dismiss = function () {
+        this.viewCtrl.dismiss();
+    };
+    PreferencesPage.prototype.next = function () {
+        this.viewCtrl.dismiss(this.preferenceOptions);
+    };
+    return PreferencesPage;
+}());
+PreferencesPage = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
+        selector: 'page-preferences',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/,
+    }),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["j" /* NavParams */]])
+], PreferencesPage);
+
+//# sourceMappingURL=preferences.js.map
+
+/***/ }),
+
+/***/ 285:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(285);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(289);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(290);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -831,7 +864,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 289:
+/***/ 290:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -839,23 +872,23 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(326);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(327);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(133);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_space_space__ = __webpack_require__(243);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_space_space__ = __webpack_require__(244);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_profile_profile__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(236);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(239);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(630);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(59);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(634);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(631);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(635);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_google_maps__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_deeplinks__ = __webpack_require__(240);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_clipboard__ = __webpack_require__(244);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_clipboard__ = __webpack_require__(245);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_native_storage__ = __webpack_require__(281);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__services_groupsocket_groupsocket_service__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_launch_navigator__ = __webpack_require__(282);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_location_location__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__ = __webpack_require__(245);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__ = __webpack_require__(284);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -932,7 +965,7 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 326:
+/***/ 327:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -998,20 +1031,20 @@ MyApp = __decorate([
 
 /***/ }),
 
-/***/ 354:
+/***/ 355:
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
 
-/***/ 58:
+/***/ 47:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(333);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(334);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_url_join__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1079,18 +1112,18 @@ ConfigService = __decorate([
 
 /***/ }),
 
-/***/ 630:
+/***/ 631:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ServicesModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(631);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(632);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(634);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__groupsocket_groupsocket_service__ = __webpack_require__(134);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__onwater_onwater_service__ = __webpack_require__(636);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__onwater_onwater_service__ = __webpack_require__(243);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1143,14 +1176,14 @@ ServicesModule = __decorate([
 
 /***/ }),
 
-/***/ 631:
+/***/ 632:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SampleService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(48);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1189,13 +1222,13 @@ SampleService = __decorate([
 
 /***/ }),
 
-/***/ 632:
+/***/ 633:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_service__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_service__ = __webpack_require__(47);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1219,14 +1252,14 @@ ConfigModule = __decorate([
 
 /***/ }),
 
-/***/ 633:
+/***/ 634:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return YelpService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(59);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(48);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1268,54 +1301,7 @@ YelpService = __decorate([
 
 //# sourceMappingURL=yelp.service.js.map
 
-/***/ }),
-
-/***/ 636:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OnWaterService; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__config_config_service__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(59);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-
-
-
-var OnWaterService = (function () {
-    function OnWaterService(http, configService) {
-        this.http = http;
-        this.configService = configService;
-    }
-    Object.defineProperty(OnWaterService.prototype, "onWater", {
-        get: function () {
-            return this.configService.onWater;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    OnWaterService.prototype.checkForWater = function (latitude, longitude, options) {
-        var onWaterUrl = "" + this.onWater + latitude + "," + longitude;
-        return this.http.get(onWaterUrl);
-    };
-    return OnWaterService;
-}());
-OnWaterService = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_1__config_config_service__["a" /* ConfigService */]])
-], OnWaterService);
-
-//# sourceMappingURL=onwater.service.js.map
-
 /***/ })
 
-},[284]);
+},[285]);
 //# sourceMappingURL=main.js.map
