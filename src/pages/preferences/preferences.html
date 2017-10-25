@@ -2,24 +2,23 @@
     <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">
         <ion-icon name="close"></ion-icon>
     </button>
-    <div class="flex-center-align">
-        <h1>Select your preferences</h1>
+    <div>
+        <h1 class="text-center">Select Space Preferences</h1>
         <ion-list>
-
             <ion-item>
-                <ion-label>Has Wi-Fi</ion-label>
+                <ion-label>Has WiFi</ion-label>
                 <ion-toggle [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>
             </ion-item>
-
             <ion-item>
-                <ion-label>Has Local Deals</ion-label>
+                <ion-label>Local Deals</ion-label>
                 <ion-toggle [(ngModel)]="preferenceOptions.localDeals"></ion-toggle>
             </ion-item>
-
         </ion-list>
-        <button ion-button icon-only clear large class="icon-button" (click)="next()">
-            <ion-icon name="arrow-round-forward"></ion-icon>
-        </button>
-
+        <div class="text-center">
+            <button ion-button icon-end (click)="next()">
+                Next
+                <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+        </div>
     </div>
 </div>

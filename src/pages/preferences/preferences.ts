@@ -3,7 +3,7 @@ import { NavParams, ViewController } from 'ionic-angular';
 import { PreferenceOptions } from './preference-options';
 
 @Component({
-  selector: 'preferences',
+  selector: 'page-preferences',
   templateUrl: 'preferences.html',
 })
 export class PreferencesPage {

@@ -1,4 +1,4 @@
-preferences {
+page-preferences {
     background: transparent;
     background-color: rgba(32, 181, 170, 0.85);
     color: white;
@@ -18,14 +18,10 @@ preferences {
     }
 
     ion-list {
-        background: transparent;
-        color: rgba(255, 255, 255, 0.5) !important;
-        background-color: rgba(255, 255, 255, 0.5) !important;
+      margin-top: 32px !important;
     }
   }
-  
-  .flex-center-align {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+
+  .text-center {
+    text-align: center;
   }

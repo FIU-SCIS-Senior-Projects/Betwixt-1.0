@@ -1,4 +1,4 @@
 export interface PreferenceOptions {
-    hasWifi: boolean,
-    localDeals : boolean
-  }
+  hasWifi: boolean;
+  localDeals: boolean;
+}
