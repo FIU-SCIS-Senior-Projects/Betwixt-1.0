@@ -58,7 +58,7 @@ export class HomePage {
   longitude: number;
 
   host_uid: string;
-  spaceCreated: boolean = false;
+  isSpaceCreated: boolean = false;
   spacePreferences: PreferenceOptions;
 
   //Random username.
@@ -145,11 +145,11 @@ export class HomePage {
   }
 
   presentProfilePage() {
-    const profileData: Profile = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
+    const profileData = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
-  getProfileData(...keys): Profile {
+  getProfileData(...keys) {
     let profileData = <Profile>{};
     keys.forEach((key, index) => {
       this.nativeStorage.getItem(key).then(
@@ -236,6 +236,7 @@ export class HomePage {
             }
           );
           this.locations = [];
+          this.isSpaceCreated = false;
         });
 
         return { latitude, longitude };
@@ -344,7 +345,8 @@ export class HomePage {
   }
 
   showCreateSpaceModal() {
-    let preferencesModal = this.modalCtrl.create(PreferencesPage);
+    const defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
+    let preferencesModal = this.modalCtrl.create(PreferencesPage, { defaultPreferences });
     preferencesModal.present();
     preferencesModal.onDidDismiss(preferences => {
       //If the next button was clicked, preferences were passed.
@@ -376,7 +378,7 @@ export class HomePage {
 
             spaceModal.onDidDismiss(data => {
               this.groupSocketService.userInfos = [];
-              this.spaceCreated = true;
+              this.isSpaceCreated = true;
             });
           },
           error => {

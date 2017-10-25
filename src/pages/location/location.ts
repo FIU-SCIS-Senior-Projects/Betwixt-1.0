@@ -40,7 +40,7 @@ export class LocationPage {
   }
 
   //Comparison function passed into sort.
-  preferenceCompare(preferences) {
+  preferenceCompare(preferences: PreferenceOptions) {
     return (a, b) => {
       //Amount of preferences a and b match.
       let aCount = 0;
@@ -51,7 +51,7 @@ export class LocationPage {
         if (a.no_wifi == '0') aCount++;
         if (b.no_wifi == '0') bCount++;
       }
-      if (preferences.localDeals) {
+      if (preferences.hasLocalDeals) {
         if (a.local_deal_flag == '1') aCount++;
         if (b.local_deal_flag == '1') bCount++;
       }

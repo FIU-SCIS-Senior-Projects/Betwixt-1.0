@@ -4,14 +4,15 @@
     </button>
     <div>
         <h1 class="text-center">Select Space Preferences</h1>
+        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>
         <ion-list>
             <ion-item>
                 <ion-label>Has WiFi</ion-label>
-                <ion-toggle [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>
+                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>
             </ion-item>
             <ion-item>
                 <ion-label>Has Local Deals</ion-label>
-                <ion-toggle [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>
+                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>
             </ion-item>
         </ion-list>
         <div class="text-center">
