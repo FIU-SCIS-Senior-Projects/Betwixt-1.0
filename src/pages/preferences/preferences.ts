@@ -10,7 +10,7 @@ export class PreferencesPage {
   preferenceOptions: PreferenceOptions;
 
   constructor(public viewCtrl: ViewController, params: NavParams) {
-    this.preferenceOptions = { hasWifi: false, localDeals: false };
+    this.preferenceOptions = { hasWifi: false, hasLocalDeals: false };
   }
 
   dismiss() {

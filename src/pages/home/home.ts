@@ -16,7 +16,7 @@ import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { OnWaterService } from '../../app/services/onwater/onwater.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
-import { ProfilePage } from '../profile/profile';
+import { ProfilePage, Profile } from '../profile/profile';
 import { NativeStorage } from '@ionic-native/native-storage';
 import geolib from 'geolib';
 import gravatar from 'gravatar';
@@ -38,10 +38,10 @@ interface SelectedLocation {
 
 // TODO: remove random coordinates
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
-  { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-  { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
-  // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
-  // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
+  // { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
+  // { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
+  { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
+  { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
 
 @Component({
@@ -86,10 +86,12 @@ export class HomePage {
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
 
-    events.subscribe('profile:saved', profile => {
+    events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
       this.nativeStorage.setItem('firstName', profile.firstName);
       this.nativeStorage.setItem('lastName', profile.lastName);
+      this.nativeStorage.setItem('hasWifi', profile.hasWifi);
+      this.nativeStorage.setItem('hasLocalDeals', profile.hasLocalDeals);
       this.gravatarUrl = gravatar.url(
         profile.email,
         { s: '100', d: 'mm' },
@@ -137,29 +139,23 @@ export class HomePage {
 
   initialSetup() {
     this.nativeStorage.getItem('gravatarUrl').then(
-      url => {
-        this.gravatarUrl = url;
-      },
-      error => {
-        console.log(error);
-      }
+      url => this.gravatarUrl = url,
+      error => console.log(error)
     );
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData('email', 'firstName', 'lastName');
+    const profileData: Profile = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
-  getProfileData(...keys) {
-    let profileData = <any>{};
+  getProfileData(...keys): Profile {
+    let profileData = <Profile>{};
     keys.forEach((key, index) => {
       this.nativeStorage.getItem(key).then(
-        value => {
-          profileData[key] = value;
-        },
+        value => profileData[key] = value,
         error => {
-          console.log(error);
+          console.log('Error getting storage item', error);
           profileData[key] = '';
         }
       );

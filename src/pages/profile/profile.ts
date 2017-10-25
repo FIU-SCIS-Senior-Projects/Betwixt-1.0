@@ -1,10 +1,19 @@
 import { Component } from '@angular/core';
-import { IonicPage, ViewController, NavController, NavParams, Events } from 'ionic-angular';
+import {
+  IonicPage,
+  ViewController,
+  NavController,
+  NavParams,
+  Events,
+} from 'ionic-angular';
+import { PreferenceOptions } from '../preferences/preference-options';
 
-interface Profile {
+export interface Profile {
   firstName: string;
   lastName: string;
   email: string;
+  hasWifi: boolean;
+  hasLocalDeals: boolean;
 }
 
 @IonicPage()
@@ -15,8 +24,14 @@ interface Profile {
 export class ProfilePage {
   profile: Profile;
 
-  constructor(public viewCtrl: ViewController, public navParams: NavParams, public navCtrl: NavController, public events: Events) {
+  constructor(
+    public viewCtrl: ViewController,
+    public navParams: NavParams,
+    public navCtrl: NavController,
+    public events: Events
+  ) {
     this.profile = navParams.get('profileData');
+    console.log('Profile Settings', this.profile);
   }
 
   ionViewDidLoad() {
@@ -25,5 +40,6 @@ export class ProfilePage {
 
   ionViewWillLeave() {
     this.events.publish('profile:saved', this.profile);
+    this.navCtrl.pop();
   }
 }
