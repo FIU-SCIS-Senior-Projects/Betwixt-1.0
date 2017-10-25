@@ -1,10 +1,10 @@
-import { Component } from '@angular/core/';
+import { Component } from "@angular/core/";
 import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  GoogleMapOptions,
-} from '@ionic-native/google-maps';
+  GoogleMapOptions
+} from "@ionic-native/google-maps";
 import {
   Platform,
   ModalController,
@@ -22,6 +22,9 @@ import geolib from 'geolib';
 import gravatar from 'gravatar';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../location/location';
+import { PreferencesPage } from "../preferences/preferences";
+import { PreferenceOptions } from '../preferences/preference-options';
+
 
 interface Coordinates {
   latitude: number;
@@ -37,28 +40,33 @@ interface SelectedLocation {
 // TODO: remove random coordinates
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
+
   { latitude: 25.942871, longitude: -180.12338 }, // Sunny Isles
+
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html',
+  selector: "page-home",
+  templateUrl: "home.html"
 })
 export class HomePage {
   map: GoogleMap;
   mapElement: HTMLElement;
   gravatarUrl: string;
   selectedLocation: SelectedLocation;
-
   //For use outisde promise chain.
   latitude: number;
   longitude: number;
+
   host_uid: string;
+  spaceCreated : boolean = false;
+  spacePreferences : PreferenceOptions;
 
   //Random username.
   username: string;
+
 
   locations;
   // If central location is on water
@@ -82,46 +90,47 @@ export class HomePage {
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
 
-    events.subscribe('profile:saved', profile => {
-      this.nativeStorage.setItem('email', profile.email);
-      this.nativeStorage.setItem('firstName', profile.firstName);
-      this.nativeStorage.setItem('lastName', profile.lastName);
+    events.subscribe("profile:saved", profile => {
+      this.nativeStorage.setItem("email", profile.email);
+      this.nativeStorage.setItem("firstName", profile.firstName);
+      this.nativeStorage.setItem("lastName", profile.lastName);
       this.gravatarUrl = gravatar.url(
         profile.email,
-        { s: '100', d: 'mm' },
+        { s: "100", d: "mm" },
         true
       );
-      this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
+      this.nativeStorage.setItem("gravatarUrl", this.gravatarUrl);
     });
   }
 
   ngAfterViewInit() {
-    console.log('Ion view loaded.');
+    console.log("Ion view loaded.");
     this.platform
       .ready()
       .then(() => this.initialSetup())
       .then(() => {
-        alert('platform ready...');
-        this.host_uid = this.navParams.get('group_uid');
-        alert(`got host uid ${this.host_uid}`);
-        this.selectedLocation = this.navParams.get('selectedLocation');
-        alert(`got selectedLocation ${this.selectedLocation}`);
+        this.host_uid = this.navParams.get("group_uid");
+        this.selectedLocation = this.navParams.get("selectedLocation");
         this.joinHostGroup();
         this.selectLocation();
-        // this.locations = [{
-        //   title: 'Starbucks',
-        //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-        //   type: 'free',
-        //   distance: 12,
-        //   no_wifi: 1
-        // },
-        // {
-        //   title: 'Starbucks',
-        //   description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-        //   type: 'commercial',
-        //   distance: 5,
-        //   no_wifi: 0
-        // }]
+        /*
+         this.locations = [{
+           title: 'Starbucks',
+           description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+           type: 'free',
+           distance: 12,
+           no_wifi: 1,
+           local_deal_flag: 1
+         },
+         {
+           title: 'Starbucks',
+           description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
+           type: 'commercial',
+           distance: 5,
+           no_wifi: 0,
+           local_deal_flag: 0
+         }]
+         */
         return this.getCurrentPosition();
       })
       .then(currentPosition => this.loadMap(currentPosition))
@@ -131,7 +140,7 @@ export class HomePage {
   }
 
   initialSetup() {
-    this.nativeStorage.getItem('gravatarUrl').then(
+    this.nativeStorage.getItem("gravatarUrl").then(
       url => {
         this.gravatarUrl = url;
       },
@@ -142,7 +151,7 @@ export class HomePage {
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData('email', 'firstName', 'lastName');
+    const profileData = this.getProfileData("email", "firstName", "lastName");
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
@@ -155,7 +164,7 @@ export class HomePage {
         },
         error => {
           console.log(error);
-          profileData[key] = '';
+          profileData[key] = "";
         }
       );
     });
@@ -171,33 +180,34 @@ export class HomePage {
       camera: {
         target: {
           lat: latitude,
-          lng: longitude,
+          lng: longitude
         },
         zoom: 18,
-        tilt: 30,
-      },
+        tilt: 30
+      }
     };
 
-    this.mapElement = document.getElementById('map');
+    this.mapElement = document.getElementById("map");
     this.map = this.googleMaps.create(this.mapElement, mapOptions);
 
     return this.map
       .one(GoogleMapsEvent.MAP_READY)
       .then(() => {
-        console.log('Map is ready!');
+        console.log("Map is ready!");
 
         this.dropMarker('Current Location', 'green', latitude, longitude, false);
 
         RANDOM_GEOCOORDINATES.forEach((position, index) => {
           const { latitude, longitude } = position;
           this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude, false);
+
         });
 
         this.groupSocketService.userInfoSubject.subscribe(userInfo => {
           console.log(`Marker dropped for user: ${userInfo.username}`);
           this.dropMarker(
             userInfo.username,
-            'blue',
+            "blue",
             userInfo.latitude,
             userInfo.longitude,
             false
@@ -212,14 +222,14 @@ export class HomePage {
           );
           this.dropMarker(
             selectedLocation.title,
-            'red',
+            "red",
             selectedLocation.latitude,
             selectedLocation.longitude,
             this.launchMapsDirections,
             {
               launchNavigator: this.launchNavigator,
               currentPosition: currentPosition.coords,
-              selectedPosition: selectedLocation,
+              selectedPosition: selectedLocation
             }
           );
           this.locations = [];
@@ -232,7 +242,7 @@ export class HomePage {
 
   getCurrentPosition() {
     const options = {
-      enableHighAccuracy: true,
+      enableHighAccuracy: true
     };
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -244,6 +254,7 @@ export class HomePage {
 
     return new Promise(resolve => {
       const centralPosition = geolib.getCenterOfBounds(locations);
+
       this.onWaterService.checkForWater(centralPosition.latitude, centralPosition.longitude).subscribe(res => {
         this.isOnWater = res.json().water;
         if (this.isOnWater === true) {
@@ -257,13 +268,16 @@ export class HomePage {
           this.isOnWater,
         );
       });
+
       return resolve(centralPosition);
     });
   }
 
   getWorkfromLocations(centralPosition) {
+
     const latitude = centralPosition.latitude === undefined ? centralPosition.lat : centralPosition.latitude;
     const longitude = centralPosition.longitude === undefined ? centralPosition.lng : centralPosition.longitude;
+
 
     // TODO: we need to expand the radius or have some option for the user to expand it
     this.workfromService
@@ -300,66 +314,75 @@ export class HomePage {
             .navigate(
               [
                 params.selectedPosition.latitude,
-                params.selectedPosition.longitude,
+                params.selectedPosition.longitude
               ],
               {
                 app: app,
                 start: [
                   params.currentPosition.latitude,
-                  params.currentPosition.longitude,
-                ],
+                  params.currentPosition.longitude
+                ]
               }
             )
             .then(
-              success => alert('Map launching...'),
-              error => alert('Maps application failed to open!')
+              success => alert("Map launching..."),
+              error => alert("Maps application failed to open!")
             );
         });
     }
   }
 
   showCreateSpaceModal() {
-    //On open space modal, subscribe to group uid from server.
-    this.groupSocketService.uid.subscribe(
-      //User's info object that will be sent to server.
-      group_uid => {
-        this.groupSocketService.userInfo = {
-          socketID: '',
-          groupUID: group_uid,
-          username: this.username,
-          latitude: this.latitude,
-          longitude: this.longitude,
-        };
+    let preferencesModal = this.modalCtrl.create(PreferencesPage);
+    preferencesModal.present();
+    preferencesModal.onDidDismiss(preferences => {
+      //If the next button was clicked, preferences were passed.
+      if (preferences != undefined) {
+        this.spacePreferences = preferences;
+        //On open space modal, subscribe to group uid from server.
+        this.groupSocketService.uid.subscribe(
+          //User's info object that will be sent to server.
+          group_uid => {
+            this.groupSocketService.userInfo = {
+              socketID: "",
+              groupUID: group_uid,
+              username: this.username,
+              latitude: this.latitude,
+              longitude: this.longitude
+            };
 
-        console.log(group_uid);
+            console.log(group_uid);
 
-        //Join the room specified by the group uid.
-        this.groupSocketService.joinGroup();
+            //Join the room specified by the group uid.
+            this.groupSocketService.joinGroup();
 
-        //Create modal.
-        let spaceModal = this.modalCtrl.create(SpacePage, {
-          uid: group_uid,
-        });
+            //Create modal.
+            let spaceModal = this.modalCtrl.create(SpacePage, {
+              uid: group_uid
+            });
 
-        spaceModal.present();
+            spaceModal.present();
 
-        spaceModal.onDidDismiss(data => {
-          this.groupSocketService.userInfos = [];
-        });
-      },
-      error => {
-        //Create modal.
-        let spaceModal = this.modalCtrl.create(SpacePage, {
-          uid: '',
-        });
+            spaceModal.onDidDismiss(data => {
+              this.groupSocketService.userInfos = [];
+              this.spaceCreated = true;
+            });
+          },
+          error => {
+            //Create modal.
+            let spaceModal = this.modalCtrl.create(SpacePage, {
+              uid: ""
+            });
 
-        spaceModal.present();
+            spaceModal.present();
 
-        spaceModal.onDidDismiss(data => {
-          this.groupSocketService.userInfos = [];
-        });
+            spaceModal.onDidDismiss(data => {
+              this.groupSocketService.userInfos = [];
+            });
+          }
+        );
       }
-    );
+    });
   }
 
   showLocationsModal() {
@@ -367,19 +390,19 @@ export class HomePage {
       .create(LocationPage, {
         locations: this.locations,
         group_uid: this.groupSocketService.userInfo.groupUID,
+        preferences : this.spacePreferences
       })
-      .present();
+      .present()
   }
 
   private selectLocation() {
     if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
-      alert(`Got selected location! ${JSON.stringify(this.selectedLocation)}`);
       this.groupSocketService.selectedLocation = {
-        socketId: '',
+        socketId: "",
         groupUID: this.groupSocketService.userInfo.groupUID,
         latitude: this.selectedLocation.latitude,
         longitude: this.selectedLocation.longitude,
-        title: this.selectedLocation.title,
+        title: this.selectedLocation.title
       };
 
       this.groupSocketService.selectLocation();
@@ -389,16 +412,13 @@ export class HomePage {
 
   //If routed from the deeplink, join the room.
   private joinHostGroup() {
-    // when there is a selected location, then that means that we have already joined a group
-    // const isJoinedGroup = this.groupSocketService.socket.sockets.adapter.sids[this.groupSocketService.userInfo.socketID][this.groupSocketService.uid];
     if (this.host_uid && this.selectedLocation === undefined) {
-      alert(`Joining group ${this.host_uid}`);
       this.groupSocketService.userInfo = {
-        socketID: '',
+        socketID: "",
         groupUID: this.host_uid,
         username: this.username,
         latitude: this.latitude,
-        longitude: this.longitude,
+        longitude: this.longitude
       };
 
       //Join the room specified by the group uid.
@@ -421,7 +441,10 @@ export class HomePage {
         title,
         icon,
         animation: "DROP",
+<<<<<<< HEAD
         draggable,
+=======
+>>>>>>> feature/685
         position: { lat, lng }
       })
       .then(marker => {

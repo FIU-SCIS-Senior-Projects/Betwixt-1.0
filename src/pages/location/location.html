@@ -11,7 +11,7 @@
 
 <ion-content *ngIf="locations">
   <ion-card *ngFor="let location of locations">
-    <img *ngIf="location?.full_img" src="location?.full_img"/>
+    <img *ngIf="location?.full_img" src="location?.full_img" />
     <ion-card-content>
       <ion-card-title class="flex-center">
         {{ location?.title }}
@@ -19,6 +19,9 @@
       </ion-card-title>
       <div *ngIf="location?.no_wifi > 0" class="no-wifi">
         <ion-badge color="danger">No WiFi</ion-badge>
+      </div>
+      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">
+        <ion-badge color="success">Local deals</ion-badge>
       </div>
       <p>{{ location?.description }}</p>
       <br/>

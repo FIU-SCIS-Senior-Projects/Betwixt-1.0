@@ -24,10 +24,6 @@ export interface SelectedLocation {
 
 @Injectable()
 export class GroupSocketService {
-  //LOCALHOST
-  // socketHost = 'http://localhost:8080/';
-  //IP TO ACCESS WITH ANDROID EMULATOR. COMMENT OUT ALL OTHERS WHEN TESTING WITH ANDROID EMULATOR.
-  //socketHost = 'http://10.0.2.2:8080/';
   socketHost: string;
   socket: io;
   uid: Observable<string>;
@@ -45,7 +41,6 @@ export class GroupSocketService {
     this.socket = io(this.socketHost);
     //Add user information when a new user joins.
     this.socket.on('getNewUserInfo', res => {
-      alert('User info added\n' + JSON.stringify(res));
       this.userInfos.push(res);
       this.socket.emit('sendUserInfo', {
         socketID: res.socketID,
@@ -55,13 +50,11 @@ export class GroupSocketService {
     });
 
     this.socket.on('getExistingUserInfo', res => {
-      alert('User info added\n' + JSON.stringify(res));
       this.userInfos.push(res);
       this.userInfoSubject.next(res);
     });
 
     this.socket.on('getSelectedLocation', res => {
-      alert('Selected Location Received\n' + JSON.stringify(res));
       this.socket.emit('sendSelectedLocation', {
         socketId: res.socketId,
         selectedLocation: this.selectedLocation,
@@ -70,25 +63,20 @@ export class GroupSocketService {
     });
 
     this.socket.on('getExistingSelectedLocation', res => {
-      alert('Existing Selected Location Received\n' + JSON.stringify(res));
       this.locationSubject.next(res);
     });
   }
 
   joinGroup() {
-    alert(`Socket is: ${this.socket.connected}`);
     //Add the unique socket id on join group.
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('joinGroup', this.userInfo);
-    alert(`Should have joined group with uid: ${this.userInfo.groupUID}`)
   }
 
   selectLocation() {
-    alert(`Socket is: ${this.socket.connected}`);
     //Add the unique socket id on join group.
     this.selectedLocation.socketId = this.socket.io.engine.id;
     this.socket.emit('selectLocation', this.selectedLocation);
-    alert(`Should have selected location with ${JSON.stringify(this.selectedLocation)}`)
   }
 
   private get getUID(): Observable<string> {
