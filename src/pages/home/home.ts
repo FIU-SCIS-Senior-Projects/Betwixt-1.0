@@ -10,21 +10,20 @@ import {
   ModalController,
   NavController,
   NavParams,
-  Events,
-} from 'ionic-angular';
-import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+  Events
+} from "ionic-angular";
+import { WorkfromService } from "../../app/services/workfrom/workfrom.service";
 import { OnWaterService } from "../../app/services/onwater/onwater.service";
-import { SpacePage } from '../space/space';
-import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
-import { ProfilePage } from '../profile/profile';
-import { NativeStorage } from '@ionic-native/native-storage';
-import geolib from 'geolib';
-import gravatar from 'gravatar';
-import { LaunchNavigator } from '@ionic-native/launch-navigator';
-import { LocationPage } from '../location/location';
+import { SpacePage } from "../space/space";
+import { GroupSocketService } from "../../app/services/groupsocket/groupsocket.service";
+import { ProfilePage } from "../profile/profile";
+import { NativeStorage } from "@ionic-native/native-storage";
+import geolib from "geolib";
+import gravatar from "gravatar";
+import { LaunchNavigator } from "@ionic-native/launch-navigator";
+import { LocationPage } from "../location/location";
 import { PreferencesPage } from "../preferences/preferences";
-import { PreferenceOptions } from '../preferences/preference-options';
-
+import { PreferenceOptions } from "../preferences/preference-options";
 
 interface Coordinates {
   latitude: number;
@@ -41,7 +40,7 @@ interface SelectedLocation {
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
 
-  { latitude: 25.942871, longitude: -180.12338 }, // Sunny Isles
+  { latitude: 25.942871, longitude: -180.12338 } // Sunny Isles
 
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
@@ -61,12 +60,11 @@ export class HomePage {
   longitude: number;
 
   host_uid: string;
-  spaceCreated : boolean = false;
-  spacePreferences : PreferenceOptions;
+  spaceCreated: boolean = false;
+  spacePreferences: PreferenceOptions;
 
   //Random username.
   username: string;
-
 
   locations;
   // If central location is on water
@@ -195,12 +193,23 @@ export class HomePage {
       .then(() => {
         console.log("Map is ready!");
 
-        this.dropMarker('Current Location', 'green', latitude, longitude, false);
+        this.dropMarker(
+          "Current Location",
+          "green",
+          latitude,
+          longitude,
+          false
+        );
 
         RANDOM_GEOCOORDINATES.forEach((position, index) => {
           const { latitude, longitude } = position;
-          this.dropMarker(`Location ${index + 1}`, 'blue', latitude, longitude, false);
-
+          this.dropMarker(
+            `Location ${index + 1}`,
+            "blue",
+            latitude,
+            longitude,
+            false
+          );
         });
 
         this.groupSocketService.userInfoSubject.subscribe(userInfo => {
@@ -255,29 +264,37 @@ export class HomePage {
     return new Promise(resolve => {
       const centralPosition = geolib.getCenterOfBounds(locations);
 
-      this.onWaterService.checkForWater(centralPosition.latitude, centralPosition.longitude).subscribe(res => {
-        this.isOnWater = res.json().water;
-        if (this.isOnWater === true) {
-          alert("It seems that the central location is in water! You may move the pin and put it on land.")
-        }
-        this.dropMarker(
-          "Central Location",
-          "purple",
-          centralPosition.latitude,
-          centralPosition.longitude,
-          this.isOnWater,
-        );
-      });
+      this.onWaterService
+        .checkForWater(centralPosition.latitude, centralPosition.longitude)
+        .subscribe(res => {
+          this.isOnWater = res.json().water;
+          if (this.isOnWater === true) {
+            alert(
+              "It seems that the central location is in water! You may move the pin and put it on land."
+            );
+          }
+          this.dropMarker(
+            "Central Location",
+            "purple",
+            centralPosition.latitude,
+            centralPosition.longitude,
+            this.isOnWater
+          );
+        });
 
       return resolve(centralPosition);
     });
   }
 
   getWorkfromLocations(centralPosition) {
-
-    const latitude = centralPosition.latitude === undefined ? centralPosition.lat : centralPosition.latitude;
-    const longitude = centralPosition.longitude === undefined ? centralPosition.lng : centralPosition.longitude;
-
+    const latitude =
+      centralPosition.latitude === undefined
+        ? centralPosition.lat
+        : centralPosition.latitude;
+    const longitude =
+      centralPosition.longitude === undefined
+        ? centralPosition.lng
+        : centralPosition.longitude;
 
     // TODO: we need to expand the radius or have some option for the user to expand it
     this.workfromService
@@ -390,9 +407,9 @@ export class HomePage {
       .create(LocationPage, {
         locations: this.locations,
         group_uid: this.groupSocketService.userInfo.groupUID,
-        preferences : this.spacePreferences
+        preferences: this.spacePreferences
       })
-      .present()
+      .present();
   }
 
   private selectLocation() {
@@ -434,7 +451,7 @@ export class HomePage {
     lng,
     draggable,
     clickFunction?,
-    clickFunctionParams?,
+    clickFunctionParams?
   ) {
     this.map
       .addMarker({
@@ -449,8 +466,7 @@ export class HomePage {
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);
           });
-        }
-        else
+        } else
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             alert(`clicked on ${res}`);
           });
