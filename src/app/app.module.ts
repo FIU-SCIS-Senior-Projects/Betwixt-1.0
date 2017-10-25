@@ -4,7 +4,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { HomePage } from '../pages/home/home';
-import {SpacePage} from '../pages/space/space';
+import { SpacePage } from '../pages/space/space';
 import { ProfilePage } from '../pages/profile/profile';
 
 import { StatusBar } from '@ionic-native/status-bar';
@@ -17,7 +17,7 @@ import { GoogleMaps } from '@ionic-native/google-maps';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { Clipboard } from '@ionic-native/clipboard';
 import { NativeStorage } from '@ionic-native/native-storage';
-import { GroupSocketService } from "./services/groupsocket/groupsocket.service";
+import { GroupSocketService } from './services/groupsocket/groupsocket.service';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../pages/location/location';
 import { PreferencesPage } from '../pages/preferences/preferences';
@@ -28,8 +28,8 @@ const components = [
   SpacePage,
   ProfilePage,
   LocationPage,
-  PreferencesPage
-]
+  PreferencesPage,
+];
 
 @NgModule({
   declarations: components,
@@ -40,7 +40,7 @@ const components = [
     BrowserModule,
     HttpModule,
     // Ionic
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: components,
@@ -54,7 +54,7 @@ const components = [
     NativeStorage,
     GroupSocketService,
     LaunchNavigator,
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
-  ]
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+  ],
 })
 export class AppModule {}

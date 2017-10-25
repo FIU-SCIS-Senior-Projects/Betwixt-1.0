@@ -1,29 +1,29 @@
-import { Component } from "@angular/core/";
+import { Component } from '@angular/core/';
 import {
   GoogleMaps,
   GoogleMap,
   GoogleMapsEvent,
-  GoogleMapOptions
-} from "@ionic-native/google-maps";
+  GoogleMapOptions,
+} from '@ionic-native/google-maps';
 import {
   Platform,
   ModalController,
   NavController,
   NavParams,
-  Events
-} from "ionic-angular";
-import { WorkfromService } from "../../app/services/workfrom/workfrom.service";
-import { OnWaterService } from "../../app/services/onwater/onwater.service";
-import { SpacePage } from "../space/space";
-import { GroupSocketService } from "../../app/services/groupsocket/groupsocket.service";
-import { ProfilePage } from "../profile/profile";
-import { NativeStorage } from "@ionic-native/native-storage";
-import geolib from "geolib";
-import gravatar from "gravatar";
-import { LaunchNavigator } from "@ionic-native/launch-navigator";
-import { LocationPage } from "../location/location";
-import { PreferencesPage } from "../preferences/preferences";
-import { PreferenceOptions } from "../preferences/preference-options";
+  Events,
+} from 'ionic-angular';
+import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
+import { OnWaterService } from '../../app/services/onwater/onwater.service';
+import { SpacePage } from '../space/space';
+import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
+import { ProfilePage } from '../profile/profile';
+import { NativeStorage } from '@ionic-native/native-storage';
+import geolib from 'geolib';
+import gravatar from 'gravatar';
+import { LaunchNavigator } from '@ionic-native/launch-navigator';
+import { LocationPage } from '../location/location';
+import { PreferencesPage } from '../preferences/preferences';
+import { PreferenceOptions } from '../preferences/preference-options';
 
 interface Coordinates {
   latitude: number;
@@ -40,15 +40,15 @@ interface SelectedLocation {
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
 
-  { latitude: 25.942871, longitude: -180.12338 } // Sunny Isles
+  { latitude: 25.942871, longitude: -180.12338 }, // Sunny Isles
 
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
 
 @Component({
-  selector: "page-home",
-  templateUrl: "home.html"
+  selector: 'page-home',
+  templateUrl: 'home.html',
 })
 export class HomePage {
   map: GoogleMap;
@@ -88,27 +88,27 @@ export class HomePage {
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
 
-    events.subscribe("profile:saved", profile => {
-      this.nativeStorage.setItem("email", profile.email);
-      this.nativeStorage.setItem("firstName", profile.firstName);
-      this.nativeStorage.setItem("lastName", profile.lastName);
+    events.subscribe('profile:saved', profile => {
+      this.nativeStorage.setItem('email', profile.email);
+      this.nativeStorage.setItem('firstName', profile.firstName);
+      this.nativeStorage.setItem('lastName', profile.lastName);
       this.gravatarUrl = gravatar.url(
         profile.email,
-        { s: "100", d: "mm" },
+        { s: '100', d: 'mm' },
         true
       );
-      this.nativeStorage.setItem("gravatarUrl", this.gravatarUrl);
+      this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
     });
   }
 
   ngAfterViewInit() {
-    console.log("Ion view loaded.");
+    console.log('Ion view loaded.');
     this.platform
       .ready()
       .then(() => this.initialSetup())
       .then(() => {
-        this.host_uid = this.navParams.get("group_uid");
-        this.selectedLocation = this.navParams.get("selectedLocation");
+        this.host_uid = this.navParams.get('group_uid');
+        this.selectedLocation = this.navParams.get('selectedLocation');
         this.joinHostGroup();
         this.selectLocation();
         /*
@@ -138,7 +138,7 @@ export class HomePage {
   }
 
   initialSetup() {
-    this.nativeStorage.getItem("gravatarUrl").then(
+    this.nativeStorage.getItem('gravatarUrl').then(
       url => {
         this.gravatarUrl = url;
       },
@@ -149,7 +149,7 @@ export class HomePage {
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData("email", "firstName", "lastName");
+    const profileData = this.getProfileData('email', 'firstName', 'lastName');
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
@@ -162,7 +162,7 @@ export class HomePage {
         },
         error => {
           console.log(error);
-          profileData[key] = "";
+          profileData[key] = '';
         }
       );
     });
@@ -178,24 +178,24 @@ export class HomePage {
       camera: {
         target: {
           lat: latitude,
-          lng: longitude
+          lng: longitude,
         },
         zoom: 18,
-        tilt: 30
-      }
+        tilt: 30,
+      },
     };
 
-    this.mapElement = document.getElementById("map");
+    this.mapElement = document.getElementById('map');
     this.map = this.googleMaps.create(this.mapElement, mapOptions);
 
     return this.map
       .one(GoogleMapsEvent.MAP_READY)
       .then(() => {
-        console.log("Map is ready!");
+        console.log('Map is ready!');
 
         this.dropMarker(
-          "Current Location",
-          "green",
+          'Current Location',
+          'green',
           latitude,
           longitude,
           false
@@ -205,7 +205,7 @@ export class HomePage {
           const { latitude, longitude } = position;
           this.dropMarker(
             `Location ${index + 1}`,
-            "blue",
+            'blue',
             latitude,
             longitude,
             false
@@ -216,7 +216,7 @@ export class HomePage {
           console.log(`Marker dropped for user: ${userInfo.username}`);
           this.dropMarker(
             userInfo.username,
-            "blue",
+            'blue',
             userInfo.latitude,
             userInfo.longitude,
             false
@@ -231,14 +231,14 @@ export class HomePage {
           );
           this.dropMarker(
             selectedLocation.title,
-            "red",
+            'red',
             selectedLocation.latitude,
             selectedLocation.longitude,
             this.launchMapsDirections,
             {
               launchNavigator: this.launchNavigator,
               currentPosition: currentPosition.coords,
-              selectedPosition: selectedLocation
+              selectedPosition: selectedLocation,
             }
           );
           this.locations = [];
@@ -251,7 +251,7 @@ export class HomePage {
 
   getCurrentPosition() {
     const options = {
-      enableHighAccuracy: true
+      enableHighAccuracy: true,
     };
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
@@ -270,12 +270,12 @@ export class HomePage {
           this.isOnWater = res.json().water;
           if (this.isOnWater === true) {
             alert(
-              "It seems that the central location is in water! You may move the pin and put it on land."
+              'It seems that the central location is in water! You may move the pin and put it on land.'
             );
           }
           this.dropMarker(
-            "Central Location",
-            "purple",
+            'Central Location',
+            'purple',
             centralPosition.latitude,
             centralPosition.longitude,
             this.isOnWater
@@ -331,19 +331,19 @@ export class HomePage {
             .navigate(
               [
                 params.selectedPosition.latitude,
-                params.selectedPosition.longitude
+                params.selectedPosition.longitude,
               ],
               {
                 app: app,
                 start: [
                   params.currentPosition.latitude,
-                  params.currentPosition.longitude
-                ]
+                  params.currentPosition.longitude,
+                ],
               }
             )
             .then(
-              success => alert("Map launching..."),
-              error => alert("Maps application failed to open!")
+              success => alert('Map launching...'),
+              error => alert('Maps application failed to open!')
             );
         });
     }
@@ -361,11 +361,11 @@ export class HomePage {
           //User's info object that will be sent to server.
           group_uid => {
             this.groupSocketService.userInfo = {
-              socketID: "",
+              socketID: '',
               groupUID: group_uid,
               username: this.username,
               latitude: this.latitude,
-              longitude: this.longitude
+              longitude: this.longitude,
             };
 
             console.log(group_uid);
@@ -375,7 +375,7 @@ export class HomePage {
 
             //Create modal.
             let spaceModal = this.modalCtrl.create(SpacePage, {
-              uid: group_uid
+              uid: group_uid,
             });
 
             spaceModal.present();
@@ -388,7 +388,7 @@ export class HomePage {
           error => {
             //Create modal.
             let spaceModal = this.modalCtrl.create(SpacePage, {
-              uid: ""
+              uid: '',
             });
 
             spaceModal.present();
@@ -407,7 +407,7 @@ export class HomePage {
       .create(LocationPage, {
         locations: this.locations,
         group_uid: this.groupSocketService.userInfo.groupUID,
-        preferences: this.spacePreferences
+        preferences: this.spacePreferences,
       })
       .present();
   }
@@ -415,11 +415,11 @@ export class HomePage {
   private selectLocation() {
     if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
       this.groupSocketService.selectedLocation = {
-        socketId: "",
+        socketId: '',
         groupUID: this.groupSocketService.userInfo.groupUID,
         latitude: this.selectedLocation.latitude,
         longitude: this.selectedLocation.longitude,
-        title: this.selectedLocation.title
+        title: this.selectedLocation.title,
       };
 
       this.groupSocketService.selectLocation();
@@ -431,11 +431,11 @@ export class HomePage {
   private joinHostGroup() {
     if (this.host_uid && this.selectedLocation === undefined) {
       this.groupSocketService.userInfo = {
-        socketID: "",
+        socketID: '',
         groupUID: this.host_uid,
         username: this.username,
         latitude: this.latitude,
-        longitude: this.longitude
+        longitude: this.longitude,
       };
 
       //Join the room specified by the group uid.
@@ -457,9 +457,9 @@ export class HomePage {
       .addMarker({
         title,
         icon,
-        animation: "DROP",
+        animation: 'DROP',
         draggable,
-        position: { lat, lng }
+        position: { lat, lng },
       })
       .then(marker => {
         if (clickFunction !== undefined) {

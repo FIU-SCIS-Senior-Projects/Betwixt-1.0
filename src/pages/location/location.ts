@@ -1,11 +1,11 @@
-import { Component } from "@angular/core/";
-import { NavParams, ViewController, NavController } from "ionic-angular";
-import { HomePage } from "../home/home";
-import { PreferenceOptions } from "../preferences/preference-options";
+import { Component } from '@angular/core/';
+import { NavParams, ViewController, NavController } from 'ionic-angular';
+import { HomePage } from '../home/home';
+import { PreferenceOptions } from '../preferences/preference-options';
 
 @Component({
-  selector: "page-location",
-  templateUrl: "location.html"
+  selector: 'page-location',
+  templateUrl: 'location.html',
 })
 export class LocationPage {
   locations;
@@ -17,20 +17,20 @@ export class LocationPage {
     params: NavParams,
     public navCtrl: NavController
   ) {
-    this.locations = params.get("locations");
-    this.group_uid = params.get("group_uid");
-    this.preferences = params.get("preferences");
+    this.locations = params.get('locations');
+    this.group_uid = params.get('group_uid');
+    this.preferences = params.get('preferences');
 
     this.sortByPreference();
   }
 
   selectLocation(latitude, longitude, title) {
-    console.log("selected location!", latitude, longitude);
-    console.log("group_uid", this.group_uid);
+    console.log('selected location!', latitude, longitude);
+    console.log('group_uid', this.group_uid);
     this.dismiss();
     this.navCtrl.push(HomePage, {
       selectedLocation: { latitude, longitude, title },
-      group_uid: this.group_uid
+      group_uid: this.group_uid,
     });
   }
 
@@ -48,12 +48,12 @@ export class LocationPage {
       console.log(preferences);
 
       if (preferences.hasWifi) {
-        if (a.no_wifi == "0") aCount++;
-        if (b.no_wifi == "0") bCount++;
+        if (a.no_wifi == '0') aCount++;
+        if (b.no_wifi == '0') bCount++;
       }
       if (preferences.localDeals) {
-        if (a.local_deal_flag == "1") aCount++;
-        if (b.local_deal_flag == "1") bCount++;
+        if (a.local_deal_flag == '1') aCount++;
+        if (b.local_deal_flag == '1') bCount++;
       }
 
       //If a matches more preferences, put it first.

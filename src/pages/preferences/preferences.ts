@@ -1,10 +1,10 @@
-import { Component } from "@angular/core/";
-import { NavParams, ViewController } from "ionic-angular";
-import { PreferenceOptions } from "./preference-options";
+import { Component } from '@angular/core/';
+import { NavParams, ViewController } from 'ionic-angular';
+import { PreferenceOptions } from './preference-options';
 
 @Component({
-  selector: "preferences",
-  templateUrl: "preferences.html"
+  selector: 'preferences',
+  templateUrl: 'preferences.html',
 })
 export class PreferencesPage {
   preferenceOptions: PreferenceOptions;
