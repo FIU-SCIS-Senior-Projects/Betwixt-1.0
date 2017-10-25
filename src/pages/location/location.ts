@@ -37,8 +37,8 @@ export class LocationPage {
 
   sortByPreference()
   {
-    console.log(this.locations);
-    this.locations.sort(this.preferenceCompare(this.preferences));
+    if(!this.locations)
+      this.locations.sort(this.preferenceCompare(this.preferences));
   }
 
   //Comparison function passed into sort.

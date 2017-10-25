@@ -337,7 +337,7 @@ export class HomePage {
     preferencesModal.present();
     preferencesModal.onDidDismiss(preferences => {
       //If the next button was clicked, preferences were passed.
-      if (preferences != undefined) {
+      if (!preferences) {
         this.spacePreferences = preferences;
         //On open space modal, subscribe to group uid from server.
         this.groupSocketService.uid.subscribe(
@@ -441,10 +441,7 @@ export class HomePage {
         title,
         icon,
         animation: "DROP",
-<<<<<<< HEAD
         draggable,
-=======
->>>>>>> feature/685
         position: { lat, lng }
       })
       .then(marker => {
