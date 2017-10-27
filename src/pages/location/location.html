@@ -11,7 +11,7 @@
 
 <ion-content *ngIf="locations">
   <ion-card *ngFor="let location of locations">
-    <img *ngIf="location?.full_img" src="location?.full_img" />
+    <img *ngIf="location?.full_img" [src]="location?.full_img" />
     <ion-card-content>
       <ion-card-title class="flex-center">
         {{ location?.title }}

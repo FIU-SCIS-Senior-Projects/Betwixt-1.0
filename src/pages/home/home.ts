@@ -16,7 +16,7 @@ import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { OnWaterService } from '../../app/services/onwater/onwater.service';
 import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
-import { ProfilePage } from '../profile/profile';
+import { ProfilePage, Profile } from '../profile/profile';
 import { NativeStorage } from '@ionic-native/native-storage';
 import geolib from 'geolib';
 import gravatar from 'gravatar';
@@ -39,9 +39,7 @@ interface SelectedLocation {
 // TODO: remove random coordinates
 const RANDOM_GEOCOORDINATES: Coordinates[] = [
   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
-
   { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
-
   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 ];
@@ -60,7 +58,7 @@ export class HomePage {
   longitude: number;
 
   host_uid: string;
-  spaceCreated: boolean = false;
+  isSpaceCreated: boolean = false;
   spacePreferences: PreferenceOptions;
 
   //Random username.
@@ -88,10 +86,12 @@ export class HomePage {
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
 
-    events.subscribe('profile:saved', profile => {
+    events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
       this.nativeStorage.setItem('firstName', profile.firstName);
       this.nativeStorage.setItem('lastName', profile.lastName);
+      this.nativeStorage.setItem('hasWifi', profile.hasWifi);
+      this.nativeStorage.setItem('hasLocalDeals', profile.hasLocalDeals);
       this.gravatarUrl = gravatar.url(
         profile.email,
         { s: '100', d: 'mm' },
@@ -139,29 +139,23 @@ export class HomePage {
 
   initialSetup() {
     this.nativeStorage.getItem('gravatarUrl').then(
-      url => {
-        this.gravatarUrl = url;
-      },
-      error => {
-        console.log(error);
-      }
+      url => this.gravatarUrl = url,
+      error => console.log(error)
     );
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData('email', 'firstName', 'lastName');
+    const profileData = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
   getProfileData(...keys) {
-    let profileData = <any>{};
+    let profileData = <Profile>{};
     keys.forEach((key, index) => {
       this.nativeStorage.getItem(key).then(
-        value => {
-          profileData[key] = value;
-        },
+        value => profileData[key] = value,
         error => {
-          console.log(error);
+          console.log('Error getting storage item', error);
           profileData[key] = '';
         }
       );
@@ -234,6 +228,7 @@ export class HomePage {
             'red',
             selectedLocation.latitude,
             selectedLocation.longitude,
+            false,
             this.launchMapsDirections,
             {
               launchNavigator: this.launchNavigator,
@@ -242,6 +237,7 @@ export class HomePage {
             }
           );
           this.locations = [];
+          this.isSpaceCreated = false;
         });
 
         return { latitude, longitude };
@@ -270,7 +266,7 @@ export class HomePage {
           this.isOnWater = res.json().water;
           if (this.isOnWater === true) {
             alert(
-              'It seems that the central location is in water! You may move the pin and put it on land.'
+              'It looks like the central location is on water! You have the chance to move the pin and put it on land.'
             );
           }
           this.dropMarker(
@@ -350,7 +346,8 @@ export class HomePage {
   }
 
   showCreateSpaceModal() {
-    let preferencesModal = this.modalCtrl.create(PreferencesPage);
+    const defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
+    let preferencesModal = this.modalCtrl.create(PreferencesPage, { defaultPreferences });
     preferencesModal.present();
     preferencesModal.onDidDismiss(preferences => {
       //If the next button was clicked, preferences were passed.
@@ -382,7 +379,7 @@ export class HomePage {
 
             spaceModal.onDidDismiss(data => {
               this.groupSocketService.userInfos = [];
-              this.spaceCreated = true;
+              this.isSpaceCreated = true;
             });
           },
           error => {
