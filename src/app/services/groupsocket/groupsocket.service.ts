@@ -5,6 +5,7 @@ import { Http } from '@angular/http';
 import { ConfigService } from '../config/config.service';
 import * as io from 'socket.io-client';
 import 'rxjs/Rx';
+import * as _ from 'lodash';
 
 export interface UserInfo {
   socketID: string;
@@ -65,12 +66,21 @@ export class GroupSocketService {
     this.socket.on('getExistingSelectedLocation', res => {
       this.locationSubject.next(res);
     });
+
+    this.socket.on('getLeavingUserInfo', res => {
+      _.pull(this.userInfos, res);
+    });
   }
 
   joinGroup() {
     //Add the unique socket id on join group.
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('joinGroup', this.userInfo);
+  }
+
+  leaveGroup() {
+    this.userInfo.socketID = this.socket.io.engine.id;
+    this.socket.emit('leaveGroup', this.userInfo);
   }
 
   selectLocation() {

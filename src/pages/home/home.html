@@ -4,7 +4,7 @@
     <div *ngIf="isSpaceCreated" class="location-button">
       <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>
     </div>
-    <!-- TODO: if user is in a space, the button should change to 'Leave space' -->
-    <button ion-button color="primary" (click)="showCreateSpaceModal()">Create space</button>
+    <button ion-button color="primary" (click)="showCreateSpaceModal()" *ngIf="!isInGroup">Create space</button>
+    <button ion-button color="primary" (click)="leaveGroup()" *ngIf="isInGroup">Leave space</button>
   </div>
 </div>

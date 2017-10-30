@@ -11,6 +11,7 @@ import {
   NavController,
   NavParams,
   Events,
+  AlertController,
 } from 'ionic-angular';
 import { WorkfromService } from '../../app/services/workfrom/workfrom.service';
 import { OnWaterService } from '../../app/services/onwater/onwater.service';
@@ -67,6 +68,7 @@ export class HomePage {
   locations;
   // If central location is on water
   isOnWater: boolean;
+  isInGroup: boolean;
 
   constructor(
     public platform: Platform,
@@ -79,12 +81,14 @@ export class HomePage {
     private navParams: NavParams,
     public navCtrl: NavController,
     public events: Events,
+    public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator
   ) {
     //Generate random username and pass to socketservice.
     this.username = `TestUser${Math.floor(Math.random() * 100)}`;
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
+    this.isInGroup = false;
 
     events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
@@ -369,6 +373,7 @@ export class HomePage {
 
             //Join the room specified by the group uid.
             this.groupSocketService.joinGroup();
+            this.isInGroup = true;
 
             //Create modal.
             let spaceModal = this.modalCtrl.create(SpacePage, {
@@ -409,6 +414,30 @@ export class HomePage {
       .present();
   }
 
+  leaveGroup() {
+    const alert = this.alertCtrl.create({
+      title: 'Leave space',
+      message: 'Are you sure to want to leave this space?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel leave space clicked');
+          }
+        },
+        {
+          text: 'Confirm',
+          handler: () => {
+            this.groupSocketService.leaveGroup();
+            this.isInGroup = false;
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
   private selectLocation() {
     if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
       this.groupSocketService.selectedLocation = {
@@ -437,6 +466,7 @@ export class HomePage {
 
       //Join the room specified by the group uid.
       this.groupSocketService.joinGroup();
+      this.isInGroup = true;
       this.navCtrl.pop();
     }
   }
