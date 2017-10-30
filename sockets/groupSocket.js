@@ -32,6 +32,11 @@ module.exports = io => {
           io.in(selectedLocation.groupUID).emit('getExistingSelectedLocation', selectedLocation);
         });
 
+        socket.on('leaveGroup', userInfo => {
+          console.log(`User left group: ${userInfo.groupUID}`);
+          socket.to(userInfo.groupUID).emit('getLeavingUserInfo', userInfo);
+        });
+
         //Whenever someone disconnects this piece of code executed
         socket.on('disconnect', function() {
           console.log('A user disconnected');
