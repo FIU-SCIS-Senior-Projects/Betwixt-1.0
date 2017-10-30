@@ -113,8 +113,11 @@ export class HomePage {
       .then(() => {
         this.host_uid = this.navParams.get('group_uid');
         this.selectedLocation = this.navParams.get('selectedLocation');
-        this.joinHostGroup();
-        this.selectLocation();
+        return this.getCurrentPosition().then(currentPosition => {
+          this.joinHostGroup(currentPosition);
+          this.selectLocation();
+          return new Promise(resolve => resolve(currentPosition));
+        });
         /*
          this.locations = [{
            title: 'Starbucks',
@@ -133,7 +136,6 @@ export class HomePage {
            local_deal_flag: 0
          }]
          */
-        return this.getCurrentPosition();
       })
       .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
@@ -142,14 +144,19 @@ export class HomePage {
   }
 
   initialSetup() {
-    this.nativeStorage.getItem('gravatarUrl').then(
-      url => this.gravatarUrl = url,
-      error => console.log(error)
-    );
+    this.nativeStorage
+      .getItem('gravatarUrl')
+      .then(url => (this.gravatarUrl = url), error => console.log(error));
   }
 
   presentProfilePage() {
-    const profileData = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
+    const profileData = this.getProfileData(
+      'email',
+      'firstName',
+      'lastName',
+      'hasWifi',
+      'hasLocalDeals'
+    );
     this.navCtrl.push(ProfilePage, { profileData });
   }
 
@@ -157,7 +164,7 @@ export class HomePage {
     let profileData = <Profile>{};
     keys.forEach((key, index) => {
       this.nativeStorage.getItem(key).then(
-        value => profileData[key] = value,
+        value => (profileData[key] = value),
         error => {
           console.log('Error getting storage item', error);
           profileData[key] = '';
@@ -351,7 +358,9 @@ export class HomePage {
 
   showCreateSpaceModal() {
     const defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
-    let preferencesModal = this.modalCtrl.create(PreferencesPage, { defaultPreferences });
+    let preferencesModal = this.modalCtrl.create(PreferencesPage, {
+      defaultPreferences,
+    });
     preferencesModal.present();
     preferencesModal.onDidDismiss(preferences => {
       //If the next button was clicked, preferences were passed.
@@ -454,14 +463,14 @@ export class HomePage {
   }
 
   //If routed from the deeplink, join the room.
-  private joinHostGroup() {
+  private joinHostGroup(currentPosition) {
     if (this.host_uid && this.selectedLocation === undefined) {
       this.groupSocketService.userInfo = {
         socketID: '',
         groupUID: this.host_uid,
         username: this.username,
-        latitude: this.latitude,
-        longitude: this.longitude,
+        latitude: currentPosition.coords.latitude,
+        longitude: currentPosition.coords.longitude,
       };
 
       //Join the room specified by the group uid.
