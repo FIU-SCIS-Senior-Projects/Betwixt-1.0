@@ -14,13 +14,11 @@ webpackJsonp([1],{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__profile_profile__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__ = __webpack_require__(282);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib__ = __webpack_require__(625);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_geolib__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar__ = __webpack_require__(626);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10_gravatar__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__location_location__ = __webpack_require__(284);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__preferences_preferences__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar__ = __webpack_require__(625);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_gravatar__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__location_location__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__preferences_preferences__ = __webpack_require__(285);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -43,12 +41,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
-// TODO: remove random coordinates
-var RANDOM_GEOCOORDINATES = [
-    { latitude: 25.992046, longitude: -80.283645 },
-    { latitude: 25.942871, longitude: -80.12338 },
-];
+// TODO: Remove random coordinates
+// gonna leave them here for now to use this for testing
+// const RANDOM_GEOCOORDINATES: Coordinates[] = [
+//   { latitude: 25.992046, longitude: -80.283645 }, // Pembroke Pines
+//   { latitude: 25.942871, longitude: -80.12338 }, // Sunny Isles
+//   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
+//   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
+// ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, onWaterService, googleMaps, groupSocketService, nativeStorage, navParams, navCtrl, events, alertCtrl, launchNavigator) {
         var _this = this;
@@ -76,7 +76,7 @@ var HomePage = (function () {
             _this.nativeStorage.setItem('lastName', profile.lastName);
             _this.nativeStorage.setItem('hasWifi', profile.hasWifi);
             _this.nativeStorage.setItem('hasLocalDeals', profile.hasLocalDeals);
-            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_10_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
+            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_9_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
             _this.nativeStorage.setItem('gravatarUrl', _this.gravatarUrl);
         });
     }
@@ -165,10 +165,6 @@ var HomePage = (function () {
             .then(function () {
             console.log('Map is ready!');
             _this.dropMarker('Current Location', 'green', latitude, longitude, false);
-            RANDOM_GEOCOORDINATES.forEach(function (position, index) {
-                var latitude = position.latitude, longitude = position.longitude;
-                _this.dropMarker("Location " + (index + 1), 'blue', latitude, longitude, false);
-            });
             _this.groupSocketService.userInfoSubject.subscribe(function (userInfo) {
                 console.log("Marker dropped for user: " + userInfo.username);
                 _this.dropMarker(userInfo.username, 'blue', userInfo.latitude, userInfo.longitude, false);
@@ -196,20 +192,22 @@ var HomePage = (function () {
         });
     };
     HomePage.prototype.getCentralPosition = function (currentPosition) {
+        // const locations = [currentPosition, ...RANDOM_GEOCOORDINATES];
         var _this = this;
-        var locations = [currentPosition].concat(RANDOM_GEOCOORDINATES);
         return new Promise(function (resolve) {
-            var centralPosition = __WEBPACK_IMPORTED_MODULE_9_geolib___default.a.getCenterOfBounds(locations);
+            // const centralPosition = geolib.getCenterOfBounds(locations);
+            // TODO: should be dropping the pin on the central location
+            // but for now it will just be the current position
             _this.onWaterService
-                .checkForWater(centralPosition.latitude, centralPosition.longitude)
+                .checkForWater(currentPosition.latitude, currentPosition.longitude)
                 .subscribe(function (res) {
                 _this.isOnWater = res.json().water;
                 if (_this.isOnWater === true) {
                     alert('It looks like the central location is on water! You have the chance to move the pin and put it on land.');
                 }
-                _this.dropMarker('Central Location', 'purple', centralPosition.latitude, centralPosition.longitude, _this.isOnWater);
+                _this.dropMarker('Central Location', 'purple', currentPosition.latitude, currentPosition.longitude, _this.isOnWater);
             });
-            return resolve(centralPosition);
+            return resolve(currentPosition);
         });
     };
     HomePage.prototype.getWorkfromLocations = function (centralPosition) {
@@ -264,7 +262,7 @@ var HomePage = (function () {
     HomePage.prototype.showCreateSpaceModal = function () {
         var _this = this;
         var defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
-        var preferencesModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_13__preferences_preferences__["a" /* PreferencesPage */], {
+        var preferencesModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_12__preferences_preferences__["a" /* PreferencesPage */], {
             defaultPreferences: defaultPreferences,
         });
         preferencesModal.present();
@@ -311,7 +309,7 @@ var HomePage = (function () {
     };
     HomePage.prototype.showLocationsModal = function () {
         this.modalCtrl
-            .create(__WEBPACK_IMPORTED_MODULE_12__location_location__["a" /* LocationPage */], {
+            .create(__WEBPACK_IMPORTED_MODULE_11__location_location__["a" /* LocationPage */], {
             locations: this.locations,
             group_uid: this.groupSocketService.userInfo.groupUID,
             preferences: this.spacePreferences,
@@ -320,7 +318,7 @@ var HomePage = (function () {
     };
     HomePage.prototype.leaveGroup = function () {
         var _this = this;
-        var alert = this.alertCtrl.create({
+        this.alertCtrl.create({
             title: 'Leave space',
             message: 'Are you sure to want to leave this space?',
             buttons: [
@@ -339,8 +337,7 @@ var HomePage = (function () {
                     }
                 }
             ]
-        });
-        alert.present();
+        }).present();
     };
     HomePage.prototype.selectLocation = function () {
         if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
@@ -404,20 +401,10 @@ HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
         selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl || \'assets/profile.jpg\'" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="isSpaceCreated" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <button ion-button color="primary" (click)="showCreateSpaceModal()" *ngIf="!isInGroup">Create space</button>\n    <button ion-button color="primary" (click)="leaveGroup()" *ngIf="isInGroup">Leave space</button>\n  </div>\n</div>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */],
-        __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
-        __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */],
-        __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
-        __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */],
-        __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */],
-        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */],
-        __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */]])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* NavParams */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["k" /* NavParams */]) === "function" && _h || Object, typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */]) === "function" && _j || Object, typeof (_k = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */]) === "function" && _k || Object, typeof (_l = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */]) === "function" && _l || Object, typeof (_m = typeof __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__["a" /* LaunchNavigator */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__["a" /* LaunchNavigator */]) === "function" && _m || Object])
 ], HomePage);
 
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 //# sourceMappingURL=home.js.map
 
 /***/ }),
@@ -602,7 +589,7 @@ webpackEmptyAsyncContext.id = 153;
 
 var map = {
 	"../pages/profile/profile.module": [
-		637,
+		636,
 		0
 	]
 };
@@ -932,9 +919,9 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_profile_profile__ = __webpack_require__(143);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(236);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(239);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(631);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(636);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(635);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_google_maps__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_deeplinks__ = __webpack_require__(240);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_clipboard__ = __webpack_require__(245);
@@ -1166,15 +1153,15 @@ ConfigService = __decorate([
 
 /***/ }),
 
-/***/ 632:
+/***/ 631:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ServicesModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(633);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(634);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(635);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(634);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__groupsocket_groupsocket_service__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__onwater_onwater_service__ = __webpack_require__(243);
@@ -1230,7 +1217,7 @@ ServicesModule = __decorate([
 
 /***/ }),
 
-/***/ 633:
+/***/ 632:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1276,7 +1263,7 @@ SampleService = __decorate([
 
 /***/ }),
 
-/***/ 634:
+/***/ 633:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1306,7 +1293,7 @@ ConfigModule = __decorate([
 
 /***/ }),
 
-/***/ 635:
+/***/ 634:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
