@@ -25,6 +25,7 @@ import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../location/location';
 import { PreferencesPage } from '../preferences/preferences';
 import { PreferenceOptions } from '../preferences/preference-options';
+import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
 
 interface Coordinates {
   latitude: number;
@@ -78,6 +79,7 @@ export class HomePage {
     private onWaterService: OnWaterService,
     private googleMaps: GoogleMaps,
     public groupSocketService: GroupSocketService,
+    public groupTestService: GroupTestService,
     private nativeStorage: NativeStorage,
     private navParams: NavParams,
     public navCtrl: NavController,
@@ -417,26 +419,28 @@ export class HomePage {
   }
 
   leaveGroup() {
-    this.alertCtrl.create({
-      title: 'Leave space',
-      message: 'Are you sure to want to leave this space?',
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancel leave space clicked');
-          }
-        },
-        {
-          text: 'Confirm',
-          handler: () => {
-            this.groupSocketService.leaveGroup();
-            this.isInGroup = false;
-          }
-        }
-      ]
-    }).present();
+    this.alertCtrl
+      .create({
+        title: 'Leave space',
+        message: 'Are you sure to want to leave this space?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancel leave space clicked');
+            },
+          },
+          {
+            text: 'Confirm',
+            handler: () => {
+              this.groupSocketService.leaveGroup();
+              this.isInGroup = false;
+            },
+          },
+        ],
+      })
+      .present();
   }
 
   private selectLocation() {

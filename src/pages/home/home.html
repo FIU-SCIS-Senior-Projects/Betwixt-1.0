@@ -2,6 +2,8 @@
   <img id="profile-icon" [src]="gravatarUrl || 'assets/profile.jpg'" on-tap="presentProfilePage()" />
   <div class="button-group">
     <div *ngIf="isSpaceCreated" class="location-button">
+      <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->
+      <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID)">Generate user</button>-->
       <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>
     </div>
     <button ion-button color="primary" (click)="showCreateSpaceModal()" *ngIf="!isInGroup">Create space</button>

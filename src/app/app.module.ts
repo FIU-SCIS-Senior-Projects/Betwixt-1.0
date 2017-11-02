@@ -21,6 +21,7 @@ import { GroupSocketService } from './services/groupsocket/groupsocket.service';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../pages/location/location';
 import { PreferencesPage } from '../pages/preferences/preferences';
+import { GroupTestService } from './services/grouptest/grouptest.service';
 
 const components = [
   MyApp,
@@ -53,6 +54,7 @@ const components = [
     Clipboard,
     NativeStorage,
     GroupSocketService,
+    GroupTestService,
     LaunchNavigator,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
   ],
