@@ -209,7 +209,7 @@ var HomePage = (function () {
                 if (_this.isOnWater === true) {
                     alert('It looks like the central location is on water! You have the chance to move the pin and put it on land.');
                 }
-                _this.dropMarker('Central Location', 'purple', currentPosition.latitude, currentPosition.longitude, _this.isOnWater);
+                _this.dropMarker('Central Location', 'purple', currentPosition.latitude, currentPosition.longitude, true);
             });
             return resolve(currentPosition);
         });

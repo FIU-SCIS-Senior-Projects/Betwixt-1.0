@@ -282,7 +282,7 @@ export class HomePage {
             'purple',
             currentPosition.latitude,
             currentPosition.longitude,
-            this.isOnWater
+            true
           );
         });
 
