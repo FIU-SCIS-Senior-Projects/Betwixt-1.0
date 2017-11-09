@@ -68,6 +68,7 @@ export class HomePage {
   username: string;
 
   locations;
+  droppedMarkers;
   // If central location is on water
   isOnWater: boolean;
   isInGroup: boolean;
@@ -92,6 +93,7 @@ export class HomePage {
     this.groupSocketService.username = this.username;
     this.isOnWater = false;
     this.isInGroup = false;
+    this.droppedMarkers = [];
 
     events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
@@ -239,7 +241,7 @@ export class HomePage {
               selectedPosition: selectedLocation,
             }
           );
-          this.locations = [];
+          // this.locations = [];
           this.isSpaceCreated = false;
         });
 
@@ -436,6 +438,11 @@ export class HomePage {
             handler: () => {
               this.groupSocketService.leaveGroup();
               this.isInGroup = false;
+              this.isSpaceCreated = false;
+              this.selectedLocation = null;
+              for (var i = 1; i < this.droppedMarkers.length; i++) {
+                this.droppedMarkers[i].remove();
+              }
             },
           },
         ],
@@ -494,6 +501,7 @@ export class HomePage {
         position: { lat, lng },
       })
       .then(marker => {
+        this.droppedMarkers.push(marker);
         if (clickFunction !== undefined) {
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);
