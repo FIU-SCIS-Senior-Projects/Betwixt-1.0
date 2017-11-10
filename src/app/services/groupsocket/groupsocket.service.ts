@@ -11,6 +11,7 @@ export interface UserInfo {
   socketID: string;
   groupUID: string;
   username: string;
+  imageUrl?: string;
   latitude?: number;
   longitude?: number;
 }
@@ -30,7 +31,6 @@ export class GroupSocketService {
   uid: Observable<string>;
   userInfos: Array<UserInfo> = [];
   userInfoSubject: Subject<UserInfo> = new Subject<UserInfo>();
-  username: string;
   locationSubject: Subject<SelectedLocation> = new Subject<SelectedLocation>();
   public selectedLocation: SelectedLocation;
   public userInfo: UserInfo;

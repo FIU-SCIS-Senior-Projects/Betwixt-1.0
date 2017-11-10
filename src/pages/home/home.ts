@@ -19,13 +19,13 @@ import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
 import { ProfilePage, Profile } from '../profile/profile';
 import { NativeStorage } from '@ionic-native/native-storage';
-import geolib from 'geolib';
+// import geolib from 'geolib';
 import gravatar from 'gravatar';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../location/location';
 import { PreferencesPage } from '../preferences/preferences';
 import { PreferenceOptions } from '../preferences/preference-options';
-import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
+// import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
 
 interface Coordinates {
   latitude: number;
@@ -37,6 +37,11 @@ interface SelectedLocation {
   latitude: number;
   longitude: number;
 }
+
+const IMAGE_SIZE = {
+  width: 28,
+  height: 28,
+};
 
 // TODO: Remove random coordinates
 // gonna leave them here for now to use this for testing
@@ -61,17 +66,16 @@ export class HomePage {
   longitude: number;
 
   host_uid: string;
-  isSpaceCreated: boolean = false;
+  isSpaceCreated = false;
   spacePreferences: PreferenceOptions;
-
-  //Random username.
-  username: string;
 
   locations;
   droppedMarkers;
   // If central location is on water
   isOnWater: boolean;
   isInGroup: boolean;
+
+  username: { firstName: string; lastName: string };
 
   constructor(
     public platform: Platform,
@@ -80,7 +84,7 @@ export class HomePage {
     private onWaterService: OnWaterService,
     private googleMaps: GoogleMaps,
     public groupSocketService: GroupSocketService,
-    public groupTestService: GroupTestService,
+    // public groupTestService: GroupTestService,
     private nativeStorage: NativeStorage,
     private navParams: NavParams,
     public navCtrl: NavController,
@@ -88,12 +92,13 @@ export class HomePage {
     public alertCtrl: AlertController,
     private launchNavigator: LaunchNavigator
   ) {
-    //Generate random username and pass to socketservice.
-    this.username = `TestUser${Math.floor(Math.random() * 100)}`;
-    this.groupSocketService.username = this.username;
     this.isOnWater = false;
     this.isInGroup = false;
     this.droppedMarkers = [];
+    this.username = {
+      firstName: 'Betwixt',
+      lastName: 'Space'
+    };
 
     events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
@@ -107,6 +112,8 @@ export class HomePage {
         true
       );
       this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
+
+      alert(`profile:saved ${JSON.stringify(profile)}`);
     });
   }
 
@@ -123,24 +130,6 @@ export class HomePage {
           this.selectLocation();
           return new Promise(resolve => resolve(currentPosition));
         });
-        /*
-         this.locations = [{
-           title: 'Starbucks',
-           description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-           type: 'free',
-           distance: 12,
-           no_wifi: 1,
-           local_deal_flag: 1
-         },
-         {
-           title: 'Starbucks',
-           description: 'A cool please to study. A cool please to study. A cool please to study. A cool please to study.',
-           type: 'commercial',
-           distance: 5,
-           no_wifi: 0,
-           local_deal_flag: 0
-         }]
-         */
       })
       .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
@@ -149,9 +138,33 @@ export class HomePage {
   }
 
   initialSetup() {
-    this.nativeStorage
-      .getItem('gravatarUrl')
-      .then(url => (this.gravatarUrl = url), error => console.log(error));
+    this.nativeStorage.getItem('firstName').then(
+      firstName => {
+        this.username.firstName = firstName;
+        console.log(`set username ${this.username.firstName}`);
+      },
+      error => {
+        this.username.firstName = 'Betwixt';
+        console.log(`error username ${this.username.firstName} ${error}`);
+      }
+    );
+    this.nativeStorage.getItem('lastName').then(
+      lastName => {
+        this.username.lastName = lastName;
+        console.log(`set username ${this.username.lastName}`);
+      },
+      error => {
+        this.username.lastName = 'Space';
+        console.log(`error username ${this.username.lastName} ${error}`);
+      }
+    );
+    this.nativeStorage.getItem('gravatarUrl').then(
+      url => {
+        this.gravatarUrl = url;
+        console.log(`set gravatarUrl ${this.gravatarUrl}`);
+      },
+      error => console.log(error)
+    );
   }
 
   presentProfilePage() {
@@ -203,9 +216,14 @@ export class HomePage {
       .then(() => {
         console.log('Map is ready!');
 
+        const currentUserImage = {
+          url: this.gravatarUrl,
+          size: IMAGE_SIZE,
+        };
+
         this.dropMarker(
           'Current Location',
-          'green',
+          currentUserImage,
           latitude,
           longitude,
           false
@@ -215,7 +233,10 @@ export class HomePage {
           console.log(`Marker dropped for user: ${userInfo.username}`);
           this.dropMarker(
             userInfo.username,
-            'blue',
+            {
+              url: userInfo.imageUrl,
+              size: IMAGE_SIZE,
+            },
             userInfo.latitude,
             userInfo.longitude,
             false
@@ -355,26 +376,31 @@ export class HomePage {
 
   showCreateSpaceModal() {
     const defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
+    console.log(`defaultPreferences ${JSON.stringify(defaultPreferences)}`);
+
     let preferencesModal = this.modalCtrl.create(PreferencesPage, {
       defaultPreferences,
     });
     preferencesModal.present();
     preferencesModal.onDidDismiss(preferences => {
       //If the next button was clicked, preferences were passed.
+      console.log(`preferences ${JSON.stringify(preferences)}`);
       if (preferences) {
         this.spacePreferences = preferences;
         //On open space modal, subscribe to group uid from server.
         this.groupSocketService.uid.subscribe(
           //User's info object that will be sent to server.
           group_uid => {
+            console.log(`group_uid ${JSON.stringify(group_uid)}`);
             this.groupSocketService.userInfo = {
               socketID: '',
               groupUID: group_uid,
-              username: this.username,
+              imageUrl: this.gravatarUrl,
+              username: `${this.username.firstName} ${this.username.lastName}`,
               latitude: this.latitude,
               longitude: this.longitude,
             };
-
+            console.log(`this.groupSocketService.userInfo ${JSON.stringify(this.groupSocketService.userInfo)}`);
             console.log(group_uid);
 
             //Join the room specified by the group uid.
@@ -471,7 +497,8 @@ export class HomePage {
       this.groupSocketService.userInfo = {
         socketID: '',
         groupUID: this.host_uid,
-        username: this.username,
+        username: `${this.username.firstName} ${this.username.lastName}`,
+        imageUrl: this.gravatarUrl,
         latitude: currentPosition.coords.latitude,
         longitude: currentPosition.coords.longitude,
       };
@@ -506,10 +533,7 @@ export class HomePage {
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);
           });
-        } else
-          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
-            alert(`clicked on ${res}`);
-          });
+        }
         if (draggable) {
           marker.on(GoogleMapsEvent.MARKER_DRAG_END).subscribe(res => {
             this.getWorkfromLocations(res[0]);

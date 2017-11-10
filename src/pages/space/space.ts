@@ -7,16 +7,21 @@ import { Clipboard } from '@ionic-native/clipboard';
   templateUrl: 'space.html',
 })
 export class SpacePage {
-  spaceLink : string;
-  uid : string;
+  spaceLink: string;
+  uid: string;
 
-  constructor(public viewCtrl: ViewController, public clipboard: Clipboard, params: NavParams) {
+  constructor(
+    public viewCtrl: ViewController,
+    public clipboard: Clipboard,
+    params: NavParams
+  ) {
     this.uid = params.get('uid');
-    this.spaceLink = `betwixt://betwixt.com/?group_uid=${this.uid}`
+    this.spaceLink = `betwixt://betwixt.com/?group_uid=${this.uid}`;
   }
 
   onCopy() {
-    this.clipboard.copy(this.spaceLink)
+    this.clipboard
+      .copy(this.spaceLink)
       .then(() => alert('Your Space Link has been copied to your clipboard!'));
   }
 

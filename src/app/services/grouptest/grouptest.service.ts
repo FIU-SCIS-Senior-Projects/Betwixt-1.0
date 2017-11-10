@@ -26,6 +26,7 @@ export class GroupTestService {
       socketID: '',
       groupUID: group_uid,
       username: `RandomGeoUser${Math.floor(Math.random() * 100)}`,
+      imageUrl: 'http://www.freeiconspng.com/uploads/profile-icon-9.png',
       latitude: randomPoint.latitude,
       longitude: randomPoint.longitude,
     };
