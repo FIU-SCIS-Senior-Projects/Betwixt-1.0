@@ -1,6 +1,5 @@
 import { Component } from '@angular/core/';
 import { NavParams, ViewController, NavController } from 'ionic-angular';
-import { HomePage } from '../home/home';
 import { PreferenceOptions } from '../preferences/preference-options';
 
 @Component({
@@ -27,11 +26,7 @@ export class LocationPage {
   selectLocation(latitude, longitude, title) {
     console.log('selected location!', latitude, longitude);
     console.log('group_uid', this.group_uid);
-    this.dismiss();
-    this.navCtrl.push(HomePage, {
-      selectedLocation: { latitude, longitude, title },
-      group_uid: this.group_uid,
-    });
+    this.viewCtrl.dismiss({ latitude, longitude, title, groupUID: this.group_uid });
   }
 
   sortByPreference() {

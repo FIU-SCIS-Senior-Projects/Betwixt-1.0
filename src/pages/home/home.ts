@@ -9,7 +9,6 @@ import {
   Platform,
   ModalController,
   NavController,
-  NavParams,
   Events,
   AlertController,
 } from 'ionic-angular';
@@ -36,6 +35,7 @@ interface SelectedLocation {
   title: string;
   latitude: number;
   longitude: number;
+  groupUID: string;
 }
 
 const IMAGE_SIZE = {
@@ -86,7 +86,6 @@ export class HomePage {
     public groupSocketService: GroupSocketService,
     // public groupTestService: GroupTestService,
     private nativeStorage: NativeStorage,
-    private navParams: NavParams,
     public navCtrl: NavController,
     public events: Events,
     public alertCtrl: AlertController,
@@ -113,7 +112,7 @@ export class HomePage {
       );
       this.nativeStorage.setItem('gravatarUrl', this.gravatarUrl);
 
-      alert(`profile:saved ${JSON.stringify(profile)}`);
+      console.log(`profile:saved ${JSON.stringify(profile)}`);
     });
   }
 
@@ -122,19 +121,22 @@ export class HomePage {
     this.platform
       .ready()
       .then(() => this.initialSetup())
-      .then(() => {
-        this.host_uid = this.navParams.get('group_uid');
-        this.selectedLocation = this.navParams.get('selectedLocation');
-        return this.getCurrentPosition().then(currentPosition => {
-          this.joinHostGroup(currentPosition);
-          this.selectLocation();
-          return new Promise(resolve => resolve(currentPosition));
-        });
-      })
+      .then(() => this.getCurrentPosition())
+      .then(currentPosition => this.joinGroupIfDeeplinked(currentPosition))
       .then(currentPosition => this.loadMap(currentPosition))
       .then(currentPosition => this.getCentralPosition(currentPosition))
       .then(centralPosition => this.getWorkfromLocations(centralPosition))
       .catch(error => alert(`An error has occured:\n ${error}`));
+  }
+
+  joinGroupIfDeeplinked(currentPosition) {
+    this.events.subscribe('group:join', deeplinkGroupSubject => {
+      deeplinkGroupSubject.subscribe(uid => {
+        this.joinHostGroup(currentPosition, uid);
+      });
+    });
+    this.events.publish('deeplink:listening');
+    return new Promise(resolve => resolve(currentPosition));
   }
 
   initialSetup() {
@@ -277,6 +279,7 @@ export class HomePage {
     };
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
+      //return resolve({coords: { latitude: 25.992046, longitude: -80.383645 }})
     });
   }
 
@@ -408,42 +411,36 @@ export class HomePage {
             this.isInGroup = true;
 
             //Create modal.
-            let spaceModal = this.modalCtrl.create(SpacePage, {
+            const spaceModal = this.modalCtrl.create(SpacePage, {
               uid: group_uid,
             });
 
             spaceModal.present();
 
-            spaceModal.onDidDismiss(data => {
-              this.groupSocketService.userInfos = [];
-              this.isSpaceCreated = true;
-            });
+            spaceModal.onDidDismiss(() => (this.isSpaceCreated = true));
           },
-          error => {
-            //Create modal.
-            let spaceModal = this.modalCtrl.create(SpacePage, {
-              uid: '',
-            });
-
-            spaceModal.present();
-
-            spaceModal.onDidDismiss(data => {
-              this.groupSocketService.userInfos = [];
-            });
-          }
+          error => this.modalCtrl.create(SpacePage, { uid: '' }).present()
         );
       }
     });
   }
 
   showLocationsModal() {
-    this.modalCtrl
-      .create(LocationPage, {
-        locations: this.locations,
-        group_uid: this.groupSocketService.userInfo.groupUID,
-        preferences: this.spacePreferences,
-      })
-      .present();
+    const locationsModal = this.modalCtrl.create(LocationPage, {
+      locations: this.locations,
+      group_uid: this.groupSocketService.userInfo.groupUID,
+      preferences: this.spacePreferences,
+    });
+
+    locationsModal.present();
+    locationsModal.onDidDismiss((selectedLocation: SelectedLocation) => {
+      this.selectLocation(
+        selectedLocation.groupUID,
+        selectedLocation.latitude,
+        selectedLocation.longitude,
+        selectedLocation.title
+      );
+    });
   }
 
   leaveGroup() {
@@ -476,38 +473,32 @@ export class HomePage {
       .present();
   }
 
-  private selectLocation() {
-    if (this.selectedLocation && this.groupSocketService.userInfo.groupUID) {
-      this.groupSocketService.selectedLocation = {
-        socketId: '',
-        groupUID: this.groupSocketService.userInfo.groupUID,
-        latitude: this.selectedLocation.latitude,
-        longitude: this.selectedLocation.longitude,
-        title: this.selectedLocation.title,
-      };
+  private selectLocation(groupUID, latitude, longitude, title) {
+    this.groupSocketService.selectedLocation = {
+      socketId: '',
+      groupUID,
+      latitude,
+      longitude,
+      title,
+    };
 
-      this.groupSocketService.selectLocation();
-      this.navCtrl.pop();
-    }
+    this.groupSocketService.selectLocation();
   }
 
   //If routed from the deeplink, join the room.
-  private joinHostGroup(currentPosition) {
-    if (this.host_uid && this.selectedLocation === undefined) {
-      this.groupSocketService.userInfo = {
-        socketID: '',
-        groupUID: this.host_uid,
-        username: `${this.username.firstName} ${this.username.lastName}`,
-        imageUrl: this.gravatarUrl,
-        latitude: currentPosition.coords.latitude,
-        longitude: currentPosition.coords.longitude,
-      };
+  private joinHostGroup(currentPosition, groupUID) {
+    this.groupSocketService.userInfo = {
+      socketID: '',
+      groupUID,
+      imageUrl: this.gravatarUrl,
+      username: `${this.username.firstName} ${this.username.lastName}`,
+      latitude: currentPosition.coords.latitude,
+      longitude: currentPosition.coords.longitude,
+    };
 
-      //Join the room specified by the group uid.
-      this.groupSocketService.joinGroup();
-      this.isInGroup = true;
-      this.navCtrl.pop();
-    }
+    //Join the room specified by the group uid.
+    this.groupSocketService.joinGroup();
+    this.isInGroup = true;
   }
 
   private dropMarker(

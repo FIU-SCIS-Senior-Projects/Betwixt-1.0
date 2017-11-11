@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/subject';
 import { Http } from '@angular/http';
 import { ConfigService } from '../config/config.service';
 import * as io from 'socket.io-client';
 import 'rxjs/Rx';
 import * as _ from 'lodash';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 export interface UserInfo {
   socketID: string;
@@ -30,10 +30,13 @@ export class GroupSocketService {
   socket: io;
   uid: Observable<string>;
   userInfos: Array<UserInfo> = [];
-  userInfoSubject: Subject<UserInfo> = new Subject<UserInfo>();
-  locationSubject: Subject<SelectedLocation> = new Subject<SelectedLocation>();
+  userInfoSubject: ReplaySubject<UserInfo> = new ReplaySubject<UserInfo>();
+  locationSubject: ReplaySubject<SelectedLocation> = new ReplaySubject<
+    SelectedLocation
+  >();
   public selectedLocation: SelectedLocation;
   public userInfo: UserInfo;
+  socketIdSubject: ReplaySubject<string> = new ReplaySubject<string>();
 
   constructor(private http: Http, configService: ConfigService) {
     this.socketHost = configService.serverUrl;
@@ -42,6 +45,7 @@ export class GroupSocketService {
     this.socket = io(this.socketHost);
     //Add user information when a new user joins.
     this.socket.on('getNewUserInfo', res => {
+      console.log(`Got new user info ${JSON.stringify(res)}`);
       this.userInfos.push(res);
       this.socket.emit('sendUserInfo', {
         socketID: res.socketID,
@@ -50,7 +54,12 @@ export class GroupSocketService {
       this.userInfoSubject.next(res);
     });
 
+    this.socket.on('error', res => {
+      console.log(`${JSON.stringify(res)}`);
+    });
+
     this.socket.on('getExistingUserInfo', res => {
+      console.log(`Got existing user info ${JSON.stringify(res)}`);
       this.userInfos.push(res);
       this.userInfoSubject.next(res);
     });
@@ -70,12 +79,20 @@ export class GroupSocketService {
     this.socket.on('getLeavingUserInfo', res => {
       _.pull(this.userInfos, res);
     });
+
+    //Get socket id on connect as observable.
+    this.socket.on('connect', res => {
+      this.socketIdSubject.next(this.socket.io.engine.id);
+    });
   }
 
   joinGroup() {
     //Add the unique socket id on join group.
-    this.userInfo.socketID = this.socket.io.engine.id;
-    this.socket.emit('joinGroup', this.userInfo);
+    this.socketIdSubject.subscribe(socketId => {
+      this.userInfo.socketID = socketId;
+      console.log(`Got socketID: ${this.userInfo.socketID}`);
+      this.socket.emit('joinGroup', this.userInfo);
+    });
   }
 
   leaveGroup() {
