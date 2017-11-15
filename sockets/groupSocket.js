@@ -25,6 +25,13 @@ module.exports = io => {
           io.in(selectedLocation.groupUID).emit('getSelectedLocation', selectedLocation);
         });
 
+        socket.on('removeSelectedLocation', selectedLocation => {
+          console.log(
+            `User removed selected location: ${JSON.stringify(selectedLocation)}`
+          );
+          io.in(selectedLocation.groupUID).emit('removedSelectedLocation', selectedLocation);
+        });
+
         socket.on('sendSelectedLocation', selectedLocation => {
           console.log(
             `Sending info to specific client: ${selectedLocation.socketId}`
