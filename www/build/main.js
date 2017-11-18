@@ -70,7 +70,7 @@ webpackEmptyAsyncContext.id = 152;
 
 var map = {
 	"../pages/profile/profile.module": [
-		637,
+		638,
 		0
 	]
 };
@@ -103,12 +103,18 @@ module.exports = webpackAsyncContext;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__space_space__ = __webpack_require__(244);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__profile_profile__ = __webpack_require__(141);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__ = __webpack_require__(282);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar__ = __webpack_require__(624);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_gravatar__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__location_location__ = __webpack_require__(284);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__preferences_preferences__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__ = __webpack_require__(283);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib__ = __webpack_require__(624);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9_geolib___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9_geolib__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar__ = __webpack_require__(625);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10_gravatar___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_10_gravatar__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__location_location__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__preferences_preferences__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_lodash__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_14_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -127,9 +133,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 // import geolib from 'geolib';
 
 
+
+
+//import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
 
 
 var IMAGE_SIZE = {
@@ -146,7 +156,7 @@ var IMAGE_SIZE = {
 // ];
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, onWaterService, googleMaps, groupSocketService, 
-        // public groupTestService: GroupTestService,
+        //public groupTestService: GroupTestService,
         nativeStorage, navCtrl, events, alertCtrl, launchNavigator) {
         var _this = this;
         this.platform = platform;
@@ -164,44 +174,30 @@ var HomePage = (function () {
         this.isOnWater = false;
         this.isInGroup = false;
         this.droppedMarkers = [];
+        this.userMarkerUID = this.generateMarkerUID();
         this.username = {
             firstName: 'Betwixt',
-            lastName: 'Space'
+            lastName: 'Space',
         };
+        this.gravatarUrl = 'assets/profile.jpg';
         events.subscribe('profile:saved', function (profile) {
             _this.nativeStorage.setItem('email', profile.email);
             _this.nativeStorage.setItem('firstName', profile.firstName);
             _this.nativeStorage.setItem('lastName', profile.lastName);
             _this.nativeStorage.setItem('hasWifi', profile.hasWifi);
             _this.nativeStorage.setItem('hasLocalDeals', profile.hasLocalDeals);
-            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_9_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
+            _this.gravatarUrl = __WEBPACK_IMPORTED_MODULE_10_gravatar___default.a.url(profile.email, { s: '100', d: 'mm' }, true);
             _this.nativeStorage.setItem('gravatarUrl', _this.gravatarUrl);
             console.log("profile:saved " + JSON.stringify(profile));
         });
-    }
-    HomePage.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        console.log('Ion view loaded.');
         this.platform
             .ready()
             .then(function () { return _this.initialSetup(); })
             .then(function () { return _this.getCurrentPosition(); })
             .then(function (currentPosition) { return _this.joinGroupIfDeeplinked(currentPosition); })
             .then(function (currentPosition) { return _this.loadMap(currentPosition); })
-            .then(function (currentPosition) { return _this.getCentralPosition(currentPosition); })
-            .then(function (centralPosition) { return _this.getWorkfromLocations(centralPosition); })
             .catch(function (error) { return alert("An error has occured:\n " + error); });
-    };
-    HomePage.prototype.joinGroupIfDeeplinked = function (currentPosition) {
-        var _this = this;
-        this.events.subscribe('group:join', function (deeplinkGroupSubject) {
-            deeplinkGroupSubject.subscribe(function (uid) {
-                _this.joinHostGroup(currentPosition, uid);
-            });
-        });
-        this.events.publish('deeplink:listening');
-        return new Promise(function (resolve) { return resolve(currentPosition); });
-    };
+    }
     HomePage.prototype.initialSetup = function () {
         var _this = this;
         this.nativeStorage.getItem('firstName').then(function (firstName) {
@@ -242,6 +238,21 @@ var HomePage = (function () {
         });
         return profileData;
     };
+    //Joins group if deeplinked.
+    HomePage.prototype.joinGroupIfDeeplinked = function (currentPosition) {
+        var _this = this;
+        //Subscribe to event and get Replay Subject
+        this.events.subscribe('group:join', function (deeplinkGroupSubject) {
+            //Subscribe to Replay Subject and get the group uid
+            deeplinkGroupSubject.subscribe(function (uid) {
+                //Join the host group.
+                _this.joinHostGroup(currentPosition, uid);
+            });
+        });
+        //Home Page is ready to receive group uid.
+        this.events.publish('deeplink:listening');
+        return currentPosition;
+    };
     HomePage.prototype.loadMap = function (currentPosition) {
         var _this = this;
         var _a = currentPosition.coords, latitude = _a.latitude, longitude = _a.longitude;
@@ -262,27 +273,52 @@ var HomePage = (function () {
         return this.map
             .one(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MAP_READY)
             .then(function () {
-            console.log('Map is ready!');
             var currentUserImage = {
                 url: _this.gravatarUrl,
                 size: IMAGE_SIZE,
             };
-            _this.dropMarker('Current Location', currentUserImage, latitude, longitude, false);
-            _this.groupSocketService.userInfoSubject.subscribe(function (userInfo) {
+            _this.dropMarker('Current Location', _this.userMarkerUID, currentUserImage, latitude, longitude, false);
+            //Share observable between multiple subscribers.
+            var userInfoSubject = _this.groupSocketService.userInfoSubject;
+            //Drop marker.
+            userInfoSubject.subscribe(function (userInfo) {
                 console.log("Marker dropped for user: " + userInfo.username);
-                _this.dropMarker(userInfo.username, {
+                _this.dropMarker(userInfo.username, userInfo.markerUID, {
                     url: userInfo.imageUrl,
                     size: IMAGE_SIZE,
                 }, userInfo.latitude, userInfo.longitude, false);
             });
+            //Adjust central location. Multiple instantaneous requests are ignored so just 1 is done every 1 second.
+            userInfoSubject.debounce(function () { return __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__["Observable"].timer(1000); }).subscribe(function () {
+                _this.adjustCentralLocation({
+                    latitude: latitude,
+                    longitude: longitude,
+                });
+            });
+            //Share observable among subscribers.
+            var userLeftObservable = _this.groupSocketService.userLeftObservable.share();
+            //Remove pin of person who has left the group.
+            userLeftObservable.subscribe(function (userInfo) {
+                if (userInfo) {
+                    var userMarker = _this.droppedMarkers.find(function (x) { return x.markerUID === userInfo.markerUID; });
+                    userMarker.marker.remove();
+                    __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](_this.droppedMarkers, userMarker);
+                }
+            });
+            //Adjust central location on removal of user.
+            userLeftObservable.subscribe(function () {
+                _this.adjustCentralLocation({
+                    latitude: latitude,
+                    longitude: longitude,
+                });
+            });
             _this.groupSocketService.locationSubject.subscribe(function (selectedLocation) {
                 console.log("Marker dropped for selected location " + JSON.stringify(selectedLocation));
-                _this.dropMarker(selectedLocation.title, 'red', selectedLocation.latitude, selectedLocation.longitude, false, _this.launchMapsDirections, {
+                _this.dropMarker(selectedLocation.title, _this.generateMarkerUID(), 'red', selectedLocation.latitude, selectedLocation.longitude, false, _this.launchMapsDirections, {
                     launchNavigator: _this.launchNavigator,
                     currentPosition: currentPosition.coords,
                     selectedPosition: selectedLocation,
                 });
-                // this.locations = [];
                 _this.isSpaceCreated = false;
             });
             return { latitude: latitude, longitude: longitude };
@@ -294,27 +330,54 @@ var HomePage = (function () {
             enableHighAccuracy: true,
         };
         return new Promise(function (resolve, reject) {
+            //LOCATION IN PEMBROKE PINES USED FOR TESTING.
+            //return resolve({
+            // coords: { latitude: 25.992046, longitude: -80.383645 },
+            //});
             navigator.geolocation.getCurrentPosition(resolve, reject, options);
-            //return resolve({coords: { latitude: 25.992046, longitude: -80.383645 }})
+        });
+    };
+    HomePage.prototype.adjustCentralLocation = function (currentPosition) {
+        var _this = this;
+        //Find old central location marker.
+        var centralLocationMarker = this.droppedMarkers.find(function (x) { return x.title === 'Central Location'; });
+        //Remove old central location marker.
+        if (centralLocationMarker) {
+            centralLocationMarker.marker.remove();
+            __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](this.droppedMarkers, centralLocationMarker);
+        }
+        //Share central position observable that calculates central position among users.
+        var centralPosObservable = this.getCentralPosition(currentPosition).share();
+        centralPosObservable.subscribe(function (centralPosition) {
+            return _this.getWorkfromLocations(centralPosition);
+        });
+        centralPosObservable.subscribe(function (centralPosition) {
+            return _this.checkIfPositionOnWater(centralPosition);
         });
     };
     HomePage.prototype.getCentralPosition = function (currentPosition) {
-        // const locations = [currentPosition, ...RANDOM_GEOCOORDINATES];
         var _this = this;
-        return new Promise(function (resolve) {
-            // const centralPosition = geolib.getCenterOfBounds(locations);
-            // TODO: should be dropping the pin on the central location
-            // but for now it will just be the current position
-            _this.onWaterService
-                .checkForWater(currentPosition.latitude, currentPosition.longitude)
-                .subscribe(function (res) {
-                _this.isOnWater = res.json().water;
-                if (_this.isOnWater === true) {
-                    alert('It looks like the central location is on water! You have the chance to move the pin and put it on land.');
-                }
-                _this.dropMarker('Central Location', 'purple', currentPosition.latitude, currentPosition.longitude, true);
-            });
-            return resolve(currentPosition);
+        //Array of user locations.
+        var userLocations = this.groupSocketService.userInfos.map(function (x) {
+            return { latitude: x.latitude, longitude: x.longitude };
+        });
+        var locations = [currentPosition].concat(userLocations);
+        console.log("" + JSON.stringify(locations));
+        return new __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__["Observable"](function (observer) {
+            var centralPosition = __WEBPACK_IMPORTED_MODULE_9_geolib___default.a.getCenterOfBounds(locations);
+            _this.dropMarker('Central Location', _this.generateMarkerUID(), 'purple', centralPosition.latitude, centralPosition.longitude, _this.isOnWater);
+            observer.next(centralPosition);
+        });
+    };
+    HomePage.prototype.checkIfPositionOnWater = function (centralPosition) {
+        var _this = this;
+        this.onWaterService
+            .checkForWater(centralPosition.latitude, centralPosition.longitude)
+            .subscribe(function (res) {
+            _this.isOnWater = res.json().water;
+            if (_this.isOnWater === true) {
+                alert('It looks like the central location is on water! You have the chance to move the pin and put it on land.');
+            }
         });
     };
     HomePage.prototype.getWorkfromLocations = function (centralPosition) {
@@ -370,7 +433,7 @@ var HomePage = (function () {
         var _this = this;
         var defaultPreferences = this.getProfileData('hasWifi', 'hasLocalDeals');
         console.log("defaultPreferences " + JSON.stringify(defaultPreferences));
-        var preferencesModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_12__preferences_preferences__["a" /* PreferencesPage */], {
+        var preferencesModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_13__preferences_preferences__["a" /* PreferencesPage */], {
             defaultPreferences: defaultPreferences,
         });
         preferencesModal.present();
@@ -387,6 +450,7 @@ var HomePage = (function () {
                     _this.groupSocketService.userInfo = {
                         socketID: '',
                         groupUID: group_uid,
+                        markerUID: _this.userMarkerUID,
                         imageUrl: _this.gravatarUrl,
                         username: _this.username.firstName + " " + _this.username.lastName,
                         latitude: _this.latitude,
@@ -409,7 +473,7 @@ var HomePage = (function () {
     };
     HomePage.prototype.showLocationsModal = function () {
         var _this = this;
-        var locationsModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_11__location_location__["a" /* LocationPage */], {
+        var locationsModal = this.modalCtrl.create(__WEBPACK_IMPORTED_MODULE_12__location_location__["a" /* LocationPage */], {
             locations: this.locations,
             group_uid: this.groupSocketService.userInfo.groupUID,
             preferences: this.spacePreferences,
@@ -440,9 +504,13 @@ var HomePage = (function () {
                         _this.isInGroup = false;
                         _this.isSpaceCreated = false;
                         _this.selectedLocation = null;
-                        for (var i = 1; i < _this.droppedMarkers.length; i++) {
-                            _this.droppedMarkers[i].remove();
-                        }
+                        _this.droppedMarkers.forEach(function (marker) {
+                            if (marker.markerUID != _this.userMarkerUID)
+                                marker.marker.remove();
+                        });
+                        _this.droppedMarkers = _this.droppedMarkers.filter(function (marker) {
+                            marker.markerUID == _this.userMarkerUID;
+                        });
                     },
                 },
             ],
@@ -464,6 +532,7 @@ var HomePage = (function () {
         this.groupSocketService.userInfo = {
             socketID: '',
             groupUID: groupUID,
+            markerUID: this.userMarkerUID,
             imageUrl: this.gravatarUrl,
             username: this.username.firstName + " " + this.username.lastName,
             latitude: currentPosition.coords.latitude,
@@ -473,7 +542,14 @@ var HomePage = (function () {
         this.groupSocketService.joinGroup();
         this.isInGroup = true;
     };
-    HomePage.prototype.dropMarker = function (title, icon, lat, lng, draggable, clickFunction, clickFunctionParams) {
+    //Used to generate UIDs for handling marker removals.
+    HomePage.prototype.generateMarkerUID = function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = (Math.random() * 16) | 0, v = c == 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+        });
+    };
+    HomePage.prototype.dropMarker = function (title, markerUID, icon, lat, lng, draggable, clickFunction, clickFunctionParams) {
         var _this = this;
         this.map
             .addMarker({
@@ -484,7 +560,11 @@ var HomePage = (function () {
             position: { lat: lat, lng: lng },
         })
             .then(function (marker) {
-            _this.droppedMarkers.push(marker);
+            _this.droppedMarkers.push({
+                title: title,
+                markerUID: markerUID,
+                marker: marker,
+            });
             if (clickFunction !== undefined) {
                 marker.on(__WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["b" /* GoogleMapsEvent */].MARKER_CLICK).subscribe(function (res) {
                     clickFunction(clickFunctionParams);
@@ -501,12 +581,21 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n    <!-- <button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID)">Generate user</button> -->\n    <div *ngIf="isSpaceCreated" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <button ion-button color="primary" (click)="showCreateSpaceModal()" *ngIf="!isInGroup">Create space</button>\n    <button ion-button color="primary" (click)="leaveGroup()" *ngIf="isInGroup">Leave space</button>\n  </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="isSpaceCreated" class="location-button">\n      <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n      <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID, generateMarkerUID())">Generate user</button>-->\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <button *ngIf="!isInGroup" ion-button color="primary" (click)="showCreateSpaceModal()">\n      Create space\n    </button>\n    <button *ngIf="isInGroup" ion-button color="primary" (click)="leaveGroup()">\n      Leave space\n    </button>\n  </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */]) === "function" && _d || Object, typeof (_e = typeof __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */]) === "function" && _e || Object, typeof (_f = typeof __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */]) === "function" && _f || Object, typeof (_g = typeof __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */]) === "function" && _g || Object, typeof (_h = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */]) === "function" && _h || Object, typeof (_j = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */]) === "function" && _j || Object, typeof (_k = typeof __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */]) === "function" && _k || Object, typeof (_l = typeof __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__["a" /* LaunchNavigator */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_10__ionic_native_launch_navigator__["a" /* LaunchNavigator */]) === "function" && _l || Object])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */],
+        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */],
+        __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__["a" /* WorkfromService */],
+        __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__["a" /* OnWaterService */],
+        __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__["a" /* GoogleMaps */],
+        __WEBPACK_IMPORTED_MODULE_6__app_services_groupsocket_groupsocket_service__["a" /* GroupSocketService */],
+        __WEBPACK_IMPORTED_MODULE_8__ionic_native_native_storage__["a" /* NativeStorage */],
+        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["j" /* NavController */],
+        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["b" /* Events */],
+        __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["a" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_11__ionic_native_launch_navigator__["a" /* LaunchNavigator */]])
 ], HomePage);
 
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 //# sourceMappingURL=home.js.map
 
 /***/ }),
@@ -664,7 +753,7 @@ SpacePage = __decorate([
 
 /***/ }),
 
-/***/ 284:
+/***/ 285:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -748,7 +837,7 @@ LocationPage = __decorate([
 
 /***/ }),
 
-/***/ 285:
+/***/ 286:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -790,13 +879,13 @@ PreferencesPage = __decorate([
 
 /***/ }),
 
-/***/ 286:
+/***/ 287:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(287);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(291);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(292);
 
 
 Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* platformBrowserDynamic */])().bootstrapModule(__WEBPACK_IMPORTED_MODULE_1__app_module__["a" /* AppModule */]);
@@ -804,7 +893,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 
 /***/ }),
 
-/***/ 291:
+/***/ 292:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -812,24 +901,24 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(328);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(329);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(240);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_space_space__ = __webpack_require__(244);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pages_profile_profile__ = __webpack_require__(141);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(235);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(238);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(630);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__services_services_module__ = __webpack_require__(631);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__angular_http__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(634);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_geolocation__ = __webpack_require__(635);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__ionic_native_google_maps__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_deeplinks__ = __webpack_require__(239);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__ionic_native_clipboard__ = __webpack_require__(245);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_native_storage__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__ionic_native_native_storage__ = __webpack_require__(283);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__services_groupsocket_groupsocket_service__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_launch_navigator__ = __webpack_require__(283);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_location_location__ = __webpack_require__(284);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__ = __webpack_require__(285);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_grouptest_grouptest_service__ = __webpack_require__(635);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__ionic_native_launch_navigator__ = __webpack_require__(284);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_location_location__ = __webpack_require__(285);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_preferences_preferences__ = __webpack_require__(286);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__services_grouptest_grouptest_service__ = __webpack_require__(636);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -908,7 +997,7 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 328:
+/***/ 329:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -948,15 +1037,16 @@ var MyApp = (function () {
             // Here you can do any higher level native things you might need.
             statusBar.styleDefault();
             splashScreen.hide();
+            //Subscribe when the Home Page has published that it is ready to receive the group UID.
             events.subscribe('deeplink:listening', function () {
+                //alert('Publishing deeplink group subject');
+                //Publish a Replay Subject that will contain the group uid.
                 events.publish('group:join', _this.deeplinkGroupSubject);
             });
-            _this.deeplinks
-                .route({ '/': 1 })
-                .subscribe(function (match) {
-                alert("Successfully routed " + JSON.stringify(match.$args.group_uid));
+            _this.deeplinks.route({ '/': 1 }).subscribe(function (match) {
                 _this.deeplinkGroupSubject.next(match.$args.group_uid);
             }, function (nomatch) {
+                // nomatch.$link - the full link data
                 alert("Unmatched Route " + JSON.stringify(nomatch));
             });
         });
@@ -981,7 +1071,7 @@ MyApp = __decorate([
 
 /***/ }),
 
-/***/ 354:
+/***/ 355:
 /***/ (function(module, exports) {
 
 /* (ignored) */
@@ -994,7 +1084,7 @@ MyApp = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConfigService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(335);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join__ = __webpack_require__(336);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_url_join___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_url_join__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1062,15 +1152,15 @@ ConfigService = __decorate([
 
 /***/ }),
 
-/***/ 630:
+/***/ 631:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ServicesModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(631);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(632);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__sample_sample_service__ = __webpack_require__(632);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_module__ = __webpack_require__(633);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__yelp_yelp_service__ = __webpack_require__(634);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__groupsocket_groupsocket_service__ = __webpack_require__(79);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__onwater_onwater_service__ = __webpack_require__(243);
@@ -1126,7 +1216,7 @@ ServicesModule = __decorate([
 
 /***/ }),
 
-/***/ 631:
+/***/ 632:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1172,7 +1262,7 @@ SampleService = __decorate([
 
 /***/ }),
 
-/***/ 632:
+/***/ 633:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1202,7 +1292,7 @@ ConfigModule = __decorate([
 
 /***/ }),
 
-/***/ 633:
+/***/ 634:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1253,7 +1343,7 @@ YelpService = __decorate([
 
 /***/ }),
 
-/***/ 635:
+/***/ 636:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1262,7 +1352,7 @@ YelpService = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_http__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__config_config_service__ = __webpack_require__(46);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__groupsocket_groupsocket_service__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_generate_random_points__ = __webpack_require__(636);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_generate_random_points__ = __webpack_require__(637);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_generate_random_points___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_generate_random_points__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -1284,7 +1374,7 @@ var GroupTestService = (function () {
         this.configService = configService;
     }
     //Create a new instance of the GroupSocketService for testing and have it join the group.
-    GroupTestService.prototype.generateRandomGeoUser = function (latitude, longitude, group_uid) {
+    GroupTestService.prototype.generateRandomGeoUser = function (latitude, longitude, group_uid, markerUID) {
         var groupSocketService = new __WEBPACK_IMPORTED_MODULE_3__groupsocket_groupsocket_service__["a" /* GroupSocketService */](this.http, this.configService);
         //Generate a random point within a 10 mile (16094 meter) radius of the current position.
         var randomPoint = __WEBPACK_IMPORTED_MODULE_4_generate_random_points__["generateRandomPoint"]({ latitude: latitude, longitude: longitude }, 16094);
@@ -1292,6 +1382,7 @@ var GroupTestService = (function () {
         groupSocketService.userInfo = {
             socketID: '',
             groupUID: group_uid,
+            markerUID: markerUID,
             username: "RandomGeoUser" + Math.floor(Math.random() * 100),
             imageUrl: 'http://www.freeiconspng.com/uploads/profile-icon-9.png',
             latitude: randomPoint.latitude,
@@ -1321,11 +1412,11 @@ GroupTestService = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__config_config_service__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_socket_io_client__ = __webpack_require__(336);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_socket_io_client__ = __webpack_require__(337);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_socket_io_client___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_socket_io_client__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Rx__ = __webpack_require__(358);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Rx__ = __webpack_require__(359);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_Rx__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_lodash__ = __webpack_require__(623);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_lodash__ = __webpack_require__(282);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject__ = __webpack_require__(51);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject__);
@@ -1386,8 +1477,11 @@ var GroupSocketService = (function () {
         this.socket.on('getExistingSelectedLocation', function (res) {
             _this.locationSubject.next(res);
         });
-        this.socket.on('getLeavingUserInfo', function (res) {
-            __WEBPACK_IMPORTED_MODULE_6_lodash__["pull"](_this.userInfos, res);
+        this.userLeftObservable = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__["Observable"](function (observer) {
+            _this.socket.on('getLeavingUserInfo', function (res) {
+                __WEBPACK_IMPORTED_MODULE_6_lodash__["pull"](_this.userInfos, res);
+                observer.next(res);
+            });
         });
         //Get socket id on connect as observable.
         this.socket.on('connect', function (res) {
@@ -1404,8 +1498,11 @@ var GroupSocketService = (function () {
         });
     };
     GroupSocketService.prototype.leaveGroup = function () {
+        var _this = this;
         this.userInfo.socketID = this.socket.io.engine.id;
         this.socket.emit('leaveGroup', this.userInfo);
+        //Remove all userInfos from array except for the current user's userInfo.
+        this.userInfos = this.userInfos.filter(function (userInfo) { return userInfo.socketID == _this.userInfo.socketID; });
     };
     GroupSocketService.prototype.selectLocation = function () {
         //Add the unique socket id on join group.
@@ -1428,13 +1525,12 @@ var GroupSocketService = (function () {
 }());
 GroupSocketService = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["B" /* Injectable */])(),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_3__config_config_service__["a" /* ConfigService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__config_config_service__["a" /* ConfigService */]) === "function" && _b || Object])
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */], __WEBPACK_IMPORTED_MODULE_3__config_config_service__["a" /* ConfigService */]])
 ], GroupSocketService);
 
-var _a, _b;
 //# sourceMappingURL=groupsocket.service.js.map
 
 /***/ })
 
-},[286]);
+},[287]);
 //# sourceMappingURL=main.js.map

@@ -18,13 +18,17 @@ import { SpacePage } from '../space/space';
 import { GroupSocketService } from '../../app/services/groupsocket/groupsocket.service';
 import { ProfilePage, Profile } from '../profile/profile';
 import { NativeStorage } from '@ionic-native/native-storage';
+import geolib from 'geolib';
+import { PositionAsDecimal } from 'geolib';
 // import geolib from 'geolib';
 import gravatar from 'gravatar';
 import { LaunchNavigator } from '@ionic-native/launch-navigator';
 import { LocationPage } from '../location/location';
 import { PreferencesPage } from '../preferences/preferences';
 import { PreferenceOptions } from '../preferences/preference-options';
-// import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
+//import { GroupTestService } from '../../app/services/grouptest/grouptest.service';
+import * as _ from 'lodash';
+import { Observable } from 'rxjs/Observable';
 
 interface Coordinates {
   latitude: number;
@@ -38,6 +42,11 @@ interface SelectedLocation {
   groupUID: string;
 }
 
+interface DroppedMarker {
+  title: string;
+  markerUID: string;
+  marker: any;
+}
 const IMAGE_SIZE = {
   width: 28,
   height: 28,
@@ -65,12 +74,16 @@ export class HomePage {
   latitude: number;
   longitude: number;
 
-  host_uid: string;
   isSpaceCreated = false;
   spacePreferences: PreferenceOptions;
 
+  //Random user marker UID.
+  userMarkerUID: string;
+
+  host_uid: string;
+
   locations;
-  droppedMarkers;
+  droppedMarkers: DroppedMarker[];
   // If central location is on water
   isOnWater: boolean;
   isInGroup: boolean;
@@ -84,7 +97,7 @@ export class HomePage {
     private onWaterService: OnWaterService,
     private googleMaps: GoogleMaps,
     public groupSocketService: GroupSocketService,
-    // public groupTestService: GroupTestService,
+    //public groupTestService: GroupTestService,
     private nativeStorage: NativeStorage,
     public navCtrl: NavController,
     public events: Events,
@@ -94,10 +107,12 @@ export class HomePage {
     this.isOnWater = false;
     this.isInGroup = false;
     this.droppedMarkers = [];
+    this.userMarkerUID = this.generateMarkerUID();
     this.username = {
       firstName: 'Betwixt',
-      lastName: 'Space'
+      lastName: 'Space',
     };
+    this.gravatarUrl = 'assets/profile.jpg';
 
     events.subscribe('profile:saved', (profile: Profile) => {
       this.nativeStorage.setItem('email', profile.email);
@@ -114,29 +129,16 @@ export class HomePage {
 
       console.log(`profile:saved ${JSON.stringify(profile)}`);
     });
-  }
 
-  ngAfterViewInit() {
-    console.log('Ion view loaded.');
     this.platform
       .ready()
       .then(() => this.initialSetup())
       .then(() => this.getCurrentPosition())
       .then(currentPosition => this.joinGroupIfDeeplinked(currentPosition))
       .then(currentPosition => this.loadMap(currentPosition))
-      .then(currentPosition => this.getCentralPosition(currentPosition))
-      .then(centralPosition => this.getWorkfromLocations(centralPosition))
+      //.then(currentPosition => this.getCentralPosition(currentPosition))
+      //.then(centralPosition => this.getWorkfromLocations(centralPosition))
       .catch(error => alert(`An error has occured:\n ${error}`));
-  }
-
-  joinGroupIfDeeplinked(currentPosition) {
-    this.events.subscribe('group:join', deeplinkGroupSubject => {
-      deeplinkGroupSubject.subscribe(uid => {
-        this.joinHostGroup(currentPosition, uid);
-      });
-    });
-    this.events.publish('deeplink:listening');
-    return new Promise(resolve => resolve(currentPosition));
   }
 
   initialSetup() {
@@ -194,6 +196,22 @@ export class HomePage {
     return profileData;
   }
 
+  //Joins group if deeplinked.
+  joinGroupIfDeeplinked(currentPosition) {
+    //Subscribe to event and get Replay Subject
+    this.events.subscribe('group:join', deeplinkGroupSubject => {
+      //Subscribe to Replay Subject and get the group uid
+      deeplinkGroupSubject.subscribe(uid => {
+        //Join the host group.
+        this.joinHostGroup(currentPosition, uid);
+      });
+    });
+    //Home Page is ready to receive group uid.
+    this.events.publish('deeplink:listening');
+
+    return currentPosition;
+  }
+
   loadMap(currentPosition) {
     const { latitude, longitude } = currentPosition.coords;
     this.latitude = latitude;
@@ -216,8 +234,6 @@ export class HomePage {
     return this.map
       .one(GoogleMapsEvent.MAP_READY)
       .then(() => {
-        console.log('Map is ready!');
-
         const currentUserImage = {
           url: this.gravatarUrl,
           size: IMAGE_SIZE,
@@ -225,16 +241,22 @@ export class HomePage {
 
         this.dropMarker(
           'Current Location',
+          this.userMarkerUID,
           currentUserImage,
           latitude,
           longitude,
           false
         );
 
-        this.groupSocketService.userInfoSubject.subscribe(userInfo => {
+        //Share observable between multiple subscribers.
+        let userInfoSubject = this.groupSocketService.userInfoSubject;
+
+        //Drop marker.
+        userInfoSubject.subscribe(userInfo => {
           console.log(`Marker dropped for user: ${userInfo.username}`);
           this.dropMarker(
             userInfo.username,
+            userInfo.markerUID,
             {
               url: userInfo.imageUrl,
               size: IMAGE_SIZE,
@@ -245,6 +267,36 @@ export class HomePage {
           );
         });
 
+        //Adjust central location. Multiple instantaneous requests are ignored so just 1 is done every 1 second.
+        userInfoSubject.debounce(() => Observable.timer(1000)).subscribe(() => {
+          this.adjustCentralLocation({
+            latitude: latitude,
+            longitude: longitude,
+          });
+        });
+
+        //Share observable among subscribers.
+        let userLeftObservable = this.groupSocketService.userLeftObservable.share();
+
+        //Remove pin of person who has left the group.
+        userLeftObservable.subscribe(userInfo => {
+          if (userInfo) {
+            let userMarker = this.droppedMarkers.find(
+              x => x.markerUID === userInfo.markerUID
+            );
+            userMarker.marker.remove();
+            _.pull(this.droppedMarkers, userMarker);
+          }
+        });
+
+        //Adjust central location on removal of user.
+        userLeftObservable.subscribe(() => {
+          this.adjustCentralLocation({
+            latitude: latitude,
+            longitude: longitude,
+          });
+        });
+
         this.groupSocketService.locationSubject.subscribe(selectedLocation => {
           console.log(
             `Marker dropped for selected location ${JSON.stringify(
@@ -253,6 +305,7 @@ export class HomePage {
           );
           this.dropMarker(
             selectedLocation.title,
+            this.generateMarkerUID(),
             'red',
             selectedLocation.latitude,
             selectedLocation.longitude,
@@ -264,11 +317,10 @@ export class HomePage {
               selectedPosition: selectedLocation,
             }
           );
-          // this.locations = [];
           this.isSpaceCreated = false;
         });
 
-        return { latitude, longitude };
+        return { latitude: latitude, longitude: longitude };
       })
       .catch(error => error);
   }
@@ -278,40 +330,71 @@ export class HomePage {
       enableHighAccuracy: true,
     };
     return new Promise((resolve, reject) => {
+      //LOCATION IN PEMBROKE PINES USED FOR TESTING.
+      //return resolve({
+      // coords: { latitude: 25.992046, longitude: -80.383645 },
+      //});
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
-      //return resolve({coords: { latitude: 25.992046, longitude: -80.383645 }})
     });
   }
 
-  getCentralPosition(currentPosition: Coordinates) {
-    // const locations = [currentPosition, ...RANDOM_GEOCOORDINATES];
+  adjustCentralLocation(currentPosition) {
+    //Find old central location marker.
+    let centralLocationMarker = this.droppedMarkers.find(
+      x => x.title === 'Central Location'
+    );
 
-    return new Promise(resolve => {
-      // const centralPosition = geolib.getCenterOfBounds(locations);
+    //Remove old central location marker.
+    if (centralLocationMarker) {
+      centralLocationMarker.marker.remove();
+      _.pull(this.droppedMarkers, centralLocationMarker);
+    }
 
-      // TODO: should be dropping the pin on the central location
-      // but for now it will just be the current position
+    //Share central position observable that calculates central position among users.
+    let centralPosObservable = this.getCentralPosition(currentPosition).share();
 
-      this.onWaterService
-        .checkForWater(currentPosition.latitude, currentPosition.longitude)
-        .subscribe(res => {
-          this.isOnWater = res.json().water;
-          if (this.isOnWater === true) {
-            alert(
-              'It looks like the central location is on water! You have the chance to move the pin and put it on land.'
-            );
-          }
-          this.dropMarker(
-            'Central Location',
-            'purple',
-            currentPosition.latitude,
-            currentPosition.longitude,
-            true
-          );
-        });
+    centralPosObservable.subscribe(centralPosition =>
+      this.getWorkfromLocations(centralPosition)
+    );
+    centralPosObservable.subscribe(centralPosition =>
+      this.checkIfPositionOnWater(centralPosition)
+    );
+  }
 
-      return resolve(currentPosition);
+  getCentralPosition(currentPosition) {
+    //Array of user locations.
+    const userLocations: PositionAsDecimal[] = this.groupSocketService.userInfos.map(
+      x => {
+        return { latitude: x.latitude, longitude: x.longitude };
+      }
+    );
+    const locations = [currentPosition, ...userLocations];
+    console.log(`${JSON.stringify(locations)}`);
+    return new Observable(observer => {
+      const centralPosition = geolib.getCenterOfBounds(locations);
+      this.dropMarker(
+        'Central Location',
+        this.generateMarkerUID(),
+        'purple',
+        centralPosition.latitude,
+        centralPosition.longitude,
+        this.isOnWater
+      );
+      observer.next(centralPosition);
     });
+  }
+
+  checkIfPositionOnWater(centralPosition) {
+    this.onWaterService
+      .checkForWater(centralPosition.latitude, centralPosition.longitude)
+      .subscribe(res => {
+        this.isOnWater = res.json().water;
+        if (this.isOnWater === true) {
+          alert(
+            'It looks like the central location is on water! You have the chance to move the pin and put it on land.'
+          );
+        }
+      });
   }
 
   getWorkfromLocations(centralPosition) {
@@ -398,12 +481,17 @@ export class HomePage {
             this.groupSocketService.userInfo = {
               socketID: '',
               groupUID: group_uid,
+              markerUID: this.userMarkerUID,
               imageUrl: this.gravatarUrl,
               username: `${this.username.firstName} ${this.username.lastName}`,
               latitude: this.latitude,
               longitude: this.longitude,
             };
-            console.log(`this.groupSocketService.userInfo ${JSON.stringify(this.groupSocketService.userInfo)}`);
+            console.log(
+              `this.groupSocketService.userInfo ${JSON.stringify(
+                this.groupSocketService.userInfo
+              )}`
+            );
             console.log(group_uid);
 
             //Join the room specified by the group uid.
@@ -463,9 +551,13 @@ export class HomePage {
               this.isInGroup = false;
               this.isSpaceCreated = false;
               this.selectedLocation = null;
-              for (var i = 1; i < this.droppedMarkers.length; i++) {
-                this.droppedMarkers[i].remove();
-              }
+              this.droppedMarkers.forEach(marker => {
+                if (marker.markerUID != this.userMarkerUID)
+                  marker.marker.remove();
+              });
+              this.droppedMarkers = this.droppedMarkers.filter(marker => {
+                marker.markerUID == this.userMarkerUID;
+              });
             },
           },
         ],
@@ -490,6 +582,7 @@ export class HomePage {
     this.groupSocketService.userInfo = {
       socketID: '',
       groupUID,
+      markerUID: this.userMarkerUID,
       imageUrl: this.gravatarUrl,
       username: `${this.username.firstName} ${this.username.lastName}`,
       latitude: currentPosition.coords.latitude,
@@ -501,8 +594,18 @@ export class HomePage {
     this.isInGroup = true;
   }
 
+  //Used to generate UIDs for handling marker removals.
+  private generateMarkerUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (Math.random() * 16) | 0,
+        v = c == 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
   private dropMarker(
     title,
+    markerUID,
     icon,
     lat,
     lng,
@@ -519,7 +622,11 @@ export class HomePage {
         position: { lat, lng },
       })
       .then(marker => {
-        this.droppedMarkers.push(marker);
+        this.droppedMarkers.push({
+          title: title,
+          markerUID,
+          marker: marker,
+        });
         if (clickFunction !== undefined) {
           marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
             clickFunction(clickFunctionParams);

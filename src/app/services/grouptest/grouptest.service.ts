@@ -9,7 +9,7 @@ export class GroupTestService {
   constructor(public http: Http, public configService: ConfigService) {}
 
   //Create a new instance of the GroupSocketService for testing and have it join the group.
-  generateRandomGeoUser(latitude, longitude, group_uid) {
+  generateRandomGeoUser(latitude, longitude, group_uid, markerUID) {
     let groupSocketService = new GroupSocketService(
       this.http,
       this.configService
@@ -25,6 +25,7 @@ export class GroupTestService {
     groupSocketService.userInfo = {
       socketID: '',
       groupUID: group_uid,
+      markerUID : markerUID,
       username: `RandomGeoUser${Math.floor(Math.random() * 100)}`,
       imageUrl: 'http://www.freeiconspng.com/uploads/profile-icon-9.png',
       latitude: randomPoint.latitude,

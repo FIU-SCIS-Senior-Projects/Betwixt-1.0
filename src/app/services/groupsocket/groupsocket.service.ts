@@ -10,6 +10,7 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 export interface UserInfo {
   socketID: string;
   groupUID: string;
+  markerUID: string;
   username: string;
   imageUrl?: string;
   latitude?: number;
@@ -19,6 +20,7 @@ export interface UserInfo {
 export interface SelectedLocation {
   title?: string;
   groupUID?: string;
+  markerUID?: string;
   socketId?: string;
   latitude?: number;
   longitude?: number;
@@ -31,6 +33,8 @@ export class GroupSocketService {
   uid: Observable<string>;
   userInfos: Array<UserInfo> = [];
   userInfoSubject: ReplaySubject<UserInfo> = new ReplaySubject<UserInfo>();
+  userLeftObservable: Observable<any>;
+  username: string;
   locationSubject: ReplaySubject<SelectedLocation> = new ReplaySubject<
     SelectedLocation
   >();
@@ -76,8 +80,11 @@ export class GroupSocketService {
       this.locationSubject.next(res);
     });
 
-    this.socket.on('getLeavingUserInfo', res => {
-      _.pull(this.userInfos, res);
+    this.userLeftObservable = new Observable(observer => {
+      this.socket.on('getLeavingUserInfo', res => {
+        _.pull(this.userInfos, res);
+        observer.next(res);
+      });
     });
 
     //Get socket id on connect as observable.
@@ -98,6 +105,8 @@ export class GroupSocketService {
   leaveGroup() {
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('leaveGroup', this.userInfo);
+    //Remove all userInfos from array except for the current user's userInfo.
+    this.userInfos = this.userInfos.filter(userInfo => userInfo.socketID == this.userInfo.socketID);
   }
 
   selectLocation() {
