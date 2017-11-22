@@ -31,13 +31,14 @@ export class GroupSocketService {
   socketHost: string;
   socket: io;
   uid: Observable<string>;
-  userInfos: Array<UserInfo> = [];
+  joinedUsers: Array<UserInfo> = [];
   userInfoSubject: ReplaySubject<UserInfo> = new ReplaySubject<UserInfo>();
   userLeftObservable: Observable<any>;
   username: string;
   locationSubject: ReplaySubject<SelectedLocation> = new ReplaySubject<
     SelectedLocation
   >();
+  locationRemovedObservable: Observable<any>;
   public selectedLocation: SelectedLocation;
   public userInfo: UserInfo;
   socketIdSubject: ReplaySubject<string> = new ReplaySubject<string>();
@@ -50,7 +51,7 @@ export class GroupSocketService {
     //Add user information when a new user joins.
     this.socket.on('getNewUserInfo', res => {
       console.log(`Got new user info ${JSON.stringify(res)}`);
-      this.userInfos.push(res);
+      this.joinedUsers.push(res);
       this.socket.emit('sendUserInfo', {
         socketID: res.socketID,
         userInfo: this.userInfo,
@@ -64,7 +65,7 @@ export class GroupSocketService {
 
     this.socket.on('getExistingUserInfo', res => {
       console.log(`Got existing user info ${JSON.stringify(res)}`);
-      this.userInfos.push(res);
+      this.joinedUsers.push(res);
       this.userInfoSubject.next(res);
     });
 
@@ -82,7 +83,13 @@ export class GroupSocketService {
 
     this.userLeftObservable = new Observable(observer => {
       this.socket.on('getLeavingUserInfo', res => {
-        _.pull(this.userInfos, res);
+        _.pull(this.joinedUsers, this.joinedUsers.find(dm => dm.markerUID === res.markerUID));
+        observer.next(res);
+      });
+    });
+
+    this.locationRemovedObservable = new Observable(observer => {
+      this.socket.on('removedSelectedLocation', res => {
         observer.next(res);
       });
     });
@@ -106,13 +113,20 @@ export class GroupSocketService {
     this.userInfo.socketID = this.socket.io.engine.id;
     this.socket.emit('leaveGroup', this.userInfo);
     //Remove all userInfos from array except for the current user's userInfo.
-    this.userInfos = this.userInfos.filter(userInfo => userInfo.socketID == this.userInfo.socketID);
+    this.joinedUsers = this.joinedUsers.filter(userInfo => userInfo.socketID === this.userInfo.socketID);
   }
 
   selectLocation() {
     //Add the unique socket id on join group.
     this.selectedLocation.socketId = this.socket.io.engine.id;
     this.socket.emit('selectLocation', this.selectedLocation);
+  }
+
+  removeSelectedLocation() {
+    //Add the unique socket id on join group.
+    this.selectedLocation.socketId = this.socket.io.engine.id;
+    this.socket.emit('removeSelectedLocation', this.selectedLocation);
+    this.selectedLocation = null;
   }
 
   private get getUID(): Observable<string> {

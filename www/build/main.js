@@ -36,7 +36,7 @@ var ProfilePage = (function () {
 ProfilePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-profile',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\profile\profile.html"*/'<ion-header>\n    <ion-navbar>\n        <ion-title>Edit Profile</ion-title>\n        <ion-buttons end>\n            <button ion-button (click)="onSave()">Save</button>\n        </ion-buttons>\n    </ion-navbar>\n</ion-header>\n<ion-content>\n    <form>\n        <ion-list>\n            <ion-item>\n                <ion-label floating>Email Address</ion-label>\n                <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>First Name</ion-label>\n                <ion-input name="firstName" [(ngModel)]="profile.firstName" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Last Name</ion-label>\n                <ion-input name="lastName" [(ngModel)]="profile.lastName" type="text"></ion-input>\n            </ion-item>\n            <p class="info-text">The new email address and name that you set will be updated here; however, it won\'t be reflected on your pin until the next time you restart the app.</p>\n            <br/>\n            <ion-list-header>Space Preferences</ion-list-header>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="profile.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="profile.hasLocalDeals"></ion-toggle>\n            </ion-item>\n            <p class="info-text">We will still search the preferences that you have not selected; however, the one\'s that you have selected will be the first places you see!</p>\n        </ion-list>\n    </form>\n</ion-content>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\profile\profile.html"*/,
+        selector: 'page-profile',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/'<ion-header>\n    <ion-navbar>\n        <ion-title>Edit Profile</ion-title>\n        <ion-buttons end>\n            <button ion-button (click)="onSave()">Save</button>\n        </ion-buttons>\n    </ion-navbar>\n</ion-header>\n<ion-content>\n    <form>\n        <ion-list>\n            <ion-item>\n                <ion-label floating>Email Address</ion-label>\n                <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>First Name</ion-label>\n                <ion-input name="firstName" [(ngModel)]="profile.firstName" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Last Name</ion-label>\n                <ion-input name="lastName" [(ngModel)]="profile.lastName" type="text"></ion-input>\n            </ion-item>\n            <p class="info-text">The new email address and name that you set will be updated here; however, it won\'t be reflected on your pin until the next time you restart the app.</p>\n            <br/>\n            <ion-list-header>Space Preferences</ion-list-header>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="profile.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="profile.hasLocalDeals"></ion-toggle>\n            </ion-item>\n            <p class="info-text">We will still search the preferences that you have not selected; however, the one\'s that you have selected will be the first places you see!</p>\n        </ion-list>\n    </form>\n</ion-content>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */],
@@ -154,6 +154,8 @@ var IMAGE_SIZE = {
 //   // { latitude: 38.5678818, longitude: -121.4636956 }, // East Sacramento
 //   // { latitude: 37.2972316, longitude: -122.0976092 }, // San Jose
 // ];
+var CENTRAL_LOCATION = 'Central Location';
+var CURRENT_LOCATION = 'Current Location';
 var HomePage = (function () {
     function HomePage(platform, modalCtrl, workfromService, onWaterService, googleMaps, groupSocketService, 
         //public groupTestService: GroupTestService,
@@ -171,6 +173,7 @@ var HomePage = (function () {
         this.alertCtrl = alertCtrl;
         this.launchNavigator = launchNavigator;
         this.isSpaceCreated = false;
+        this.isUserJoined = false;
         this.isOnWater = false;
         this.isInGroup = false;
         this.droppedMarkers = [];
@@ -217,7 +220,10 @@ var HomePage = (function () {
         this.nativeStorage.getItem('gravatarUrl').then(function (url) {
             _this.gravatarUrl = url;
             console.log("set gravatarUrl " + _this.gravatarUrl);
-        }, function (error) { return console.log(error); });
+        }, function (error) {
+            _this.gravatarUrl = 'assets/profile.jpg';
+            console.log("error gravatarUrl " + _this.gravatarUrl + " " + error);
+        });
     };
     HomePage.prototype.presentProfilePage = function () {
         var profileData = this.getProfileData('email', 'firstName', 'lastName', 'hasWifi', 'hasLocalDeals');
@@ -277,7 +283,7 @@ var HomePage = (function () {
                 url: _this.gravatarUrl,
                 size: IMAGE_SIZE,
             };
-            _this.dropMarker('Current Location', _this.userMarkerUID, currentUserImage, latitude, longitude, false);
+            _this.dropMarker(CURRENT_LOCATION, _this.userMarkerUID, currentUserImage, latitude, longitude, false);
             //Share observable between multiple subscribers.
             var userInfoSubject = _this.groupSocketService.userInfoSubject;
             //Drop marker.
@@ -290,6 +296,7 @@ var HomePage = (function () {
             });
             //Adjust central location. Multiple instantaneous requests are ignored so just 1 is done every 1 second.
             userInfoSubject.debounce(function () { return __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__["Observable"].timer(1000); }).subscribe(function () {
+                _this.isUserJoined = true;
                 _this.adjustCentralLocation({
                     latitude: latitude,
                     longitude: longitude,
@@ -300,26 +307,47 @@ var HomePage = (function () {
             //Remove pin of person who has left the group.
             userLeftObservable.subscribe(function (userInfo) {
                 if (userInfo) {
-                    var userMarker = _this.droppedMarkers.find(function (x) { return x.markerUID === userInfo.markerUID; });
+                    var userMarker = _this.droppedMarkers.find(function (dm) { return dm.markerUID === userInfo.markerUID; });
                     userMarker.marker.remove();
                     __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](_this.droppedMarkers, userMarker);
+                    alert(userInfo.username + " has left the space.");
+                }
+                // if there aren't any more users in the list
+                if (_this.groupSocketService.joinedUsers.length === 0) {
+                    // remove ability to select a location
+                    _this.isUserJoined = false;
                 }
             });
             //Adjust central location on removal of user.
             userLeftObservable.subscribe(function () {
-                _this.adjustCentralLocation({
-                    latitude: latitude,
-                    longitude: longitude,
-                });
+                if (_this.groupSocketService.joinedUsers.length > 0) {
+                    _this.adjustCentralLocation({ latitude: latitude, longitude: longitude });
+                }
+                else {
+                    // remove central location marker
+                    var centralLocationMarker = _this.droppedMarkers.find(function (x) { return x.title === CENTRAL_LOCATION; });
+                    centralLocationMarker.marker.remove();
+                    __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](_this.droppedMarkers, centralLocationMarker);
+                }
+            });
+            //Remove pin of selected location to users
+            _this.groupSocketService.locationRemovedObservable.subscribe(function (selectedLocation) {
+                if (selectedLocation) {
+                    var locationMarker = _this.droppedMarkers.find(function (dm) { return dm.title === _this.selectedLocation.title; });
+                    locationMarker.marker.remove();
+                    __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](_this.droppedMarkers, locationMarker);
+                    alert(selectedLocation.title + " has been removed as the meeting location.");
+                }
             });
             _this.groupSocketService.locationSubject.subscribe(function (selectedLocation) {
                 console.log("Marker dropped for selected location " + JSON.stringify(selectedLocation));
+                _this.selectedLocation = selectedLocation;
                 _this.dropMarker(selectedLocation.title, _this.generateMarkerUID(), 'red', selectedLocation.latitude, selectedLocation.longitude, false, _this.launchMapsDirections, {
                     launchNavigator: _this.launchNavigator,
                     currentPosition: currentPosition.coords,
                     selectedPosition: selectedLocation,
                 });
-                _this.isSpaceCreated = false;
+                alert(selectedLocation.title + " has been selected as the meeting location!");
             });
             return { latitude: latitude, longitude: longitude };
         })
@@ -340,7 +368,7 @@ var HomePage = (function () {
     HomePage.prototype.adjustCentralLocation = function (currentPosition) {
         var _this = this;
         //Find old central location marker.
-        var centralLocationMarker = this.droppedMarkers.find(function (x) { return x.title === 'Central Location'; });
+        var centralLocationMarker = this.droppedMarkers.find(function (x) { return x.title === CENTRAL_LOCATION; });
         //Remove old central location marker.
         if (centralLocationMarker) {
             centralLocationMarker.marker.remove();
@@ -358,14 +386,15 @@ var HomePage = (function () {
     HomePage.prototype.getCentralPosition = function (currentPosition) {
         var _this = this;
         //Array of user locations.
-        var userLocations = this.groupSocketService.userInfos.map(function (x) {
-            return { latitude: x.latitude, longitude: x.longitude };
+        var userLocations = this.groupSocketService.joinedUsers.map(function (_a) {
+            var latitude = _a.latitude, longitude = _a.longitude;
+            return ({ latitude: latitude, longitude: longitude });
         });
         var locations = [currentPosition].concat(userLocations);
         console.log("" + JSON.stringify(locations));
         return new __WEBPACK_IMPORTED_MODULE_15_rxjs_Observable__["Observable"](function (observer) {
             var centralPosition = __WEBPACK_IMPORTED_MODULE_9_geolib___default.a.getCenterOfBounds(locations);
-            _this.dropMarker('Central Location', _this.generateMarkerUID(), 'purple', centralPosition.latitude, centralPosition.longitude, _this.isOnWater);
+            _this.dropMarker(CENTRAL_LOCATION, _this.generateMarkerUID(), 'purple', centralPosition.latitude, centralPosition.longitude, _this.isOnWater);
             observer.next(centralPosition);
         });
     };
@@ -480,6 +509,14 @@ var HomePage = (function () {
         });
         locationsModal.present();
         locationsModal.onDidDismiss(function (selectedLocation) {
+            if (_this.selectedLocation) {
+                _this.groupSocketService.removeSelectedLocation();
+                alert("Removing " + _this.selectedLocation
+                    .title + " and adding new location to meet up.");
+                var locationMarker = _this.droppedMarkers.find(function (dm) { return dm.title === _this.selectedLocation.title; });
+                locationMarker.marker.remove();
+                __WEBPACK_IMPORTED_MODULE_14_lodash__["pull"](_this.droppedMarkers, locationMarker);
+            }
             _this.selectLocation(selectedLocation.groupUID, selectedLocation.latitude, selectedLocation.longitude, selectedLocation.title);
         });
     };
@@ -505,12 +542,10 @@ var HomePage = (function () {
                         _this.isSpaceCreated = false;
                         _this.selectedLocation = null;
                         _this.droppedMarkers.forEach(function (marker) {
-                            if (marker.markerUID != _this.userMarkerUID)
+                            if (marker.markerUID !== _this.userMarkerUID)
                                 marker.marker.remove();
                         });
-                        _this.droppedMarkers = _this.droppedMarkers.filter(function (marker) {
-                            marker.markerUID == _this.userMarkerUID;
-                        });
+                        _this.droppedMarkers = _this.droppedMarkers.filter(function (marker) { return marker.markerUID === _this.userMarkerUID; });
                     },
                 },
             ],
@@ -581,7 +616,7 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="isSpaceCreated" class="location-button">\n      <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n      <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID, generateMarkerUID())">Generate user</button>-->\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <div class="space-button">\n      <button *ngIf="!isInGroup" ion-button color="primary" (click)="showCreateSpaceModal()">\n        Create space\n      </button>\n\n      <button *ngIf="isInGroup" ion-button color="primary" (click)="leaveGroup()">\n        Leave space\n      </button>\n    </div>\n  </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\home\home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n    <div *ngIf="isSpaceCreated && isUserJoined" class="location-button">\n      <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n      <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID, generateMarkerUID())">Generate user</button>-->\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <div class="space-button">\n      <button *ngIf="!isInGroup" ion-button color="primary" (click)="showCreateSpaceModal()">\n        Create space\n      </button>\n\n      <button *ngIf="isInGroup" ion-button color="primary" (click)="leaveGroup()">\n        Leave space\n      </button>\n    </div>\n  </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */],
@@ -742,7 +777,7 @@ var SpacePage = (function () {
 }());
 SpacePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-space',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\space\space.html"*/,
+        selector: 'page-space',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__["a" /* Clipboard */],
@@ -826,7 +861,7 @@ var LocationPage = (function () {
 }());
 LocationPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-location',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\location\location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.full_img" [src]="location?.full_img" />\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">\n        <ion-badge color="success">Local deals</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\location\location.html"*/,
+        selector: 'page-location',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.thumbnail_img" [src]="location?.thumbnail_img" />\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">\n        <ion-badge color="success">Local deals</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */],
@@ -870,7 +905,7 @@ var PreferencesPage = (function () {
 }());
 PreferencesPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-preferences',template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\preferences\preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\pages\preferences\preferences.html"*/,
+        selector: 'page-preferences',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */]])
 ], PreferencesPage);
@@ -1058,7 +1093,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Nav */])
 ], MyApp.prototype, "navChild", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"C:\Users\Alex\Desktop\Betwixt-1.0\src\app\app.html"*/,
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */],
@@ -1099,12 +1134,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 var SERVER_URL = 'https://server.betwixt.space/';
 //For browser or iOS testing
-//const SERVER_URL = 'http://localhost:8080/';
+// const SERVER_URL = 'http://localhost:8080/';
 //For android emulator testing
 //const SERVER_URL = "http://10.0.2.2:8080/";
 var ConfigService = (function () {
     function ConfigService() {
-        console.info("CONFIG-SERVICE");
+        console.info('CONFIG-SERVICE');
     }
     Object.defineProperty(ConfigService.prototype, "serverUrl", {
         get: function () {
@@ -1115,21 +1150,21 @@ var ConfigService = (function () {
     });
     Object.defineProperty(ConfigService.prototype, "getServerHelloWorld", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "helloworld");
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'helloworld');
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ConfigService.prototype, "yelpBusinessSearch", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "businesses", "search");
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'businesses', 'search');
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ConfigService.prototype, "workfromPlaces", {
         get: function () {
-            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, "places");
+            return __WEBPACK_IMPORTED_MODULE_1_url_join___default()(SERVER_URL, 'places');
         },
         enumerable: true,
         configurable: true
@@ -1441,7 +1476,7 @@ var GroupSocketService = (function () {
     function GroupSocketService(http, configService) {
         var _this = this;
         this.http = http;
-        this.userInfos = [];
+        this.joinedUsers = [];
         this.userInfoSubject = new __WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject__["ReplaySubject"]();
         this.locationSubject = new __WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject__["ReplaySubject"]();
         this.socketIdSubject = new __WEBPACK_IMPORTED_MODULE_7_rxjs_ReplaySubject__["ReplaySubject"]();
@@ -1452,7 +1487,7 @@ var GroupSocketService = (function () {
         //Add user information when a new user joins.
         this.socket.on('getNewUserInfo', function (res) {
             console.log("Got new user info " + JSON.stringify(res));
-            _this.userInfos.push(res);
+            _this.joinedUsers.push(res);
             _this.socket.emit('sendUserInfo', {
                 socketID: res.socketID,
                 userInfo: _this.userInfo,
@@ -1464,7 +1499,7 @@ var GroupSocketService = (function () {
         });
         this.socket.on('getExistingUserInfo', function (res) {
             console.log("Got existing user info " + JSON.stringify(res));
-            _this.userInfos.push(res);
+            _this.joinedUsers.push(res);
             _this.userInfoSubject.next(res);
         });
         this.socket.on('getSelectedLocation', function (res) {
@@ -1479,7 +1514,12 @@ var GroupSocketService = (function () {
         });
         this.userLeftObservable = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__["Observable"](function (observer) {
             _this.socket.on('getLeavingUserInfo', function (res) {
-                __WEBPACK_IMPORTED_MODULE_6_lodash__["pull"](_this.userInfos, res);
+                __WEBPACK_IMPORTED_MODULE_6_lodash__["pull"](_this.joinedUsers, _this.joinedUsers.find(function (dm) { return dm.markerUID === res.markerUID; }));
+                observer.next(res);
+            });
+        });
+        this.locationRemovedObservable = new __WEBPACK_IMPORTED_MODULE_1_rxjs_Observable__["Observable"](function (observer) {
+            _this.socket.on('removedSelectedLocation', function (res) {
                 observer.next(res);
             });
         });
@@ -1502,12 +1542,18 @@ var GroupSocketService = (function () {
         this.userInfo.socketID = this.socket.io.engine.id;
         this.socket.emit('leaveGroup', this.userInfo);
         //Remove all userInfos from array except for the current user's userInfo.
-        this.userInfos = this.userInfos.filter(function (userInfo) { return userInfo.socketID == _this.userInfo.socketID; });
+        this.joinedUsers = this.joinedUsers.filter(function (userInfo) { return userInfo.socketID === _this.userInfo.socketID; });
     };
     GroupSocketService.prototype.selectLocation = function () {
         //Add the unique socket id on join group.
         this.selectedLocation.socketId = this.socket.io.engine.id;
         this.socket.emit('selectLocation', this.selectedLocation);
+    };
+    GroupSocketService.prototype.removeSelectedLocation = function () {
+        //Add the unique socket id on join group.
+        this.selectedLocation.socketId = this.socket.io.engine.id;
+        this.socket.emit('removeSelectedLocation', this.selectedLocation);
+        this.selectedLocation = null;
     };
     Object.defineProperty(GroupSocketService.prototype, "getUID", {
         get: function () {
