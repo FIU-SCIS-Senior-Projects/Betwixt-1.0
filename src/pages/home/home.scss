@@ -13,6 +13,7 @@ page-home {
   }
   #profile-icon {
     margin: 10px;
+    margin-top: 50px;
     height: 40px;
     width: 40px;
     border-radius: 4px;
@@ -35,6 +36,12 @@ page-home {
       button {
         width: 50%;
       }
+    }
+    .space-button {
+      display: flex;
+      width: 100%;
+      margin-left: 7%;
+      margin-bottom: 5%;
     }
   }
 }

@@ -25223,6 +25223,7 @@ page-home button {
 
 page-home #profile-icon {
   margin: 10px;
+  margin-top: 50px;
   height: 40px;
   width: 40px;
   border-radius: 4px;
@@ -25267,6 +25268,16 @@ page-home .button-group .location-button {
 
 page-home .button-group .location-button button {
   width: 50%;
+}
+
+page-home .button-group .space-button {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  margin-left: 7%;
+  margin-bottom: 5%;
 }
 
 .flex-center {

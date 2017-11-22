@@ -332,7 +332,7 @@ export class HomePage {
     return new Promise((resolve, reject) => {
       //LOCATION IN PEMBROKE PINES USED FOR TESTING.
       //return resolve({
-      // coords: { latitude: 25.992046, longitude: -80.383645 },
+      //coords: { latitude: 25.992046, longitude: -80.383645 },
       //});
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
