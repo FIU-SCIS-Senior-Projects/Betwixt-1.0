@@ -350,9 +350,10 @@ export class HomePage {
               false,
               this.launchMapsDirections,
               {
+                createNavigatorAlert: true,
                 launchNavigator: this.launchNavigator,
                 currentPosition: currentPosition.coords,
-                selectedPosition: selectedLocation,
+                selectedLocation,
               }
             );
             alert(
@@ -373,7 +374,7 @@ export class HomePage {
     return new Promise((resolve, reject) => {
       //LOCATION IN PEMBROKE PINES USED FOR TESTING.
       //return resolve({
-      //coords: { latitude: 25.992046, longitude: -80.383645 },
+      // coords: { latitude: 25.992046, longitude: -80.383645 },
       //});
       navigator.geolocation.getCurrentPosition(resolve, reject, options);
     });
@@ -392,7 +393,9 @@ export class HomePage {
     }
 
     //Share central position observable that calculates central position among users.
-    const centralPosObservable = this.getCentralPosition(currentPosition).share();
+    const centralPosObservable = this.getCentralPosition(
+      currentPosition
+    ).share();
 
     centralPosObservable.subscribe(centralPosition =>
       this.getWorkfromLocations(centralPosition)
@@ -462,41 +465,53 @@ export class HomePage {
       });
   }
 
+  //Alert control for map navigation must be created before clickFunction because of scoping issues.
+  prepareAlertCtrl(launchNav, currentPosition, selectedLocation) {
+    let alertCtrl = this.alertCtrl.create({
+      title: 'Betwixt',
+      message: `Would you like directions to ${selectedLocation.title}?`,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          },
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            let launchNavigator = launchNav;
+
+            launchNavigator
+              .isAppAvailable(launchNavigator.APP.GOOGLE_MAPS)
+              .then(available => {
+                let app: string;
+                if (available) app = launchNavigator.APP.GOOGLE_MAPS;
+                else app = launchNavigator.APP.USER_SELECT;
+
+                launchNavigator.navigate(
+                  [selectedLocation.latitude, selectedLocation.longitude],
+                  {
+                    app: app,
+                    start: [
+                      currentPosition.latitude,
+                      currentPosition.longitude,
+                    ],
+                  }
+                );
+              });
+          },
+        },
+      ],
+    });
+
+    return alertCtrl;
+  }
+
+  //Presents the redirect to navigator modal.
   launchMapsDirections(params) {
-    // TODO: we need our own confirmation dialog because the title
-    // of this is index.html and we dont want the user to see that
-    if (
-      confirm(`Would you like directions to ${params.selectedPosition.title}?`)
-    ) {
-      let launchNavigator = params.launchNavigator;
-
-      launchNavigator
-        .isAppAvailable(launchNavigator.APP.GOOGLE_MAPS)
-        .then(available => {
-          let app: string;
-          if (available) app = launchNavigator.APP.GOOGLE_MAPS;
-          else app = launchNavigator.APP.USER_SELECT;
-
-          launchNavigator
-            .navigate(
-              [
-                params.selectedPosition.latitude,
-                params.selectedPosition.longitude,
-              ],
-              {
-                app: app,
-                start: [
-                  params.currentPosition.latitude,
-                  params.currentPosition.longitude,
-                ],
-              }
-            )
-            .then(
-              success => alert('Map launching...'),
-              error => alert('Maps application failed to open!')
-            );
-        });
-    }
+    params.alertCtrl.present();
   }
 
   showCreateSpaceModal() {
@@ -682,9 +697,19 @@ export class HomePage {
           marker,
         });
         if (clickFunction !== undefined) {
-          marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
-            clickFunction(clickFunctionParams);
-          });
+          if (clickFunctionParams.createNavigatorAlert === true) {
+            marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
+              let alertCtrl = this.prepareAlertCtrl(
+                clickFunctionParams.launchNavigator,
+                clickFunctionParams.currentPosition,
+                clickFunctionParams.selectedLocation
+              );
+              clickFunction({ alertCtrl });
+            });
+          } else
+            marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(res => {
+              clickFunction(clickFunctionParams);
+            });
         }
         if (draggable) {
           marker.on(GoogleMapsEvent.MARKER_DRAG_END).subscribe(res => {
