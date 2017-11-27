@@ -82,21 +82,9 @@
             "cordova-plugin-geolocation": {},
             "ionic-plugin-deeplinks": {
                 "URL_SCHEME": "betwixt",
+                "DEEPLINK_HOST": "betwixt.space",
                 "DEEPLINK_SCHEME": "https",
-                "DEEPLINK_HOST": "localhost:8080",
-                "ANDROID_PATH_PREFIX": "C:/Program Files/Git/",
-                "DEEPLINK_2_HOST": "10.0.2.2:8080",
-                "ANDROID_2_PATH_PREFIX": "/",
-                "ANDROID_3_PATH_PREFIX": "/",
-                "ANDROID_4_PATH_PREFIX": "/",
-                "ANDROID_5_PATH_PREFIX": "/",
-                "DEEPLINK_2_SCHEME": " ",
-                "DEEPLINK_3_SCHEME": " ",
-                "DEEPLINK_3_HOST": " ",
-                "DEEPLINK_4_SCHEME": " ",
-                "DEEPLINK_4_HOST": " ",
-                "DEEPLINK_5_SCHEME": " ",
-                "DEEPLINK_5_HOST": " "
+                "ANDROID_PATH_PREFIX": "/"
             },
             "cordova-clipboard": {},
             "uk.co.workingedge.phonegap.plugin.launchnavigator": {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core/';
 import { NavParams, ViewController } from 'ionic-angular';
 import { Clipboard } from '@ionic-native/clipboard';
+import { Platform } from 'ionic-angular';
 
 @Component({
   selector: 'page-space',
@@ -13,10 +14,11 @@ export class SpacePage {
   constructor(
     public viewCtrl: ViewController,
     public clipboard: Clipboard,
+    public platform: Platform,
     params: NavParams
   ) {
     this.uid = params.get('uid');
-    this.spaceLink = `betwixt://betwixt.com/?group_uid=${this.uid}`;
+    this.spaceLink = `https://betwixt.space/?group_uid=${this.uid}`;
   }
 
   onCopy() {

@@ -6,7 +6,7 @@ webpackJsonp([1],{
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfilePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(34);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -36,7 +36,7 @@ var ProfilePage = (function () {
 ProfilePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["f" /* IonicPage */])(),
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({
-        selector: 'page-profile',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/'<ion-header>\n    <ion-navbar>\n        <ion-title>Edit Profile</ion-title>\n        <ion-buttons end>\n            <button ion-button (click)="onSave()">Save</button>\n        </ion-buttons>\n    </ion-navbar>\n</ion-header>\n<ion-content>\n    <form>\n        <ion-list>\n            <ion-item>\n                <ion-label floating>Email Address</ion-label>\n                <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>First Name</ion-label>\n                <ion-input name="firstName" [(ngModel)]="profile.firstName" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Last Name</ion-label>\n                <ion-input name="lastName" [(ngModel)]="profile.lastName" type="text"></ion-input>\n            </ion-item>\n            <p class="info-text">The new email address and name that you set will be updated here; however, it won\'t be reflected on your pin until the next time you restart the app.</p>\n            <br/>\n            <ion-list-header>Space Preferences</ion-list-header>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="profile.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="profile.hasLocalDeals"></ion-toggle>\n            </ion-item>\n            <p class="info-text">We will still search the preferences that you have not selected; however, the one\'s that you have selected will be the first places you see!</p>\n        </ion-list>\n    </form>\n</ion-content>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/profile/profile.html"*/,
+        selector: 'page-profile',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/'<ion-header>\n    <ion-navbar>\n        <ion-title>Edit Profile</ion-title>\n        <ion-buttons end>\n            <button ion-button (click)="onSave()">Save</button>\n        </ion-buttons>\n    </ion-navbar>\n</ion-header>\n<ion-content>\n    <form>\n        <ion-list>\n            <ion-item>\n                <ion-label floating>Email Address</ion-label>\n                <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>First Name</ion-label>\n                <ion-input name="firstName" [(ngModel)]="profile.firstName" type="text"></ion-input>\n            </ion-item>\n            <ion-item>\n                <ion-label floating>Last Name</ion-label>\n                <ion-input name="lastName" [(ngModel)]="profile.lastName" type="text"></ion-input>\n            </ion-item>\n            <p class="info-text">The new email address and name that you set will be updated here; however, it won\'t be reflected on your pin until the next time you restart the app.</p>\n            <br/>\n            <ion-list-header>Space Preferences</ion-list-header>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="profile.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="profile.hasLocalDeals"></ion-toggle>\n            </ion-item>\n            <p class="info-text">We will still search the preferences that you have not selected; however, the one\'s that you have selected will be the first places you see!</p>\n        </ion-list>\n    </form>\n</ion-content>\n'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/profile/profile.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */],
@@ -97,7 +97,7 @@ module.exports = webpackAsyncContext;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_google_maps__ = __webpack_require__(241);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_services_workfrom_workfrom_service__ = __webpack_require__(242);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__app_services_onwater_onwater_service__ = __webpack_require__(243);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__space_space__ = __webpack_require__(244);
@@ -639,7 +639,7 @@ var HomePage = (function () {
 }());
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n     <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n     <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID, generateMarkerUID())">Generate user</button>-->\n    <div *ngIf="isSpaceCreated && isUserJoined" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <div class="space-button">\n      <button *ngIf="!isInGroup" ion-button color="primary" (click)="showCreateSpaceModal()">\n        Create space\n      </button>\n\n      <button *ngIf="isInGroup" ion-button color="primary" (click)="leaveGroup()">\n        Leave space\n      </button>\n    </div>\n  </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/home/home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/home/home.html"*/'<div id="map" class="map-canvas">\n  <img id="profile-icon" [src]="gravatarUrl" on-tap="presentProfilePage()" />\n  <div class="button-group">\n     <!--REMOVE THIS BUTTON AND GROUP TEST SERVICE FOR PRODUCTION-->\n     <!--<button ion-button color="secondary" round (click)="groupTestService.generateRandomGeoUser(latitude, longitude, groupSocketService.userInfo.groupUID, generateMarkerUID())">Generate user</button>-->\n    <div *ngIf="isSpaceCreated && isUserJoined" class="location-button">\n      <button ion-button color="light" round (click)="showLocationsModal()">Select A Location!</button>\n    </div>\n    <div class="space-button">\n      <button *ngIf="!isInGroup" ion-button color="primary" (click)="showCreateSpaceModal()">\n        Create space\n      </button>\n\n      <button *ngIf="isInGroup" ion-button color="primary" (click)="leaveGroup()">\n        Leave space\n      </button>\n    </div>\n  </div>\n</div>'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/home/home.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2_ionic_angular__["l" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["h" /* ModalController */],
@@ -767,7 +767,7 @@ OnWaterService = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SpacePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__ = __webpack_require__(245);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -781,12 +781,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var SpacePage = (function () {
-    function SpacePage(viewCtrl, clipboard, params) {
+    function SpacePage(viewCtrl, clipboard, platform, params) {
         this.viewCtrl = viewCtrl;
         this.clipboard = clipboard;
+        this.platform = platform;
         this.uid = params.get('uid');
-        this.spaceLink = "betwixt://betwixt.com/?group_uid=" + this.uid;
+        this.spaceLink = "https://betwixt.space/?group_uid=" + this.uid;
     }
     SpacePage.prototype.onCopy = function () {
         this.clipboard
@@ -800,10 +802,11 @@ var SpacePage = (function () {
 }());
 SpacePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-space',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/space/space.html"*/,
+        selector: 'page-space',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/space/space.html"*/'<div>\n    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div *ngIf="uid" class="flex-center-align">\n        <h1>Your Space Link</h1>\n        <p>{{spaceLink}}</p>\n        <button ion-button icon-left (click)="onCopy()">\n            <ion-icon name="copy"></ion-icon>\n            Copy Space Link\n        </button>\n        <h4>Share the Space Link above with the people you want to meet with!</h4>\n    </div>\n    <div *ngIf="!uid" class="flex-center-align">\n        <h1>Oops! Something bad happened on the server.</h1>\n        <p>It\'s not your fault. Try closing and opening the page again.</p>\n    </div>\n</div>'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/space/space.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_native_clipboard__["a" /* Clipboard */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */]])
 ], SpacePage);
 
@@ -817,7 +820,7 @@ SpacePage = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LocationPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(34);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -884,7 +887,7 @@ var LocationPage = (function () {
 }());
 LocationPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-location',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.thumbnail_img" [src]="location?.thumbnail_img" />\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">\n        <ion-badge color="success">Local deals</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/location/location.html"*/,
+        selector: 'page-location',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/location/location.html"*/'<ion-header>\n  <ion-navbar>\n    <ion-buttons start>\n      <button ion-button icon-only (click)="dismiss()">\n        <ion-icon name="arrow-back"></ion-icon>\n      </button>\n    </ion-buttons>\n    <ion-title>Select A Location</ion-title>\n  </ion-navbar>\n</ion-header>\n\n<ion-content *ngIf="locations">\n  <ion-card *ngFor="let location of locations">\n    <img *ngIf="location?.thumbnail_img" [src]="location?.thumbnail_img" />\n    <ion-card-content>\n      <ion-card-title class="flex-center">\n        {{ location?.title }}\n        <ion-badge color="secondary" class="badge-title">{{ location?.type }}</ion-badge>\n      </ion-card-title>\n      <div *ngIf="location?.no_wifi > 0" class="no-wifi">\n        <ion-badge color="danger">No WiFi</ion-badge>\n      </div>\n      <div *ngIf="location?.local_deal_flag > 0" class="local-deal">\n        <ion-badge color="success">Local deals</ion-badge>\n      </div>\n      <p>{{ location?.description }}</p>\n      <br/>\n      <p>{{ location?.distance }} miles away from central location!</p>\n    </ion-card-content>\n    <ion-row no-padding>\n      <ion-col text-left>\n        <button ion-button clear icon-start (click)="selectLocation(location?.latitude, location?.longitude, location?.title)">\n          <ion-icon name="checkmark"></ion-icon>\n          Select\n        </button>\n      </ion-col>\n      <ion-col text-right>\n        <button ion-button clear icon-start>\n          <ion-icon name="more"></ion-icon>\n          More Info\n        </button>\n      </ion-col>\n    </ion-row>\n  </ion-card>\n</ion-content>'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/location/location.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */],
@@ -901,7 +904,7 @@ LocationPage = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PreferencesPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core___ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(34);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -928,7 +931,7 @@ var PreferencesPage = (function () {
 }());
 PreferencesPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core___["n" /* Component */])({
-        selector: 'page-preferences',template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/pages/preferences/preferences.html"*/,
+        selector: 'page-preferences',template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/pages/preferences/preferences.html"*/'<div>\n    <button ion-button icon-only clear large class="icon-button" (click)="dismiss()">\n        <ion-icon name="close"></ion-icon>\n    </button>\n    <div>\n        <h1 class="text-center">Select Space Preferences</h1>\n        <p>The following preferences are the same as your default preferences; however, you have a chance to update them now for this space!</p>\n        <ion-list>\n            <ion-item>\n                <ion-label>Has WiFi</ion-label>\n                <ion-toggle name="hasWifi" [(ngModel)]="preferenceOptions.hasWifi"></ion-toggle>\n            </ion-item>\n            <ion-item>\n                <ion-label>Has Local Deals</ion-label>\n                <ion-toggle name="hasLocalDeals" [(ngModel)]="preferenceOptions.hasLocalDeals"></ion-toggle>\n            </ion-item>\n        </ion-list>\n        <div class="text-center">\n            <button ion-button icon-end (click)="next()">\n                Next\n                <ion-icon name="arrow-forward"></ion-icon>\n            </button>\n        </div>\n    </div>\n</div>'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/pages/preferences/preferences.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["m" /* ViewController */], __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["k" /* NavParams */]])
 ], PreferencesPage);
@@ -958,7 +961,7 @@ Object(__WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__["a" /* pl
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AppModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_platform_browser__ = __webpack_require__(43);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app_component__ = __webpack_require__(329);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__pages_home_home__ = __webpack_require__(240);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__pages_space_space__ = __webpack_require__(244);
@@ -1061,7 +1064,7 @@ AppModule = __decorate([
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MyApp; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__ = __webpack_require__(235);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_native_splash_screen__ = __webpack_require__(238);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_deeplinks__ = __webpack_require__(239);
@@ -1116,7 +1119,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Nav */])
 ], MyApp.prototype, "navChild", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/aliciar/Projects/mine/betwixt/mobileApp/src/app/app.html"*/,
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["n" /* Component */])({template:/*ion-inline-start:"/Users/danielraad/projects/Betwixt-1.0/src/app/app.html"*/'<ion-nav [root]="rootPage"></ion-nav>\n'/*ion-inline-end:"/Users/danielraad/projects/Betwixt-1.0/src/app/app.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["l" /* Platform */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_native_status_bar__["a" /* StatusBar */],
