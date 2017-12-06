@@ -1,20 +1,20 @@
-# Betwixt
+# Betwixt 1.0
 > A mobile application that helps groups of people find a central location where they may meet up.
 
-## Develop 🤓
+## Build & Development 🤓
 
-### `/server` ⚙
+### `Code/betwixt-server` ⚙
 
-Back-end code is located in the `server` branch. Run the following commands to get it running:
+Back-end code is located in the `Code/betwixt-server` folder. Run the following commands to get it running:
 
 ```bash
 $ npm install
 $ npm start
 ```
 
-### `/client` 🖥
+### `Code/betwixt-mobile` 🖥
 
-Front-end code is located in the `master` branch. Run the following commands to get it running:
+Front-end code is located in the `Code/betwixt-mobile` folder. Run the following commands to get it running:
 
 ```bash
 $ npm install

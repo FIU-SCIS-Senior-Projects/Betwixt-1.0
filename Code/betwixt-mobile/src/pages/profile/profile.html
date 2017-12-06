@@ -1,0 +1,38 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Edit Profile</ion-title>
+        <ion-buttons end>
+            <button ion-button (click)="onSave()">Save</button>
+        </ion-buttons>
+    </ion-navbar>
+</ion-header>
+<ion-content>
+    <form>
+        <ion-list>
+            <ion-item>
+                <ion-label floating>Email Address</ion-label>
+                <ion-input name="email" [(ngModel)]="profile.email" type="text"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>First Name</ion-label>
+                <ion-input name="firstName" [(ngModel)]="profile.firstName" type="text"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label floating>Last Name</ion-label>
+                <ion-input name="lastName" [(ngModel)]="profile.lastName" type="text"></ion-input>
+            </ion-item>
+            <p class="info-text">The new email address and name that you set will be updated here; however, it won't be reflected on your pin until the next time you restart the app.</p>
+            <br/>
+            <ion-list-header>Space Preferences</ion-list-header>
+            <ion-item>
+                <ion-label>Has WiFi</ion-label>
+                <ion-toggle name="hasWifi" [(ngModel)]="profile.hasWifi"></ion-toggle>
+            </ion-item>
+            <ion-item>
+                <ion-label>Has Local Deals</ion-label>
+                <ion-toggle name="hasLocalDeals" [(ngModel)]="profile.hasLocalDeals"></ion-toggle>
+            </ion-item>
+            <p class="info-text">We will still search the preferences that you have not selected; however, the one's that you have selected will be the first places you see!</p>
+        </ion-list>
+    </form>
+</ion-content>

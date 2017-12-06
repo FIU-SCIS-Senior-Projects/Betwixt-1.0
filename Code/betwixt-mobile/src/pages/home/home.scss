@@ -1,0 +1,47 @@
+page-home {
+  .map-canvas {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  button {
+    width: 90%;
+    margin-bottom: 5% !important;
+  }
+  #profile-icon {
+    margin: 10px;
+    margin-top: 50px;
+    height: 40px;
+    width: 40px;
+    border-radius: 4px;
+    position: absolute;
+    top: 2%;
+    left: 0;
+  }
+
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    .location-button {
+      display: flex;
+      width: 100%;
+      justify-content: flex-end;
+      margin-right: 30px;
+      button {
+        width: 50%;
+      }
+    }
+    .space-button {
+      display: flex;
+      width: 100%;
+      margin-left: 7%;
+      margin-bottom: 5%;
+    }
+  }
+}

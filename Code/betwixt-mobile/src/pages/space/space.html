@@ -1,0 +1,18 @@
+<div>
+    <button ion-button icon-only clear large class="close-button" (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+    </button>
+    <div *ngIf="uid" class="flex-center-align">
+        <h1>Your Space Link</h1>
+        <p>{{spaceLink}}</p>
+        <button ion-button icon-left (click)="onCopy()">
+            <ion-icon name="copy"></ion-icon>
+            Copy Space Link
+        </button>
+        <h4>Share the Space Link above with the people you want to meet with!</h4>
+    </div>
+    <div *ngIf="!uid" class="flex-center-align">
+        <h1>Oops! Something bad happened on the server.</h1>
+        <p>It's not your fault. Try closing and opening the page again.</p>
+    </div>
+</div>
